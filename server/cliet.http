@@ -1,0 +1,49 @@
+@baseUrl = http://localhost:8080/api/v1
+
+### @name register
+
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "name": "pedro",
+    "email": "test2@email.com",
+    "password": "123456",
+    "confirmPassword": "123456"
+}
+
+### @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "test2@email.com",
+    "password": "123456"
+}
+
+### @name logout
+GET {{baseUrl}}/auth/logout
+
+### @name refresh
+GET {{baseUrl}}/auth/refresh
+
+### @name profile
+GET {{baseUrl}}/auth/profile
+
+### @name list_stores
+GET {{baseUrl}}/store/list
+
+### @name get_store
+GET {{baseUrl}}/store/get?code=IhylaSpcfI
+
+### @name register_new_store
+POST {{baseUrl}}/store/register
+Content-Type: application/json
+
+{
+    "name": "Pedro Tec Store",
+    "address": "rua das 32"
+}
+
+### @name delete_store
+DELETE {{baseUrl}}/store/delete?code=rSljGngwHd
