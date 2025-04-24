@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum ROLE {
+  ADMIN
+  SELLER
+  CLIENT
+
+  @@map("role_type")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  avatarUrl String?  @map("avatar_url")
+  role      ROLE     @default(SELLER)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+  PENDING
+
+  @@map("role_status")
+}
+
+model Client {
+  id               String    @id @default(cuid())
+  code             String    @unique // Código *
+  address          String // Endereço *
+  state            String // Estado *
+  cityCode         String?   @map("city_code") // Código Município
+  name             String // Nome *
+  tradeName        String    @map("trade_name") // Nome Fantasia *
+  neighborhood     String? // Bairro
+  zipCode          String?   @map("zip_code") // CEP
+  city             String // Município *
+  areaCode         String?   @map("area_code") // DDD
+  phone            String? // Telefone
+  type             String // Tipo *
+  email            String?   @unique // E-mail
+  country          String? // País
+  taxId            String?   @unique @map("tax_id") // CNPJ/CPF
+  openingDate      DateTime? @map("opening_date") // Dt. Abert/Nasc
+  homepage         String? // Home-Page
+  status           Status    @default(ACTIVE)
+  registrationDate DateTime  @default(now()) @map("registration_date")
+  store            Store?    @relation(fields: [storeId], references: [id], onDelete: SetNull)
+  storeId          Int?      @map("store_id")
+
+  @@map("clients")
+}
+
+model Store {
+  id      Int      @id @default(autoincrement())
+  code    String   @unique
+  name    String
+  address String?
+  clients Client[]
+
+  @@map("stores")
+}
