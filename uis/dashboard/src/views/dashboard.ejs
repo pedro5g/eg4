@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <%- include('head.ejs') %>
+  <body
+    class="min-h-screen w-full bg-gray-50 text-gray-550 antialiased scroll-smooth">
+    <section
+      class="relative w-full text-white h-screen before:inset-0 before:-z-10 before:absolute before:bg-[url(/assets/image/hero.png)] before:bg-no-repeat before:bg-cover before:bg-center bg-zinc-900/70">
+      <%- include('hero.ejs') %>
+    </section>
+    <section class="px-5 md:px-20 my-20 min-h-screen">
+      <%- include('benefits.ejs') %>
+    </section>
+    <section class="px-5 md:px-20 h-screen"><%- include('faq.ejs') %></section>
+    <%- include('footer.ejs') %>
+  </body>
+  <script src="/lib/accordion.min.js"></script>
+  <script src="/lib/scrollreveal.min.js"></script>
+  <script type="module" src="/src/js/index.js"></script>
+</html>
