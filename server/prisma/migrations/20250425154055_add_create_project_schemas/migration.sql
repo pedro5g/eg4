@@ -1,21 +1,33 @@
 -- CreateTable
+CREATE TABLE "users" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "avatar_url" TEXT,
+    "role" TEXT NOT NULL DEFAULT 'SELLER',
+    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" DATETIME NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "clients" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "code" TEXT NOT NULL,
+    "code" TEXT NOT NULL COLLATE NOCASE,
     "address" TEXT NOT NULL,
     "state" TEXT NOT NULL,
     "city_code" TEXT,
-    "name" TEXT NOT NULL,
-    "trade_name" TEXT NOT NULL,
+    "name" TEXT NOT NULL COLLATE NOCASE,
+    "trade_name" TEXT NOT NULL COLLATE NOCASE,
     "neighborhood" TEXT,
     "zip_code" TEXT,
-    "city" TEXT NOT NULL,
+    "city" TEXT NOT NULL COLLATE NOCASE,
     "area_code" TEXT,
     "phone" TEXT,
-    "type" TEXT NOT NULL,
-    "email" TEXT,
+    "type" TEXT NOT NULL COLLATE NOCASE,
+    "email" TEXT COLLATE NOCASE,
     "country" TEXT,
-    "tax_id" TEXT,
+    "tax_id" TEXT COLLATE NOCASE,
     "opening_date" DATETIME,
     "homepage" TEXT,
     "status" TEXT NOT NULL DEFAULT 'ACTIVE',
@@ -32,25 +44,8 @@ CREATE TABLE "stores" (
     "address" TEXT
 );
 
--- RedefineTables
-PRAGMA defer_foreign_keys=ON;
-PRAGMA foreign_keys=OFF;
-CREATE TABLE "new_users" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "name" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
-    "avatar_url" TEXT,
-    "role" TEXT NOT NULL DEFAULT 'SELLER',
-    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL
-);
-INSERT INTO "new_users" ("created_at", "email", "id", "name", "password", "updated_at") SELECT "created_at", "email", "id", "name", "password", "updated_at" FROM "users";
-DROP TABLE "users";
-ALTER TABLE "new_users" RENAME TO "users";
+-- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
-PRAGMA foreign_keys=ON;
-PRAGMA defer_foreign_keys=OFF;
 
 -- CreateIndex
 CREATE UNIQUE INDEX "clients_code_key" ON "clients"("code");
@@ -60,3 +55,6 @@ CREATE UNIQUE INDEX "clients_email_key" ON "clients"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "clients_tax_id_key" ON "clients"("tax_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "stores_code_key" ON "stores"("code");

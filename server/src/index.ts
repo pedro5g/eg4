@@ -10,6 +10,7 @@ import { decorate } from "./core/hooks/decorate"
 import { AuthModule } from "./modules/auth/auth.module"
 import { UploadModule } from "./modules/uploads/upload.module"
 import { StoreModule } from "./modules/store/store.module"
+import { ClientModule } from "./modules/clients/client.module"
 
 const app = fastify()
 
@@ -42,6 +43,7 @@ decorate(app)
 
 app.register(AuthModule.build, { prefix: `${env.API_PREFIX}/auth` })
 app.register(StoreModule.build, { prefix: `${env.API_PREFIX}/store` })
+app.register(ClientModule.build, { prefix: `${env.API_PREFIX}/client` })
 app.register(UploadModule.build, { prefix: `${env.API_PREFIX}/upload` })
 
 app.setErrorHandler(globalErrorHandler)

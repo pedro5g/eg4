@@ -17,11 +17,12 @@ export type IClient = {
   email: string | null
   country: string | null
   taxId: string | null
-  openingDate: Date | string | null
+  openingDate: string | null
   homepage: string | null
   status: Status
   registrationDate: Date | null
   storeId: number | null
+  authorId: string
 }
 
 export interface RegisterClientDto {
@@ -40,10 +41,11 @@ export interface RegisterClientDto {
   email: string | null
   country: string | null
   taxId: string | null
-  openingDate: Date | string | null
+  openingDate: string | null
   homepage: string | null
   status: Status
   storeId: number | null
+  authorId: string
 }
 
 export interface RegisterClientServiceDto {
@@ -61,7 +63,30 @@ export interface RegisterClientServiceDto {
   email: string | null
   country: string | null
   taxId: string | null
-  openingDate: Date | string | null
+  openingDate: string | null
+  homepage: string | null
+  status: Status
+  storeId: number | null
+  authorId: string
+}
+
+export interface UpdateClientServiceDto {
+  code: string
+  address: string
+  state: string
+  cityCode: string | null
+  name: string
+  tradeName: string
+  neighborhood: string | null
+  zipCode: string | null
+  city: string
+  areaCode: string | null
+  phone: string | null
+  type: string
+  email: string | null
+  country: string | null
+  taxId: string | null
+  openingDate: string | null
   homepage: string | null
   status: Status
   storeId: number | null

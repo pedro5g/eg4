@@ -41,9 +41,68 @@ POST {{baseUrl}}/store/register
 Content-Type: application/json
 
 {
-    "name": "Pedro Tec Store",
+    "name": "Pedro Pizza Store",
     "address": "rua das 32"
 }
 
 ### @name delete_store
 DELETE {{baseUrl}}/store/delete?code=rSljGngwHd
+
+
+### @name register_client
+POST {{baseUrl}}/client/register
+Content-Type: application/json
+
+{
+  "address": "123 Main Street",
+  "state": "SP",
+  "cityCode": "3550308",
+  "name": "Empresa Exemplo",
+  "tradeName": "Exemplo Ltda",
+  "neighborhood": "Centro",
+  "zipCode": "01000000",
+  "city": "São Paulo",
+  "areaCode": "11",
+  "phone": "999999999",
+  "type": "Matriz",
+  "email": "contato3@exemplo.com",
+  "country": "Brasil",
+  "taxId": "12465678000199",
+  "openingDate": "2020-01-01T00:00:00.000Z",
+  "homepage": "https://www.exemplo.com",
+  "status": "ACTIVE",
+  "storeId": 1
+}
+
+### @name list_clients
+GET {{baseUrl}}/client/list-clients?page=1&take=1
+Content-Type: application/json
+
+### @name get_client
+GET {{baseUrl}}/client/profile/c7dSXXltY7
+
+### @name update_client
+PATCH {{baseUrl}}/client/update
+Content-Type: application/json
+
+{
+  "code": "c7dSXXltY7",
+  "address": "123 Main Street",
+  "state": "SP",
+  "cityCode": "3550308",
+  "name": "Empresa Exemplo",
+  "tradeName": "Exemplo Ltda",
+  "neighborhood": "Centro",
+  "zipCode": "01000000",
+  "city": "Rio de Janeiro",
+  "areaCode": "11",
+  "phone": "999999999",
+  "type": "Matriz",
+  "email": "contato1@exemplo.com",
+  "country": "Brasil",
+  "taxId": "12465678000199",
+  "openingDate": "2020-01-01T00:00:00.000Z",
+  "homepage": "https://www.exemplo.com",
+  "status": "ACTIVE",
+  "storeId": 1
+}

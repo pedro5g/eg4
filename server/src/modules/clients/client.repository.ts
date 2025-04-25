@@ -18,7 +18,7 @@ export class ClientRepository implements IClientRepository {
   }
 
   async update(client: IClient): Promise<void> {
-    const { id, code, registrationDate, ...rest } = client
+    const { id, code, registrationDate, authorId, ...rest } = client
     await this.db.client.update({
       where: { code },
       data: {
@@ -45,18 +45,18 @@ export class ClientRepository implements IClientRepository {
     return client
   }
 
-  async listStores({ page, take, query, status }: Filter): Promise<Meta> {
+  async listClient({ page, take, query, status }: Filter): Promise<Meta> {
     const prismaQuery = {
       skip: (page - 1) * take,
       take,
       where: {
         ...(query && {
           OR: [
-            { name: { contains: query, mode: "insensitive" } },
-            { email: { contains: query, mode: "insensitive" } },
-            { code: { contains: query, mode: "insensitive" } },
-            { city: { contains: query, mode: "insensitive" } },
-            { taxId: { contains: query, mode: "insensitive" } },
+            { name: { contains: query } },
+            { email: { contains: query } },
+            { code: { contains: query } },
+            { city: { contains: query } },
+            { taxId: { contains: query } },
           ],
         }),
         ...(status && { status }),
