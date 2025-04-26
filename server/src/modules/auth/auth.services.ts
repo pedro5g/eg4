@@ -13,6 +13,7 @@ import {
   refreshTokenSignOptions,
 } from "@/core/jwt"
 import { ITokenRepository } from "../token/domain/repository/token-repository.interface"
+import { ErrorCode } from "@/core/constraints"
 
 export class AuthServices {
   constructor(
@@ -25,7 +26,10 @@ export class AuthServices {
     const userExists = await this.repository.findByEmail(email)
 
     if (userExists) {
-      throw new BadRequestException("You already have an account, please login")
+      throw new BadRequestException(
+        "You already have an account, please login",
+        ErrorCode.AUTH_EMAIL_ALREADY_EXISTS,
+      )
     }
 
     const passwordHash = await this.encrypter.toHash(password)

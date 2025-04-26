@@ -14,7 +14,7 @@ export async function isAuthenticated(
     return reply.status(HTTP_STATUS.UNAUTHORIZED).send({
       ok: false,
       message: "Unauthorized Access",
-      errorCode: ErrorCode.ACCESS_UNAUTHORIZED,
+      errorCode: ErrorCode.AUTH_TOKEN_NOT_FOUND,
     })
   }
   const verifyToken = TokenModule.getService("verifyToken")
@@ -28,7 +28,7 @@ export async function isAuthenticated(
     return reply.status(HTTP_STATUS.UNAUTHORIZED).send({
       ok: false,
       message: "Unauthorized Access",
-      errorCode: ErrorCode.ACCESS_UNAUTHORIZED,
+      errorCode: ErrorCode.AUTH_INVALID_TOKEN,
     })
   }
 
