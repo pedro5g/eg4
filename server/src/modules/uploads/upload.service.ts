@@ -13,7 +13,7 @@ import fs from "node:fs/promises"
 import { logger } from "@/core/logger"
 
 export class UploadService {
-  async upload({ file, userName, bucket }: UploadDTO) {
+  async upload({ file, bucket }: UploadDTO) {
     if (!isAllowedMineType(file.type)) {
       throw new BadRequestException(
         `File type not allowed. Allowed types: ${Object.keys(

@@ -1,6 +1,5 @@
 export interface UploadDTO {
   file: File
-  userName: string
   bucket: string
 }
 

@@ -28,7 +28,26 @@ GET {{baseUrl}}/auth/logout
 GET {{baseUrl}}/auth/refresh
 
 ### @name profile
-GET {{baseUrl}}/auth/profile
+GET {{baseUrl}}/user/profile
+
+### @name update_avatar_profile
+PATCH  {{baseUrl}}/user/update/avatar
+Content-Type: multipart/form-data; boundary=---011000010111000001101001
+
+-----011000010111000001101001
+Content-Disposition: form-data; name="file"; filename="image-test-1.jpg"
+Content-Type: image/jpeg
+
+< ./tests/assets/image-test-1.jpg
+-----011000010111000001101001
+
+### @name update_profile
+PATCH {{baseUrl}}/user/update/profile
+Content-Type: application/json
+
+{
+  "name": "Pedro Luiz"
+}
 
 ### @name list_stores
 GET {{baseUrl}}/store/list

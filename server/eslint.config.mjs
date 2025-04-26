@@ -31,6 +31,7 @@ export default [
         "@typescript-eslint/no-empty-function": "off",
         "prefer-rest-params": "off",
         "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/no-empty-object-type": "off",
         "max-len": [
           "error",
           {
