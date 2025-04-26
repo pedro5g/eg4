@@ -30,7 +30,7 @@ export const Providers = ({
       <QueryClientProvider client={client}>
         <NuqsAdapter>
           {children}
-          <Toaster />
+          <Toaster richColors />
         </NuqsAdapter>
       </QueryClientProvider>
     </HelmetProvider>

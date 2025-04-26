@@ -3,16 +3,22 @@ import { authenticationRoutes, protectedRoutes } from "./common/routes";
 import { AuthLayout } from "@/layout/auth-layout";
 import { AppLayout } from "@/layout/app-layout";
 import { NotFound } from "@/pages/not-found";
+import { AuthRouter } from "./auth-router";
 
 export function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Route path="/" element={<AuthRoute />}></Route> */}
-        <Route element={<AuthLayout />}>
-          {authenticationRoutes.map((route) => (
-            <Route key={route.path} path={route.path} element={route.element} />
-          ))}
+        <Route path="/" element={<AuthRouter />}>
+          <Route element={<AuthLayout />}>
+            {authenticationRoutes.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={route.element}
+              />
+            ))}
+          </Route>
         </Route>
 
         <Route path="/" element={<></>}>
