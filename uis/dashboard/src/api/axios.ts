@@ -27,9 +27,12 @@ API.interceptors.response.use(
     ) {
       try {
         await APIRefresh.get("/auth/refresh");
-        return APIRefresh(error.config);
+
+        return await APIRefresh(error.config);
       } catch (error) {
-        if (typeof window !== "undefined") window.location.href = "/sign-in";
+        return Promise.reject({
+          error,
+        });
       }
     }
     return Promise.reject({

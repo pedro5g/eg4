@@ -53,6 +53,12 @@ export type ApiError = {
   ok: false;
 } & Error;
 
+export type User = {
+  name: string;
+  email: string;
+  avatarUrl: string | null;
+};
+
 export type SignUpBodyType = {
   name: string;
   email: string;
@@ -71,6 +77,27 @@ export type SignInBodyType = {
 };
 
 export type SignInResponseType = {
+  ok: true;
+  message: string;
+};
+
+export type ProfileResponseType = {
+  ok: true;
+  message: string;
+  profile: User;
+};
+
+export type UpdateAvatarProfileBodyType = FormData;
+export type UpdateAvatarProfileResponseType = {
+  ok: true;
+  message: string;
+};
+
+export type UpdateProfileBodyType = {
+  name: string;
+};
+
+export type UpdateProfileResponseType = {
   ok: true;
   message: string;
 };
