@@ -56,7 +56,10 @@ export type ApiError = {
 export type User = {
   name: string;
   email: string;
+  phone: string | null;
+  address: string | null;
   avatarUrl: string | null;
+  role: "ADMIN" | "SELLER";
 };
 
 export type SignUpBodyType = {
@@ -95,9 +98,16 @@ export type UpdateAvatarProfileResponseType = {
 
 export type UpdateProfileBodyType = {
   name: string;
+  phone: string | null;
+  address: string | null;
 };
 
 export type UpdateProfileResponseType = {
+  ok: true;
+  message: string;
+};
+
+export type LogoutResponseType = {
   ok: true;
   message: string;
 };

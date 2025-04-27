@@ -13,13 +13,13 @@ const cnpjSchema = z
   .max(14)
   .regex(/[0-9]$/g, "CNPJ should only have numbers")
 
-const mobilePhoneSchema = z
+export const mobilePhoneSchema = z
   .string()
   .trim()
   .min(9)
   .max(9)
   .regex(/[0-9]$/g)
-const landlinesSchema = z
+export const landlinesSchema = z
   .string()
   .trim()
   .min(8)
@@ -53,7 +53,9 @@ const areaCodeSchema = z
   .max(2)
   .regex(/[0-9]$/g)
   .nullable()
-const phoneSchema = z.union([mobilePhoneSchema, landlinesSchema]).nullable()
+export const phoneSchema = z
+  .union([mobilePhoneSchema, landlinesSchema])
+  .nullable()
 const typeSchema = baseStringSchema
 const emailSchema = z.string().trim().email().nullable()
 const countrySchema = baseStringSchema.nullable()

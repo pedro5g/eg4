@@ -5,6 +5,7 @@ import {
   UpdateProfileServiceDto,
 } from "./domain/dtos/user.dtos"
 import { IUserRepository } from "./domain/repository/user-repository.interface"
+import { env } from "@/core/env"
 
 export class UserServices {
   constructor(
@@ -19,7 +20,11 @@ export class UserServices {
       throw new NotFoundException("Invalid id, user not found")
     }
 
-    return { profile }
+    const url = profile.avatarUrl
+      ? `http://localhost:8080/${env.API_PREFIX}/upload/files/${profile.avatarUrl}`
+      : null
+
+    return { profile: { ...profile, avatarUrl: url } }
   }
 
   async updateAvatarProfile({
@@ -42,15 +47,20 @@ export class UserServices {
       avatarUrl = `${bucketName}/${fileName}`
     }
 
+    if (user.avatarUrl && avatarUrl) {
+      const [bucketName, fileName] = user.avatarUrl.split("/")
+      await this.uploadService.deleteFile({ bucketName, fileName })
+    }
+
     await this.userRepository.updateProfile({ ...user, avatarUrl })
   }
-  async updateProfile({ id, name }: UpdateProfileServiceDto) {
+  async updateProfile({ id, name, address, phone }: UpdateProfileServiceDto) {
     const user = await this.userRepository.getUserById(id)
 
     if (!user) {
       throw new NotFoundException("Invalid id, user not found")
     }
 
-    await this.userRepository.updateProfile({ ...user, name })
+    await this.userRepository.updateProfile({ ...user, name, address, phone })
   }
 }

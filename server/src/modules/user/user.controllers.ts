@@ -35,9 +35,9 @@ export class UserControllers {
 
   async updateProfile(req: FastifyRequest, reply: FastifyReply) {
     const userId = req.user.id
-    const { name } = updateUserSchema.parse(req.body)
+    const { name, phone, address } = updateUserSchema.parse(req.body)
 
-    await this.userServices.updateProfile({ id: userId, name })
+    await this.userServices.updateProfile({ id: userId, name, phone, address })
 
     reply
       .status(HTTP_STATUS.OK)

@@ -16,7 +16,6 @@ datasource db {
 enum ROLE {
   ADMIN
   SELLER
-  CLIENT
 
   @@map("role_type")
 }
@@ -28,6 +27,8 @@ model User {
   password  String
   avatarUrl String?  @map("avatar_url")
   role      ROLE     @default(SELLER)
+  phone     String?
+  address   String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   Client    Client[]

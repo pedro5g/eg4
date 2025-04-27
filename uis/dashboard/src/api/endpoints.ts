@@ -1,6 +1,7 @@
 import { API } from "./axios";
 import { AxiosAdapter, CreateHttpClientAdapter } from "./http-adapter";
 import {
+  LogoutResponseType,
   ProfileResponseType,
   SignInBodyType,
   SignInResponseType,
@@ -44,4 +45,8 @@ export const ApiUpdateProfile = async <T = UpdateProfileBodyType>(body: T) => {
     "/user/update/profile",
     body
   );
+};
+
+export const ApiLogout = async () => {
+  return await httpClient.GET<LogoutResponseType>("/auth/logout");
 };

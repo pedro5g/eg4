@@ -20,6 +20,9 @@ export class UserRepository implements IUserRepository {
         name: true,
         email: true,
         avatarUrl: true,
+        phone: true,
+        address: true,
+        role: true,
       },
     })
 
@@ -32,6 +35,8 @@ export class UserRepository implements IUserRepository {
       data: {
         name: user.name,
         avatarUrl: user.avatarUrl,
+        phone: user.phone,
+        address: user.address,
       },
     })
   }

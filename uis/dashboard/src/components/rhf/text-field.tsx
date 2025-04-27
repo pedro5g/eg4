@@ -1,11 +1,14 @@
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 import { CircleAlert } from "lucide-react";
+import { useCallback } from "react";
+import { formatCpfCnpj, formatPhone } from "@/lib/utils";
 
 export interface TextFieldProps<T extends FieldValues>
   extends Omit<React.ComponentProps<"input">, "placeholder"> {
   name: Path<T>;
   label: string;
-  type: "text" | "email";
+  type?: "text" | "email";
+  mask?: "phone" | "cpf/cnpj";
   required?: boolean;
   readonly?: boolean;
 }
@@ -16,24 +19,60 @@ export const TextField = <T extends FieldValues = any>({
   label,
   required = false,
   readonly = false,
+  mask,
   ...props
 }: TextFieldProps<T>) => {
   const { control } = useFormContext<T>();
+
+  const cleanFormat = (value: string) => {
+    return value.replace(/\D/g, "");
+  };
+
+  const applyMask = useCallback((value: string, maskType?: string) => {
+    if (!value) return "";
+
+    switch (maskType) {
+      case "phone":
+        return formatPhone(value);
+      case "cpf/cnpj":
+        return formatCpfCnpj(value);
+      default:
+        return value;
+    }
+  }, []);
+
   return (
     <Controller
       control={control}
       name={name}
       render={({
-        field: { name, onChange, value },
+        field: { name, onChange, value, ref },
         fieldState: { invalid, error },
       }) => {
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+          const inputValue = e.target.value;
+          const formattedValue = mask
+            ? applyMask(inputValue, mask)
+            : inputValue;
+
+          e.target.value = formattedValue;
+
+          if (mask) {
+            onChange(cleanFormat(formattedValue));
+          } else {
+            onChange(inputValue);
+          }
+        };
+        const displayValue =
+          mask && value ? applyMask(value.toString(), mask) : value;
         return (
           <div className="w-full max-w-md space-y-1">
             <div className="relative">
               <input
                 name={name}
-                onChange={onChange}
-                value={value}
+                ref={ref}
+                onChange={handleChange}
+                value={displayValue || ""}
                 {...props}
                 type={type}
                 data-error={invalid}

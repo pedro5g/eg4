@@ -50,4 +50,6 @@ export const toFile = (buff?: FileSchemaType) => {
 
 export const updateUserSchema = z.object({
   name: nameSchema,
+  phone: z.string().trim().min(1).max(255).nullable(),
+  address: z.string().trim().min(1).max(255).nullable(),
 })

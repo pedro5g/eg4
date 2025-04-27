@@ -1,11 +1,18 @@
+import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { Outlet } from "react-router";
 
 export function AppLayout() {
   return (
-    <div className="w-full h-screen ">
-      <main className="max-w-7xl w-full mx-auto">
-        <Outlet />
-      </main>
-    </div>
+    <SidebarProvider>
+      <AppSidebar variant="inset" />
+      <SidebarInset>
+        <div className="flex-1">
+          <main className="max-w-7xl w-full mx-auto">
+            <Outlet />
+          </main>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

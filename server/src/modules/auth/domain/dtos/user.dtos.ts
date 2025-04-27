@@ -1,4 +1,4 @@
-export type Roles = "ADMIN" | "SELLER" | "CLIENT"
+export type Roles = "ADMIN" | "SELLER"
 
 export type User = {
   id: string
@@ -7,6 +7,8 @@ export type User = {
   password: string
   avatarUrl: string | null
   role: Roles
+  phone: string | null
+  address: string | null
   createdAt: Date | string
   updatedAt: Date | string | null
 }
