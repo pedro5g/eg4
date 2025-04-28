@@ -5,6 +5,7 @@ import { AppLayout } from "@/layout/app-layout";
 import { NotFound } from "@/pages/not-found";
 import { AuthRouter } from "./auth-router";
 import { ProtectedRouter } from "./protected-router";
+import { ClientsLayout } from "@/layout/clients-layout";
 
 export function AppRoutes() {
   return (
@@ -24,13 +25,23 @@ export function AppRoutes() {
 
         <Route path="/" element={<ProtectedRouter />}>
           <Route element={<AppLayout />}>
-            {protectedRoutes.map((route) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={route.element}
-              />
-            ))}
+            {protectedRoutes.map((route) => {
+              return route.path.startsWith("/clients") ? (
+                <Route element={<ClientsLayout />}>
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={route.element}
+                  />
+                </Route>
+              ) : (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={route.element}
+                />
+              );
+            })}
           </Route>
         </Route>
         <Route path="*" element={<NotFound />} />

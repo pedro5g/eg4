@@ -8,7 +8,7 @@ export function AppLayout() {
       <AppSidebar variant="inset" />
       <SidebarInset>
         <div className="flex-1">
-          <main className="max-w-7xl w-full mx-auto">
+          <main className=" w-full mx-auto">
             <Outlet />
           </main>
         </div>

@@ -5,6 +5,8 @@ export const AUTH_ROUTES = {
 
 export const PROTECTED_ROUTES = {
   DASHBOARD: "/dashboard",
+  CLIENTS: "/clients",
+  CLIENTS_TABLE: "/clients/table",
 };
 
 export const isAuthRoute = (pathname: string): boolean => {

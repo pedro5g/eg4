@@ -1,6 +1,6 @@
 import { getInitials } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Camera, Check, Loader2 } from "lucide-react";
+import { Camera, Check, Loader2, X } from "lucide-react";
 import { ApiError, User } from "@/api/types";
 import { ChangeEvent, useCallback, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -73,15 +73,25 @@ export const ProfileAvatar = ({ user }: ProfileAvatarProps) => {
         <span className="sr-only">Escolher nova imagem de perfil</span>
       </label>
       {newImage && (
-        <button
-          onClick={changeImage}
-          disabled={isPending}
-          title="Salvar nova imagem"
-          className="absolute bottom-6.5 size-5 rounded-full ring-3 flex cursor-pointer 
+        <>
+          <button
+            onClick={changeImage}
+            disabled={isPending}
+            title="Salvar nova imagem"
+            className="absolute bottom-6.5 size-5 rounded-full ring-3 flex cursor-pointer 
             items-center justify-center -right-3.5 ring-green-200 bg-green-200/40 z-10">
-          <Check size={16} />
-          <span className="sr-only">Trocam imagem de perfil</span>
-        </button>
+            <Check size={16} className="text-green-500" />
+            <span className="sr-only">Trocam imagem de perfil</span>
+          </button>
+          <button
+            onClick={() => setNewImage(null)}
+            title="Cancelar"
+            className="absolute bottom-12.5 size-5 rounded-full ring-3 flex cursor-pointer 
+            items-center justify-center -right-5.5 ring-red-200 bg-red-200/40 z-10">
+            <X size={16} className="text-red-500" />
+            <span className="sr-only">Cancelar</span>
+          </button>
+        </>
       )}
     </div>
   );

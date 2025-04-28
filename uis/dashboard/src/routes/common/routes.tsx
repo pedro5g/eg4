@@ -2,6 +2,8 @@ import { SignUp } from "@/pages/auth/sign-up";
 import { AUTH_ROUTES, PROTECTED_ROUTES } from "./routes-path";
 import { SignIn } from "@/pages/auth/sign-in";
 import { Dashboard } from "@/pages/protected/dashboard";
+import { Clients } from "@/pages/protected/clients";
+import { ClientsTable } from "@/pages/protected/clients-table";
 
 export type RoutesStruct = {
   path: string;
@@ -15,4 +17,6 @@ export const authenticationRoutes: RoutesStruct[] = [
 
 export const protectedRoutes: RoutesStruct[] = [
   { path: PROTECTED_ROUTES.DASHBOARD, element: <Dashboard /> },
+  { path: PROTECTED_ROUTES.CLIENTS, element: <Clients /> },
+  { path: PROTECTED_ROUTES.CLIENTS_TABLE, element: <ClientsTable /> },
 ];
