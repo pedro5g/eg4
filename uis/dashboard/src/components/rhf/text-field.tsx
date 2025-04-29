@@ -1,16 +1,24 @@
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, Loader2 } from "lucide-react";
 import { useCallback } from "react";
-import { formatCpfCnpj, formatPhone } from "@/lib/utils";
+import {
+  cn,
+  formatCEP,
+  formatCpfCnpj,
+  formatDate,
+  formatPhone,
+} from "@/lib/utils";
 
 export interface TextFieldProps<T extends FieldValues>
-  extends Omit<React.ComponentProps<"input">, "placeholder"> {
+  extends Omit<React.ComponentProps<"input">, "placeholder" | "onChange"> {
   name: Path<T>;
   label: string;
   type?: "text" | "email";
-  mask?: "phone" | "cpf/cnpj";
+  mask?: "phone" | "cpf/cnpj" | "cep" | "date";
   required?: boolean;
   readonly?: boolean;
+  changeInterceptor?: (...value: any[]) => void;
+  isLoading?: boolean;
 }
 
 export const TextField = <T extends FieldValues = any>({
@@ -20,6 +28,9 @@ export const TextField = <T extends FieldValues = any>({
   required = false,
   readonly = false,
   mask,
+  changeInterceptor,
+  isLoading,
+  className,
   ...props
 }: TextFieldProps<T>) => {
   const { control } = useFormContext<T>();
@@ -36,6 +47,10 @@ export const TextField = <T extends FieldValues = any>({
         return formatPhone(value);
       case "cpf/cnpj":
         return formatCpfCnpj(value);
+      case "cep":
+        return formatCEP(value);
+      case "date":
+        return formatDate(value);
       default:
         return value;
     }
@@ -58,15 +73,17 @@ export const TextField = <T extends FieldValues = any>({
           e.target.value = formattedValue;
 
           if (mask) {
+            changeInterceptor && changeInterceptor(cleanFormat(formattedValue));
             onChange(cleanFormat(formattedValue));
           } else {
+            changeInterceptor && changeInterceptor(inputValue);
             onChange(inputValue);
           }
         };
         const displayValue =
           mask && value ? applyMask(value.toString(), mask) : value;
         return (
-          <div className="w-full max-w-md space-y-1">
+          <div className="w-full space-y-1">
             <div className="relative">
               <input
                 name={name}
@@ -79,9 +96,12 @@ export const TextField = <T extends FieldValues = any>({
                 required={required}
                 readOnly={readonly}
                 id={`floating_outlined_${label}`}
-                className="block px-3 pb-2.5 pt-4 w-full text-sm text-zinc-500 bg-transparent duration-300 transform   
+                className={cn(
+                  `block px-3 pb-2.5 pt-4 w-full text-sm text-zinc-500 bg-transparent duration-300 transform   
               rounded-sm border-2 border-zinc-500/40 appearance-none data-[error=true]:border-red-500
-              focus:outline-none focus:ring-0 focus:border-blue-400 peer"
+              focus:outline-none focus:ring-0 focus:border-blue-400 peer`,
+                  className
+                )}
                 placeholder=" "
               />
               <label
@@ -96,6 +116,11 @@ export const TextField = <T extends FieldValues = any>({
                 {label}
                 {required && <span className="text-xl leading-0">*</span>}
               </label>
+              {isLoading && (
+                <span className="absolute top-1/2 -translate-y-1/2 right-3">
+                  <Loader2 className="text-zinc-300 animate-spin" size={16} />
+                </span>
+              )}
             </div>
             {invalid && error?.message && (
               <p className="text-sm text-red-500 font-normal inline-flex items-center gap-1">

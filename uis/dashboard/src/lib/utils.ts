@@ -46,6 +46,22 @@ export const formatCPF = (value: string) => {
     .substring(0, 14);
 };
 
+export const formatCEP = (value: string) => {
+  return value
+    .replace(/\D/g, "")
+    .replace(/(\d{5})(\d)/, "$1-$2")
+    .substring(0, 9);
+};
+
+export const formatDate = (value: string) => {
+  return value
+    .replace(/\D/g, "")
+    .replace(/(\d{2})(\d)/, "$1/$2")
+    .replace(/(\d{2})\/(\d{2})(\d)/, "$1/$2/$3")
+    .replace(/\/(\d{4})(\d)/, "$1/$2/$3")
+    .substring(0, 10);
+};
+
 export const formatPhone = (value: string) => {
   value = value.replace(/\D/g, "");
 
