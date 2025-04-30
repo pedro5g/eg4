@@ -94,7 +94,7 @@ Content-Type: application/json
 }
 
 ### @name list_clients
-GET {{baseUrl}}/client/list-clients?page=1&take=1
+GET {{baseUrl}}/client/list-clients
 Content-Type: application/json
 
 ### @name get_client

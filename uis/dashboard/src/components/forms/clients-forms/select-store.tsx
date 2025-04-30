@@ -4,7 +4,6 @@ import * as React from "react";
 import { Check, ChevronsUpDown, CircleAlert, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -52,21 +51,33 @@ export const SelectStore = <T extends FieldValues>({
         return (
           <div className="w-full space-y-1">
             <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
+              <div className="relative">
+                <PopoverTrigger
                   role="combobox"
                   aria-expanded={open}
                   className={cn(
-                    "w-full shadow-none justify-between text-zinc-500 border-2 border-zinc-500/40 rounded-md px-3 pb-2.5 pt-4 h-auto cursor-pointer",
-                    invalid && "border-red-500 [&>svg]:stroke-red-500"
+                    `inline-flex justify-between  px-3 pb-2.5 pt-4 w-full text-sm text-zinc-500 bg-transparent 
+                    duration-300 transform rounded-sm border-2 border-zinc-500/40 appearance-none focus-visible:ring-0
+                    data-[state=open]:border-blue-400 data-[state=open]:[&>label]:text-blue-400 disabled:opacity-100`,
+                    invalid &&
+                      "border-red-500 [&>svg]:stroke-red-500 cursor-pointer "
                   )}>
-                  {value
-                    ? data.stores.find((store) => store.code === value)?.name
-                    : "Selecione uma Loja*"}
+                  {data.stores.find((store) => store.code === value)?.name ||
+                    "''"}
                   <ChevronsUpDown className="opacity-50" />
-                </Button>
-              </PopoverTrigger>
+
+                  <label
+                    data-error={invalid}
+                    className={cn(
+                      `absolute text-base text-zinc-500 duration-300 transform 
+                    scale-100 z-10 origin-[0] bg-white px-2 -translate-y-1/2 top-1/2 start-2`,
+                      value && "-translate-y-3 top-0 scale-75"
+                    )}>
+                    Selecione uma Loja*
+                  </label>
+                </PopoverTrigger>
+              </div>
+
               <PopoverContent align="start" className="w-full p-0">
                 <Command>
                   <CommandInput

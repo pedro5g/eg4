@@ -8,9 +8,14 @@ import {
   IClientRepository,
 } from "./domain/repository/client-repository.interface"
 import { randomString } from "@/core/helpers"
+import { IStoreRepository } from "../store/domain/repository/store-repository.interface"
+import { IStore } from "../store/domain/dtos/store.dtos"
 
 export class ClientServices {
-  constructor(private readonly clientRepository: IClientRepository) {}
+  constructor(
+    private readonly clientRepository: IClientRepository,
+    private readonly storeRepository: IStoreRepository,
+  ) {}
 
   async registerNewClient({
     name,
@@ -26,7 +31,7 @@ export class ClientServices {
     phone,
     state,
     status,
-    storeId,
+    storeCode,
     taxId,
     tradeName,
     type,
@@ -39,6 +44,11 @@ export class ClientServices {
       if (clientAlreadyExist) {
         throw new BadRequestException("Client with this email already exists")
       }
+    }
+    let store: IStore | null = null
+
+    if (storeCode) {
+      store = await this.storeRepository.findByCode(storeCode)
     }
 
     await this.clientRepository.create({
@@ -56,7 +66,7 @@ export class ClientServices {
       phone,
       state,
       status,
-      storeId,
+      storeId: store?.id || null,
       taxId,
       tradeName,
       type,
@@ -80,7 +90,6 @@ export class ClientServices {
     phone,
     state,
     status,
-    storeId,
     taxId,
     tradeName,
     type,
@@ -120,7 +129,6 @@ export class ClientServices {
       phone,
       state,
       status,
-      storeId,
       taxId,
       tradeName,
       type,

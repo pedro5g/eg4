@@ -7,13 +7,13 @@ export type IClient = {
   state: string
   cityCode: string | null
   name: string
-  tradeName: string
+  tradeName: string | null
   neighborhood: string | null
   zipCode: string | null
   city: string
   areaCode: string | null
   phone: string | null
-  type: string
+  type: string | null
   email: string | null
   country: string | null
   taxId: string | null
@@ -31,13 +31,13 @@ export interface RegisterClientDto {
   state: string
   cityCode: string | null
   name: string
-  tradeName: string
+  tradeName: string | null
   neighborhood: string | null
   zipCode: string | null
   city: string
   areaCode: string | null
   phone: string | null
-  type: string
+  type: string | null
   email: string | null
   country: string | null
   taxId: string | null
@@ -53,20 +53,20 @@ export interface RegisterClientServiceDto {
   state: string
   cityCode: string | null
   name: string
-  tradeName: string
+  tradeName: string | null
   neighborhood: string | null
   zipCode: string | null
   city: string
   areaCode: string | null
   phone: string | null
-  type: string
+  type: string | null
   email: string | null
   country: string | null
   taxId: string | null
   openingDate: string | null
   homepage: string | null
   status: Status
-  storeId: number | null
+  storeCode: string | null
   authorId: string
 }
 
@@ -76,18 +76,17 @@ export interface UpdateClientServiceDto {
   state: string
   cityCode: string | null
   name: string
-  tradeName: string
+  tradeName: string | null
   neighborhood: string | null
   zipCode: string | null
   city: string
   areaCode: string | null
   phone: string | null
-  type: string
+  type: string | null
   email: string | null
   country: string | null
   taxId: string | null
   openingDate: string | null
   homepage: string | null
   status: Status
-  storeId: number | null
 }

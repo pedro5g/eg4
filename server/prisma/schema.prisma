@@ -52,13 +52,13 @@ model Client {
   state            String // Estado *
   cityCode         String?  @map("city_code") // Código Município
   name             String // Nome *
-  tradeName        String   @map("trade_name") // Nome Fantasia *
+  tradeName        String?  @map("trade_name") // Nome Fantasia 
   neighborhood     String? // Bairro
   zipCode          String?  @map("zip_code") // CEP
   city             String // Município *
   areaCode         String?  @map("area_code") // DDD
   phone            String? // Telefone
-  type             String // Tipo *
+  type             String? // Tipo *
   email            String?  @unique // E-mail
   country          String? // País
   taxId            String?  @unique @map("tax_id") // CNPJ/CPF
