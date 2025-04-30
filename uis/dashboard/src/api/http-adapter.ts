@@ -9,12 +9,15 @@ export function AxiosAdapter(
     url: string,
     method: MethodType,
     body?: unknown,
-    headers?: Record<string, string>
+
+    headers?: Record<string, string>,
+    params?: unknown
   ): Promise<T> {
     const config: AxiosRequestConfig = {
       url,
       method,
       data: body,
+      params,
       headers,
       ...opts,
     };
@@ -26,8 +29,18 @@ export function AxiosAdapter(
 export function CreateHttpClientAdapter(requester: RequesterFn): HttpClient {
   return {
     requester,
-    async GET<T>(url: string, headers?: Record<string, string>): Promise<T> {
-      return this.requester<T>(url, MethodsEnum.GET, undefined, headers);
+    async GET<T>(
+      url: string,
+      params?: unknown,
+      headers?: Record<string, string>
+    ): Promise<T> {
+      return this.requester<T>(
+        url,
+        MethodsEnum.GET,
+        undefined,
+        headers,
+        params
+      );
     },
     async POST<T, B = unknown>(
       url: string,

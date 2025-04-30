@@ -4,6 +4,8 @@ import {
   CreateStoreBodyType,
   CreateStoreResponseType,
   GetStoresResponseType,
+  ListClientsBodyType,
+  ListClientsResponseType,
   LogoutResponseType,
   ProfileResponseType,
   RegisterClientBodyType,
@@ -74,4 +76,18 @@ export const ApiRegisterClient = async <T = RegisterClientBodyType>(
     "/client/register",
     body
   );
+};
+
+export const ApiListClients = async ({
+  page = 1,
+  take = 10,
+  q,
+  s,
+}: ListClientsBodyType) => {
+  return await httpClient.GET<ListClientsResponseType>(`/client/list-clients`, {
+    page,
+    take,
+    q,
+    s,
+  });
 };

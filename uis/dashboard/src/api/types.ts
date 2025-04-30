@@ -18,7 +18,8 @@ export type RequesterFn = <T>(
   url: string,
   method: MethodType,
   body?: unknown,
-  headers?: Record<string, string>
+  headers?: Record<string, string>,
+  params?: unknown
 ) => Promise<T>;
 
 export type AxiosAdapterType = (instance: AxiosInstance) => RequesterFn;
@@ -28,9 +29,14 @@ export interface HttpClient {
     url: string,
     method: MethodType,
     body?: unknown,
+    headers?: Record<string, string>,
+    params?: unknown
+  ): Promise<T>;
+  GET<T>(
+    url: string,
+    params?: unknown,
     headers?: Record<string, string>
   ): Promise<T>;
-  GET<T>(url: string, headers?: Record<string, string>): Promise<T>;
   POST<T, B = unknown>(
     url: string,
     body?: B,
@@ -53,7 +59,7 @@ export type ApiError = {
   errorCode: string;
   ok: false;
 } & Error;
-
+export type Status = "ACTIVE" | "INACTIVE" | "BLOCKED" | "PENDING";
 export type User = {
   name: string;
   email: string;
@@ -61,6 +67,31 @@ export type User = {
   address: string | null;
   avatarUrl: string | null;
   role: "ADMIN" | "SELLER";
+};
+
+export type Client = {
+  id: string;
+  code: string;
+  address: string;
+  state: string;
+  cityCode: string | null;
+  name: string;
+  tradeName: string | null;
+  neighborhood: string | null;
+  zipCode: string | null;
+  city: string;
+  areaCode: string | null;
+  phone: string | null;
+  type: string | null;
+  email: string | null;
+  country: string | null;
+  taxId: string | null;
+  openingDate: string | null;
+  homepage: string | null;
+  status: Status;
+  registrationDate: Date | null;
+  storeId: number | null;
+  authorId: string;
 };
 
 export type SignUpBodyType = {
@@ -136,4 +167,23 @@ export type RegisterClientBodyType = RegisterClientSchemaType;
 export type RegisterClientResponseType = {
   ok: true;
   message: string;
+};
+export type ListClientsBodyType = {
+  page?: number;
+  take?: number;
+  q?: string | undefined;
+  s?: "ACTIVE" | "INACTIVE" | "BLOCKED" | "PENDING" | undefined;
+};
+
+export type ListClientsResponseType = {
+  ok: true;
+  data: {
+    items: Client[];
+    meta: {
+      total: number;
+      page: number;
+      take: number;
+      pageCount: number;
+    };
+  };
 };

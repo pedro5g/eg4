@@ -167,5 +167,5 @@ export const listClientsSchema = z.object({
     .optional()
     .default(10),
   q: z.string().trim().optional(),
-  s: stateSchema.optional(),
+  s: statusSchema.optional(),
 })
