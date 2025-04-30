@@ -1,18 +1,9 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 import { RegisterClientSchemaType } from "./schemas/register-client-form-schema";
-import { parseAsInteger, useQueryState } from "nuqs";
 
+type Optional<T> = { [K in keyof T]?: T[K] };
 type Props = {
-  currentStep: number;
   currentFormData: Optional<RegisterClientSchemaType>;
-  next: () => void;
-  prev: () => void;
   clearFormData: () => void;
   setFormData: (data: Optional<RegisterClientSchemaType>) => void;
 };
@@ -20,8 +11,6 @@ type Props = {
 const FormProvider = createContext<Props | null>(null);
 
 const LOCAL_STORAGE_KEY = "register_client_form";
-
-type Optional<T> = { [K in keyof T]?: T[K] };
 
 export const RegisterClientFormContext = ({
   children,
@@ -32,25 +21,11 @@ export const RegisterClientFormContext = ({
     const data = localStorage.getItem(LOCAL_STORAGE_KEY);
     return data ? JSON.parse(data) : {};
   });
-  const [currentStep, setCurrentStep] = useQueryState(
-    "step",
-    parseAsInteger.withDefault(1)
-  );
-
-  const next = () => {
-    setCurrentStep((step) => step + 1);
-  };
-  const prev = () => {
-    setCurrentStep((step) => {
-      if (step <= 0) return 1;
-      return step - 1;
-    });
-  };
 
   const clearFormData = useCallback(() => {
     localStorage.removeItem(LOCAL_STORAGE_KEY);
-    setFormData({});
-  }, []);
+    _setFormData({});
+  }, [_setFormData]);
 
   const setFormData = useCallback(
     (data: Optional<RegisterClientSchemaType>) => {
@@ -62,22 +37,15 @@ export const RegisterClientFormContext = ({
         return { ...prev, ...data };
       });
     },
-    []
+    [_setFormData]
   );
-
-  useEffect(() => {
-    return () => clearFormData();
-  }, []);
 
   return (
     <FormProvider.Provider
       value={{
-        currentStep,
         currentFormData: _formData,
         setFormData,
         clearFormData,
-        prev,
-        next,
       }}>
       {children}
     </FormProvider.Provider>

@@ -113,8 +113,14 @@ const taxIdSchema = z.union([cnpjSchema, cpfSchema]);
 const openingDateSchema = baseSchema;
 const homepageSchema = baseSchema;
 
-const statusSchema = z.enum(["ACTIVE", "INACTIVE", "BLOCKED", "PENDING"]);
-const storeIdSchema = z.number().int().positive();
+const statusSchema = z
+  .enum(["ACTIVE", "INACTIVE", "BLOCKED", "PENDING"])
+  .optional();
+const storeCodeSchema = z
+  .string()
+  .trim()
+  .min(10, "Selecione uma loja")
+  .max(10, "Selecione uma loja");
 
 export const registerClientSchema = z.object({
   address: addressSchema,
@@ -133,8 +139,8 @@ export const registerClientSchema = z.object({
   taxId: taxIdSchema,
   openingDate: openingDateSchema,
   homepage: homepageSchema,
-  status: statusSchema.default("ACTIVE"),
-  storeId: storeIdSchema,
+  status: statusSchema,
+  storeCode: storeCodeSchema,
 });
 
 export const registerClientFirstStepSchema = z
@@ -142,7 +148,9 @@ export const registerClientFirstStepSchema = z
     name: nameSchema,
     email: emailSchema,
     phone: phoneSchema,
+    homepage: homepageSchema,
     areaCode: areaCodeSchema,
+    storeCode: storeCodeSchema,
   })
   .transform((values) => {
     if (values.phone) {

@@ -1,3 +1,4 @@
+import { RegisterClientSchemaType } from "@/components/forms/clients-forms/schemas/register-client-form-schema";
 import { AxiosInstance } from "axios";
 
 export type MethodType = "get" | "post" | "put" | "patch" | "delete";
@@ -108,6 +109,31 @@ export type UpdateProfileResponseType = {
 };
 
 export type LogoutResponseType = {
+  ok: true;
+  message: string;
+};
+
+export type CreateStoreBodyType = {
+  name: string;
+  address: string | null;
+};
+
+export type CreateStoreResponseType = {
+  ok: true;
+  message: string;
+};
+
+export type GetStoresResponseType = {
+  stores: {
+    id: number;
+    code: string;
+    name: string;
+    address: string | null;
+  }[];
+};
+
+export type RegisterClientBodyType = RegisterClientSchemaType;
+export type RegisterClientResponseType = {
   ok: true;
   message: string;
 };

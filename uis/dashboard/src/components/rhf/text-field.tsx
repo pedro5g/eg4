@@ -10,7 +10,10 @@ import {
 } from "@/lib/utils";
 
 export interface TextFieldProps<T extends FieldValues>
-  extends Omit<React.ComponentProps<"input">, "placeholder" | "onChange"> {
+  extends Omit<
+    React.ComponentProps<"input">,
+    "placeholder" | "onChange" | "readOnly"
+  > {
   name: Path<T>;
   label: string;
   type?: "text" | "email";

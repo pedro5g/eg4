@@ -21,6 +21,7 @@ interface SelectFieldProps<T extends FieldValues> {
   label: string;
   options?: Option[];
   required?: boolean;
+  readonly?: boolean;
 }
 
 export const SelectField = <T extends FieldValues>({
@@ -28,6 +29,7 @@ export const SelectField = <T extends FieldValues>({
   label,
   required = false,
   options = [],
+  readonly = false,
 }: SelectFieldProps<T>) => {
   const { control } = useFormContext();
 
@@ -48,10 +50,11 @@ export const SelectField = <T extends FieldValues>({
               onValueChange={onChange}>
               <div className="relative">
                 <SelectTrigger
+                  disabled={readonly}
                   className={cn(
                     `inline-flex px-3 pb-2.5 pt-4 w-full text-sm text-zinc-500 bg-transparent 
                     duration-300 transform rounded-sm border-2 border-zinc-500/40 appearance-none focus-visible:ring-0
-                    data-[state=open]:border-blue-400 data-[state=open]:[&>label]:text-blue-400`,
+                    data-[state=open]:border-blue-400 data-[state=open]:[&>label]:text-blue-400 disabled:opacity-100`,
                     invalid &&
                       "border-red-500 [&>svg]:stroke-red-500 cursor-pointer "
                   )}>

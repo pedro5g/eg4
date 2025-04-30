@@ -10,9 +10,12 @@ import { useRegisterClientForm } from "./form-context";
 import { useDebounceCallback } from "@/hooks/use-debounce";
 import { cnpja } from "@/lib/cnpj";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useRegisterClientStep } from "@/hooks/use-register-client-step";
 
 export const RegisterFormThirdStep = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const { next, prev, direction, setDirection } = useRegisterClientStep();
   const { currentFormData, setFormData } = useRegisterClientForm();
 
   const methods = useForm<RegisterClientThirdStepSchemaType>({
@@ -61,12 +64,17 @@ export const RegisterFormThirdStep = () => {
 
   const onSubmit = (data: RegisterClientThirdStepSchemaType) => {
     setFormData(data);
+    if (direction === "next") {
+      next();
+    } else {
+      prev();
+    }
   };
 
   return (
     <FormWrapper method={methods}>
       <form
-        id="form_step_3"
+        id="register_client_step_3"
         className="space-y-6"
         onSubmit={methods.handleSubmit(onSubmit)}>
         <div className="grid gap-4 ">
@@ -77,7 +85,7 @@ export const RegisterFormThirdStep = () => {
             </p>
           </div>
           <div className="grid grid-cols-2">
-            <div className="grid grid-cols-2 grid-rows-5 gap-5">
+            <div className="grid grid-rows-5 gap-5">
               <div className="row-span-1 col-span-2">
                 <TextField<RegisterClientThirdStepSchemaType>
                   name="taxId"
@@ -92,6 +100,7 @@ export const RegisterFormThirdStep = () => {
                     name="openingDate"
                     label="Data de nascimento"
                     mask="date"
+                    required
                   />
                 )}
                 {taxIdWatch && taxIdWatch.length === 14 && (
@@ -120,6 +129,24 @@ export const RegisterFormThirdStep = () => {
                 </div>
               )}
             </div>
+          </div>
+          <div className="flex gap-5 justify-end">
+            <Button
+              type="submit"
+              onClick={() => {
+                setDirection("prev");
+              }}
+              className="bg-blue-600/90 hover:bg-blue-700/70 cursor-pointer">
+              Voltar
+            </Button>
+            <Button
+              type="submit"
+              onClick={() => {
+                setDirection("next");
+              }}
+              className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
+              Avançar
+            </Button>
           </div>
         </div>
       </form>

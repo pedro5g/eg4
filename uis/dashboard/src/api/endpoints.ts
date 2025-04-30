@@ -1,8 +1,13 @@
 import { API } from "./axios";
 import { AxiosAdapter, CreateHttpClientAdapter } from "./http-adapter";
 import {
+  CreateStoreBodyType,
+  CreateStoreResponseType,
+  GetStoresResponseType,
   LogoutResponseType,
   ProfileResponseType,
+  RegisterClientBodyType,
+  RegisterClientResponseType,
   SignInBodyType,
   SignInResponseType,
   SignUpBodyType,
@@ -49,4 +54,24 @@ export const ApiUpdateProfile = async <T = UpdateProfileBodyType>(body: T) => {
 
 export const ApiLogout = async () => {
   return await httpClient.GET<LogoutResponseType>("/auth/logout");
+};
+
+export const ApiCreateStore = async <T = CreateStoreBodyType>(body: T) => {
+  return await httpClient.POST<CreateStoreResponseType, T>(
+    "/store/register",
+    body
+  );
+};
+
+export const ApiListStores = async () => {
+  return await httpClient.GET<GetStoresResponseType>("/store/list");
+};
+
+export const ApiRegisterClient = async <T = RegisterClientBodyType>(
+  body: T
+) => {
+  return await httpClient.POST<RegisterClientResponseType, T>(
+    "/client/register",
+    body
+  );
 };

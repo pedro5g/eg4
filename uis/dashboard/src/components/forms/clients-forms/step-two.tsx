@@ -8,13 +8,15 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRegisterClientForm } from "./form-context";
 import { useRegisterClientStep } from "@/hooks/use-register-client-step";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { SelectField } from "@/components/rhf/select-field";
 import { STATES } from "@/constants";
+import { Button } from "@/components/ui/button";
+import { useDebounceCallback } from "@/hooks/use-debounce";
 
 export const RegisterFormSecondStep = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { next } = useRegisterClientStep();
+  const { next, prev, direction, setDirection } = useRegisterClientStep();
   const { currentFormData, setFormData } = useRegisterClientForm();
 
   const methods = useForm<RegisterClientSecondStepSchemaType>({
@@ -30,7 +32,7 @@ export const RegisterFormSecondStep = () => {
     },
   });
 
-  const handleCep = useCallback(async (cep: string) => {
+  const handleCep = useDebounceCallback(async (cep: string) => {
     if (cep.length !== 8) return;
     try {
       setIsLoading(true);
@@ -49,17 +51,22 @@ export const RegisterFormSecondStep = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, 500);
 
   const onSubmit = (data: RegisterClientSecondStepSchemaType) => {
     setFormData(data);
-    next();
+
+    if (direction === "next") {
+      next();
+    } else {
+      prev();
+    }
   };
 
   return (
     <FormWrapper method={methods}>
       <form
-        id="form_step_2"
+        id="register_client_step_2"
         className="space-y-6"
         onSubmit={methods.handleSubmit(onSubmit)}>
         <div className="grid gap-4">
@@ -70,7 +77,7 @@ export const RegisterFormSecondStep = () => {
             </p>
           </div>
           <div className="grid grid-cols-2 grid-rows-5 gap-4">
-            <div className="row-span-1 col-span-2 w-fit">
+            <div className="col-span-2 w-fit">
               <TextField<RegisterClientSecondStepSchemaType>
                 className="py-2"
                 name="zipCode"
@@ -79,7 +86,7 @@ export const RegisterFormSecondStep = () => {
                 changeInterceptor={handleCep}
               />
             </div>
-            <div className="row-span-1 col-span-2 space-x-6 flex">
+            <div className=" col-span-2 space-x-6 flex">
               <TextField<RegisterClientSecondStepSchemaType>
                 name="address"
                 label="Endereço"
@@ -93,7 +100,7 @@ export const RegisterFormSecondStep = () => {
                 required
               />
             </div>
-            <div className="row-span-1 col-span-2 space-x-6 flex">
+            <div className=" col-span-2 space-x-6 flex">
               <TextField<RegisterClientSecondStepSchemaType>
                 name="city"
                 label="Cidade"
@@ -106,7 +113,7 @@ export const RegisterFormSecondStep = () => {
                 isLoading={isLoading}
               />
             </div>
-            <div className="row-span-1 col-span-2 space-x-6 flex">
+            <div className=" col-span-2 space-x-6 flex">
               <SelectField<RegisterClientSecondStepSchemaType>
                 name="state"
                 label="Estado"
@@ -119,6 +126,24 @@ export const RegisterFormSecondStep = () => {
                 label="Pais"
               />
             </div>
+          </div>
+          <div className="flex gap-5 justify-end">
+            <Button
+              type="submit"
+              onClick={() => {
+                setDirection("prev");
+              }}
+              className="bg-blue-600/90 hover:bg-blue-700/70 cursor-pointer">
+              Voltar
+            </Button>
+            <Button
+              type="submit"
+              onClick={() => {
+                setDirection("next");
+              }}
+              className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
+              Avançar
+            </Button>
           </div>
         </div>
       </form>
