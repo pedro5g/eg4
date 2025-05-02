@@ -172,7 +172,7 @@ export type ListClientsBodyType = {
   page?: number;
   take?: number;
   q?: string | undefined;
-  s?: "ACTIVE" | "INACTIVE" | "BLOCKED" | "PENDING" | undefined;
+  s?: string;
 };
 
 export type ListClientsResponseType = {

@@ -36,10 +36,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import {
+  ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronsLeftIcon,
   ChevronsRightIcon,
+  ColumnsIcon,
   GripVerticalIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -63,8 +65,16 @@ import {
 import { Client } from "@/api/types";
 import { Badge } from "../ui/badge";
 import { Label } from "../ui/label";
+import { cn, formatCNPJ, formatCPF, formatPhone } from "@/lib/utils";
+import { STATUS_MAP, STYLE_STATUS_MAP } from "@/constants";
+import { useTableClientsQuery } from "@/hooks/use-table-clients-query";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
-// Create a separate component for the drag handle
 function DragHandle({ id }: { id: string }) {
   const { attributes, listeners } = useSortable({
     id,
@@ -94,6 +104,7 @@ const columns: ColumnDef<Client>[] = [
     header: ({ table }) => (
       <div className="flex items-center justify-center">
         <Checkbox
+          className="data-[state=checked]:bg-blue-400 data-[state=checked]:border-blue-400"
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -106,6 +117,7 @@ const columns: ColumnDef<Client>[] = [
     cell: ({ row }) => (
       <div className="flex items-center justify-center">
         <Checkbox
+          className="data-[state=checked]:bg-blue-400 data-[state=checked]:border-blue-400"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -119,22 +131,75 @@ const columns: ColumnDef<Client>[] = [
     accessorKey: "name",
     header: "Nome",
     cell: ({ row }) => {
+      const { name, email, areaCode, phone } = row.original;
+
       return (
-        <div>
-          <span>{row.original.name}</span>
-          {row.original.email && <span>{row.original.email}</span>}
+        <div className="flex flex-col gap-1">
+          <span className="text-sm text-zinc-800 font-bold">{name}</span>
+          {email && (
+            <span className="text-xs text-zinc-500 font-light leading-1">
+              {email}
+            </span>
+          )}
+          {phone && areaCode && (
+            <span className="text-xs text-zinc-500 font-light">
+              {formatPhone(areaCode + phone)}
+            </span>
+          )}
         </div>
       );
     },
     enableHiding: false,
   },
   {
+    accessorKey: "taxId",
+    header: "CPF/CNPj",
+    cell: ({ row }) => {
+      const { taxId } = row.original;
+
+      return (
+        <div className="px-1.5">
+          {taxId ? (
+            <span className="text-sm leading-1 text-zinc-800 font-medium tracking-tight">
+              {taxId.length === 11 ? formatCPF(taxId) : formatCNPJ(taxId)}
+            </span>
+          ) : (
+            <span className="text-sm leading-1 text-zinc-600 font-medium tracking-wider">
+              Não informado
+            </span>
+          )}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "state",
+    header: "Estado",
+    cell: ({ row }) => {
+      const { address, state } = row.original;
+
+      return (
+        <div className="flex flex-col ">
+          <span className=" text-zinc-800 font-semibold text-sm">
+            {state.toUpperCase()}
+          </span>
+          <span className=" text-zinc-600 font-light  text-xs">{address}</span>
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => (
       <div className="w-32">
-        <Badge variant="outline" className="px-1.5 text-muted-foreground">
-          {row.original.state.toLowerCase()}
+        <Badge
+          variant="outline"
+          className={cn(
+            "px-3 border-2",
+            STYLE_STATUS_MAP[row.original.status]
+          )}>
+          {STATUS_MAP[row.original.status]}
         </Badge>
       </div>
     ),
@@ -165,8 +230,19 @@ function DraggableRow({ row }: { row: Row<Client> }) {
   );
 }
 
-export function DataTableClients({ data: initialData }: { data: Client[] }) {
-  const [data, setData] = React.useState(() => initialData);
+interface DataTableClientsProps {
+  data: Client[];
+  meta: {
+    pageCount: number;
+    total: number;
+  };
+}
+
+export function DataTableClients({
+  data: initialData,
+  meta,
+}: DataTableClientsProps) {
+  const [data, setData] = React.useState<Client[]>([]);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -174,10 +250,8 @@ export function DataTableClients({ data: initialData }: { data: Client[] }) {
     []
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
-    pageSize: 10,
-  });
+
+  const { pagination, setPagination } = useTableClientsQuery();
   const sortableId = React.useId();
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
@@ -185,10 +259,27 @@ export function DataTableClients({ data: initialData }: { data: Client[] }) {
     useSensor(KeyboardSensor, {})
   );
 
+  React.useEffect(() => {
+    if (initialData) {
+      setData(initialData);
+    }
+  }, [initialData]);
+
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
     [data]
   );
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (active && over && active.id !== over.id) {
+      setData((data) => {
+        const oldIndex = dataIds.indexOf(active.id);
+        const newIndex = dataIds.indexOf(over.id);
+        return arrayMove(data, oldIndex, newIndex);
+      });
+    }
+  }
 
   const table = useReactTable({
     data,
@@ -200,6 +291,9 @@ export function DataTableClients({ data: initialData }: { data: Client[] }) {
       columnFilters,
       pagination,
     },
+    pageCount: meta.pageCount,
+    rowCount: meta.total,
+    manualPagination: true,
     getRowId: (row) => row.id.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -215,19 +309,47 @@ export function DataTableClients({ data: initialData }: { data: Client[] }) {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (active && over && active.id !== over.id) {
-      setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id);
-        const newIndex = dataIds.indexOf(over.id);
-        return arrayMove(data, oldIndex, newIndex);
-      });
-    }
-  }
-
   return (
-    <div>
+    <div className=" space-y-4">
+      <div className="flex items-center">
+        <div className="ml-auto flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                className="px-3 py-3 border-2 border-zinc-500/40 text-zinc-600 cursor-pointer"
+                variant="outline"
+                size="sm">
+                <ColumnsIcon className="text-zinc-600" />
+                <span className="hidden lg:inline">Customize as colunas</span>
+                <span className="lg:hidden">Colunas</span>
+                <ChevronDownIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              {table
+                .getAllColumns()
+                .filter(
+                  (column) =>
+                    typeof column.accessorFn !== "undefined" &&
+                    column.getCanHide()
+                )
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }>
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
       <div className="overflow-hidden rounded-lg border">
         <DndContext
           collisionDetection={closestCenter}
@@ -236,7 +358,7 @@ export function DataTableClients({ data: initialData }: { data: Client[] }) {
           sensors={sensors}
           id={sortableId}>
           <Table>
-            <TableHeader className="sticky top-0 z-10 bg-muted">
+            <TableHeader className="sticky top-0 z-10 bg-blue-100/30">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
@@ -255,7 +377,7 @@ export function DataTableClients({ data: initialData }: { data: Client[] }) {
               ))}
             </TableHeader>
             <TableBody className="**:data-[slot=table-cell]:first:w-8">
-              {table.getRowModel().rows?.length ? (
+              {table.getRowModel().rows.length ? (
                 <SortableContext
                   items={dataIds}
                   strategy={verticalListSortingStrategy}>
@@ -268,7 +390,7 @@ export function DataTableClients({ data: initialData }: { data: Client[] }) {
                   <TableCell
                     colSpan={columns.length}
                     className="h-24 text-center">
-                    No results.
+                    Nenhum cliente encontrado {": ("}
                   </TableCell>
                 </TableRow>
               )}
@@ -276,15 +398,15 @@ export function DataTableClients({ data: initialData }: { data: Client[] }) {
           </Table>
         </DndContext>
       </div>
-      <div className="flex items-center justify-between px-4">
+      <div className="flex items-center justify-between px-4 mt-3">
         <div className="hidden flex-1 text-sm text-muted-foreground lg:flex">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredSelectedRowModel().rows.length} de{" "}
+          {table.getFilteredRowModel().rows.length} linha(s) selecionadas.
         </div>
         <div className="flex w-full items-center gap-8 lg:w-fit">
           <div className="hidden items-center gap-2 lg:flex">
             <Label htmlFor="rows-per-page" className="text-sm font-medium">
-              Rows per page
+              Linhas por pagina
             </Label>
             <Select
               value={`${table.getState().pagination.pageSize}`}
@@ -297,7 +419,7 @@ export function DataTableClients({ data: initialData }: { data: Client[] }) {
                 />
               </SelectTrigger>
               <SelectContent side="top">
-                {[10, 20, 30, 40, 50].map((pageSize) => (
+                {[2, 10, 20, 30, 40, 50].map((pageSize) => (
                   <SelectItem key={pageSize} value={`${pageSize}`}>
                     {pageSize}
                   </SelectItem>
@@ -306,7 +428,7 @@ export function DataTableClients({ data: initialData }: { data: Client[] }) {
             </Select>
           </div>
           <div className="flex w-fit items-center justify-center text-sm font-medium">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
+            Pagina {table.getState().pagination.pageIndex + 1} de{" "}
             {table.getPageCount()}
           </div>
           <div className="ml-auto flex items-center gap-2 lg:ml-0">

@@ -37,11 +37,12 @@ export class ClientControllers {
 
   async listClient(req: FastifyRequest, reply: FastifyReply) {
     const { page, take, q, s } = listClientsSchema.parse(req.query)
+
     const { items, meta } = await this.clientServices.listClient({
       page,
       take,
       query: q,
-      status: s as Status,
+      status: s as Status[],
     })
     reply.status(HTTP_STATUS.OK).send({ ok: true, data: { items, meta } })
   }

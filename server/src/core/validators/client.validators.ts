@@ -167,5 +167,14 @@ export const listClientsSchema = z.object({
     .optional()
     .default(10),
   q: z.string().trim().optional(),
-  s: statusSchema.optional(),
+  s: z
+    .string()
+    .optional()
+    .transform((value) => {
+      if (!value) return undefined
+      return value.split(",")
+    })
+    .pipe(
+      z.array(z.enum(["ACTIVE", "INACTIVE", "BLOCKED", "PENDING"])).optional(),
+    ),
 })

@@ -4,7 +4,7 @@ export type Filter = {
   page: number
   take: number
   query?: string
-  status?: Status
+  status?: Status[]
 }
 
 export type Meta = {

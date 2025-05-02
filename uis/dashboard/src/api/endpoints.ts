@@ -88,6 +88,6 @@ export const ApiListClients = async ({
     page,
     take,
     q,
-    s,
+    s: s,
   });
 };

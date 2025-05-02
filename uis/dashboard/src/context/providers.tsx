@@ -20,6 +20,9 @@ export const Providers = ({
               return false;
             },
             retryDelay: 0,
+            staleTime: 1000 * 60 * 5,
+            refetchOnMount: false,
+            refetchOnReconnect: false,
           },
         },
       })

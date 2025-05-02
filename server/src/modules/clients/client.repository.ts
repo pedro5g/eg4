@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient, Status } from "@prisma/client"
 import {
   Filter,
   IClientRepository,
@@ -47,8 +47,6 @@ export class ClientRepository implements IClientRepository {
 
   async listClient({ page, take, query, status }: Filter): Promise<Meta> {
     const prismaQuery = {
-      skip: (page - 1) * take,
-      take,
       where: {
         ...(query && {
           OR: [
@@ -59,13 +57,15 @@ export class ClientRepository implements IClientRepository {
             { taxId: { contains: query } },
           ],
         }),
-        ...(status && { status }),
+        ...(status && { status: { in: [...status] as Status[] } }),
       },
     }
 
     const [clients, total] = await Promise.all([
       this.db.client.findMany({
         ...prismaQuery,
+        skip: (page - 1) * take,
+        take,
         orderBy: { registrationDate: "desc" },
       }),
       this.db.client.count(prismaQuery),

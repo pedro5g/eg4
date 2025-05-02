@@ -27,3 +27,17 @@ export const STATES = [
   { title: "Sergipe", value: "SE" },
   { title: "Tocantins", value: "TO" },
 ];
+
+export const STATUS_MAP: Record<string, string> = {
+  ACTIVE: "Ativo",
+  INACTIVE: "Inativo",
+  BLOCKED: "Bloqueado",
+  PENDING: "Pendente",
+};
+
+export const STYLE_STATUS_MAP: Record<string, string> = {
+  ACTIVE: "text-green-800 border-green-800 bg-green-500/60",
+  INACTIVE: "text-blue-800 border-blue-800 bg-blue-500/60",
+  BLOCKED: "text-red-800 border-red-800 bg-red-500/60",
+  PENDING: "text-gray-800 border-gray-800 bg-gray-500/60",
+};
