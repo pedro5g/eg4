@@ -22,5 +22,6 @@ export interface IClientRepository {
   update(client: IClient): Promise<void>
   findByCode(code: string): Promise<IClient | null>
   findByEmail(email: string): Promise<IClient | null>
+  findByTaxId(taxId: string): Promise<IClient | null>
   listClient({ page, query, status }: Filter): Promise<Meta>
 }

@@ -10,11 +10,12 @@ import { Button } from "@/components/ui/button";
 import { useDebounceCallback } from "@/hooks/use-debounce";
 import { StepTwoSchema, stepTwoSchema } from "./schemas/step-two.schema";
 import { useMultiStepsForm } from "./hooks/use-multi-steps-form";
+import { RefreshCcw } from "lucide-react";
 
 export const RegisterFormSecondStep = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { navigate, focus } = useStepsControl();
-  const { currentFormData, setFormData } = useMultiStepsForm();
+  const { currentFormData, setFormData, clear } = useMultiStepsForm();
 
   const methods = useForm({
     resolver: zodResolver(stepTwoSchema),
@@ -71,7 +72,16 @@ export const RegisterFormSecondStep = () => {
         onSubmit={methods.handleSubmit(onSubmit)}>
         <div className="grid gap-4">
           <div>
-            <h2 className="text-zinc-800 text-2xl font-bold">Endereço</h2>
+            <div className="inline-flex items-center gap-5">
+              <h2 className="text-zinc-800 text-2xl font-bold">Endereço</h2>
+              <button
+                type="button"
+                onClick={clear}
+                className="text-zinc-800 cursor-pointer">
+                <RefreshCcw size={20} />
+                <span className="sr-only">Limpar o formulário</span>
+              </button>
+            </div>
             <p className="text-zinc-400">
               Insira algumas informações sobre cliente
             </p>

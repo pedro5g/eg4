@@ -10,6 +10,7 @@ import {
 import { randomString } from "@/core/helpers"
 import { IStoreRepository } from "../store/domain/repository/store-repository.interface"
 import { IStore } from "../store/domain/dtos/store.dtos"
+import { ErrorCode } from "@/core/constraints"
 
 export class ClientServices {
   constructor(
@@ -42,9 +43,24 @@ export class ClientServices {
       const clientAlreadyExist = await this.clientRepository.findByEmail(email)
 
       if (clientAlreadyExist) {
-        throw new BadRequestException("Client with this email already exists")
+        throw new BadRequestException(
+          "Client with this email already exists",
+          ErrorCode.EMAIL_ALREADY_REGISTERED,
+        )
       }
     }
+
+    if (taxId) {
+      const clientAlreadyExist = await this.clientRepository.findByTaxId(taxId)
+
+      if (clientAlreadyExist) {
+        throw new BadRequestException(
+          "Client with this taxId already exists",
+          ErrorCode.TAXID_ALREADY_REGISTERED,
+        )
+      }
+    }
+
     let store: IStore | null = null
 
     if (storeCode) {

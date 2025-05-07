@@ -11,15 +11,16 @@ import { Button } from "@/components/ui/button";
 import { useStepsControl } from "@/components/forms/register-client-form/hooks/use-steps-control";
 import { useMutation } from "@tanstack/react-query";
 import { ApiRegisterClient } from "@/api/endpoints";
-import { Loader2 } from "lucide-react";
+import { Loader2, RefreshCcw } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMultiStepsForm } from "./hooks/use-multi-steps-form";
 import { GoToField } from "./go-to-field";
+import { ApiError } from "@/api/types";
 
 export const Overview = () => {
   const { navigate } = useStepsControl();
 
-  const { currentFormData, clearFormData } = useMultiStepsForm();
+  const { currentFormData, clearFormData, clear } = useMultiStepsForm();
 
   const methods = useForm({
     resolver: zodResolver(overviewSchema),
@@ -61,25 +62,48 @@ export const Overview = () => {
         navigate(1);
       }
     },
-    onError: (erro) => {
-      console.log(erro);
+    onError: (error: ApiError) => {
+      console.log(error);
+
+      if (error.errorCode) {
+        if (error.errorCode === "EMAIL_ALREADY_REGISTERED") {
+          methods.setError("email", {
+            message: "Já existe um cliente registrado com este e-mail",
+          });
+          return;
+        }
+        if (error.errorCode === "TAXID_ALREADY_REGISTERED") {
+          methods.setError("taxId", {
+            message: `Já existe um cliente registrado com este ${
+              currentFormData.taxId?.length === 11 ? "cpf" : "cnpj"
+            }`,
+          });
+          return;
+        }
+      }
       window.toast.error("Erro, por favor tente mais tarde");
     },
   });
 
   const onSubmit = (data: OverviewSchema) => {
-    console.log(data);
-
     if (isPending) return;
     mutate(data);
   };
 
   return (
-    <div className="grid w-full h-full space-y-10">
+    <div className="grid w-full h-full space-y-5">
       <div>
-        <h1 className="text-zinc-800 text-3xl leading-0 font-semibold">
-          Overview
-        </h1>
+        <div className="inline-flex items-center gap-5">
+          <h2 className="text-zinc-800 text-2xl font-bold"> Overview</h2>
+          <button
+            type="button"
+            onClick={clear}
+            className="text-zinc-800 cursor-pointer">
+            <RefreshCcw size={20} />
+            <span className="sr-only">Limpar o formulário</span>
+          </button>
+        </div>
+        <p className="text-zinc-400">Clique no campo para ir até ele</p>
       </div>
       <FormWrapper method={methods}>
         <form

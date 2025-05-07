@@ -6,6 +6,7 @@ type Props = {
   currentFormData: Optional<OverviewSchema>;
   clearFormData: () => void;
   setFormData: (data: Optional<OverviewSchema>) => void;
+  clear: () => void;
 };
 
 export const FormProvider = createContext<Props | null>(null);
@@ -37,6 +38,13 @@ export const RegisterClientFormContext = ({
     },
     [_setFormData]
   );
+  const clear = () => {
+    const confirm = window.confirm("Limpar o formulário ?");
+    if (confirm) {
+      clearFormData();
+      window.location.reload();
+    }
+  };
 
   return (
     <FormProvider.Provider
@@ -44,6 +52,7 @@ export const RegisterClientFormContext = ({
         currentFormData: _formData,
         setFormData,
         clearFormData,
+        clear,
       }}>
       {children}
     </FormProvider.Provider>

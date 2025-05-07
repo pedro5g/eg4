@@ -12,12 +12,13 @@ import { StepOneSchema, stepOneSchema } from "./schemas/step-one.schema";
 import { SelectField } from "@/components/rhf/select-field";
 import { TYPES } from "@/constants";
 import { useMultiStepsForm } from "./hooks/use-multi-steps-form";
+import { RefreshCcw } from "lucide-react";
 
 export const RegisterFormFistStep = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { navigate, focus } = useStepsControl();
-  const { currentFormData, setFormData } = useMultiStepsForm();
+  const { currentFormData, setFormData, clear } = useMultiStepsForm();
 
   const methods = useForm({
     resolver: zodResolver(stepOneSchema),
@@ -59,10 +60,12 @@ export const RegisterFormFistStep = () => {
     if (value.length === 14) {
       try {
         setIsLoading(true);
+        methods.clearErrors("taxId");
 
         const data = await cnpja.office.read({
           taxId: value,
         });
+
         methods.setValue("tradeName", data.alias || data.company.name);
         methods.setValue(
           "openingDate",
@@ -81,7 +84,6 @@ export const RegisterFormFistStep = () => {
       methods.setValue("openingDate", null);
       methods.setValue("type", "F");
     }
-    methods.clearErrors("taxId");
   }, 500);
 
   const onSubmit = (data: StepOneSchema) => {
@@ -97,7 +99,19 @@ export const RegisterFormFistStep = () => {
         onSubmit={methods.handleSubmit(onSubmit)}>
         <div className="grid gap-4">
           <div>
-            <h2 className="text-zinc-800 text-2xl font-bold">Dados Pessoas</h2>
+            <div className="inline-flex items-center gap-5">
+              <h2 className="text-zinc-800 text-2xl font-bold">
+                Dados Pessoas
+              </h2>
+              <button
+                type="button"
+                onClick={clear}
+                className="text-zinc-800 cursor-pointer">
+                <RefreshCcw size={20} />
+                <span className="sr-only">Limpar o formulário</span>
+              </button>
+            </div>
+
             <p className="text-zinc-400">
               Insira algumas informações sobre o cliente
             </p>

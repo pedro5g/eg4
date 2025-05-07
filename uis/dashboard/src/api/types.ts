@@ -1,4 +1,4 @@
-import { RegisterClientSchemaType } from "@/components/forms/register-client-form/schemas/register-client-form-schema";
+import { OverviewSchema } from "@/components/forms/register-client-form/schemas/register-client-form-schema";
 import { AxiosInstance } from "axios";
 
 export type MethodType = "get" | "post" | "put" | "patch" | "delete";
@@ -163,7 +163,7 @@ export type GetStoresResponseType = {
   }[];
 };
 
-export type RegisterClientBodyType = RegisterClientSchemaType;
+export type RegisterClientBodyType = OverviewSchema;
 export type RegisterClientResponseType = {
   ok: true;
   message: string;

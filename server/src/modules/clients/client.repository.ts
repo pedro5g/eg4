@@ -35,6 +35,14 @@ export class ClientRepository implements IClientRepository {
     })
     return client
   }
+  async findByTaxId(taxId: string): Promise<IClient | null> {
+    const client = await this.db.client.findUnique({
+      where: {
+        taxId,
+      },
+    })
+    return client
+  }
 
   async findByCode(code: string): Promise<IClient | null> {
     const client = await this.db.client.findUnique({
