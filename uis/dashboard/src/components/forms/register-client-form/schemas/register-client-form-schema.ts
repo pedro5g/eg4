@@ -1,0 +1,46 @@
+import {
+  addressSchema,
+  areaCodeSchema,
+  cityCodeSchema,
+  citySchema,
+  countrySchema,
+  emailSchema,
+  homepageSchema,
+  houseNumberSchema,
+  nameSchema,
+  neighborhoodSchema,
+  openingDateSchema,
+  phoneSchema,
+  stateSchema,
+  statusSchema,
+  storeCodeSchema,
+  tradeNameSchema,
+  zipCodeSchema,
+  taxSchema,
+  typeSchema,
+} from "./utils.schema";
+import { z } from "zod";
+
+export const overviewSchema = z.object({
+  address: addressSchema,
+  state: stateSchema,
+  cityCode: cityCodeSchema,
+  name: nameSchema,
+  neighborhood: neighborhoodSchema,
+  zipCode: zipCodeSchema,
+  city: citySchema,
+  areaCode: areaCodeSchema,
+  phone: phoneSchema,
+  email: emailSchema,
+  country: countrySchema,
+  homepage: homepageSchema,
+  status: statusSchema,
+  storeCode: storeCodeSchema,
+  taxId: taxSchema.nullable(),
+  openingDate: openingDateSchema.nullable(),
+  tradeName: tradeNameSchema.nullable(),
+  type: typeSchema.nullable(),
+  houseNumber: houseNumberSchema,
+});
+
+export type OverviewSchema = z.infer<typeof overviewSchema>;

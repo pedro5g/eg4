@@ -1,5 +1,5 @@
-import { RegisterClientFormContext } from "@/components/forms/clients-forms/form-context";
-import { RegisterClientForms } from "@/components/forms/clients-forms/register-forms";
+import { RegisterClientFormContext } from "@/components/forms/register-client-form/provider/form-context";
+import { RegisterClientForms } from "@/components/forms/register-client-form/register-forms";
 
 export function Clients() {
   return (

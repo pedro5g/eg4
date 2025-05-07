@@ -28,6 +28,11 @@ export const STATES = [
   { title: "Tocantins", value: "TO" },
 ];
 
+export const TYPES = [
+  { title: "Pessoa Física", value: "F" },
+  { title: "Pessoa Jurídica", value: "J" },
+];
+
 export const STATUS_MAP: Record<string, string> = {
   ACTIVE: "Ativo",
   INACTIVE: "Inativo",

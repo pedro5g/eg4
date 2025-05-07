@@ -76,7 +76,8 @@ export const FilterByStatus = () => {
         <Button
           variant="outline"
           size="sm"
-          className="h-8 border-dashed w-full lg:w-auto max-lg:justify-start text-zinc-600">
+          className="h-8 border-2 border-dashed w-full lg:w-auto max-lg:justify-start 
+          text-zinc-600 data-[state=open]:border-blue-300 data-[state=open]:text-blue-300">
           <PlusCircle />
           Filtrar por status
           {selectedValueSet.size > 0 && (

@@ -1,36 +1,40 @@
 import { FormWrapper } from "@/components/rhf/form-wrapper";
 import { TextField } from "@/components/rhf/text-field";
 import { useForm } from "react-hook-form";
-import {
-  registerClientSecondStepSchema,
-  RegisterClientSecondStepSchemaType,
-} from "./schemas/register-client-form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRegisterClientForm } from "./form-context";
-import { useRegisterClientStep } from "@/hooks/use-register-client-step";
+import { useStepsControl } from "@/components/forms/register-client-form/hooks/use-steps-control";
 import { useState } from "react";
 import { SelectField } from "@/components/rhf/select-field";
 import { STATES } from "@/constants";
 import { Button } from "@/components/ui/button";
 import { useDebounceCallback } from "@/hooks/use-debounce";
+import { StepTwoSchema, stepTwoSchema } from "./schemas/step-two.schema";
+import { useMultiStepsForm } from "./hooks/use-multi-steps-form";
 
 export const RegisterFormSecondStep = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { next, prev, direction, setDirection } = useRegisterClientStep();
-  const { currentFormData, setFormData } = useRegisterClientForm();
+  const { navigate, focus } = useStepsControl();
+  const { currentFormData, setFormData } = useMultiStepsForm();
 
-  const methods = useForm<RegisterClientSecondStepSchemaType>({
-    resolver: zodResolver(registerClientSecondStepSchema),
+  const methods = useForm({
+    resolver: zodResolver(stepTwoSchema),
     defaultValues: {
       zipCode: currentFormData.zipCode || "",
       neighborhood: currentFormData.neighborhood || "",
-      address: currentFormData.address || "",
+      address:
+        (currentFormData.address && currentFormData.address.split("n°")[0]) ||
+        "",
       city: currentFormData.city || "",
-      cityCode: currentFormData.cityCode || "",
+      cityCode: currentFormData.cityCode || null,
       country: currentFormData.country || "",
       state: currentFormData.state || "",
+      houseNumber:
+        (currentFormData.address && currentFormData.address.split("n°")[1]) ||
+        "",
     },
   });
+
+  methods.setFocus(focus as keyof typeof methods.getValues);
 
   const handleCep = useDebounceCallback(async (cep: string) => {
     if (cep.length !== 8) return;
@@ -44,6 +48,7 @@ export const RegisterFormSecondStep = () => {
       methods.setValue("state", data.uf);
       methods.setValue("neighborhood", data.bairro);
       methods.setValue("cityCode", data.ibge);
+      methods.setValue("houseNumber", "");
       methods.clearErrors();
     } catch (e) {
       console.log(e);
@@ -53,14 +58,9 @@ export const RegisterFormSecondStep = () => {
     }
   }, 500);
 
-  const onSubmit = (data: RegisterClientSecondStepSchemaType) => {
+  const onSubmit = (data: StepTwoSchema) => {
     setFormData(data);
-
-    if (direction === "next") {
-      next();
-    } else {
-      prev();
-    }
+    navigate(3);
   };
 
   return (
@@ -78,7 +78,7 @@ export const RegisterFormSecondStep = () => {
           </div>
           <div className="grid grid-cols-2 grid-rows-5 gap-4">
             <div className="col-span-2 w-fit">
-              <TextField<RegisterClientSecondStepSchemaType>
+              <TextField<StepTwoSchema>
                 className="py-2"
                 name="zipCode"
                 label="CEP"
@@ -87,62 +87,54 @@ export const RegisterFormSecondStep = () => {
               />
             </div>
             <div className=" col-span-2 space-x-6 flex">
-              <TextField<RegisterClientSecondStepSchemaType>
+              <TextField<StepTwoSchema>
                 name="address"
                 label="Endereço"
                 isLoading={isLoading}
                 required
               />
-              <TextField<RegisterClientSecondStepSchemaType>
+              <TextField<StepTwoSchema>
                 name="neighborhood"
                 label="Bairro"
                 isLoading={isLoading}
                 required
               />
+              <TextField<StepTwoSchema>
+                name="houseNumber"
+                label="Numero da casa"
+                isLoading={isLoading}
+                required
+              />
             </div>
             <div className=" col-span-2 space-x-6 flex">
-              <TextField<RegisterClientSecondStepSchemaType>
+              <TextField<StepTwoSchema>
                 name="city"
                 label="Cidade"
                 isLoading={isLoading}
                 required
               />
-              <TextField<RegisterClientSecondStepSchemaType>
+              <TextField<StepTwoSchema>
                 name="cityCode"
                 label="Codigo do Município"
                 isLoading={isLoading}
               />
             </div>
             <div className=" col-span-2 space-x-6 flex">
-              <SelectField<RegisterClientSecondStepSchemaType>
+              <SelectField<StepTwoSchema>
                 name="state"
                 label="Estado"
                 options={STATES}
                 required
               />
 
-              <TextField<RegisterClientSecondStepSchemaType>
-                name="country"
-                label="Pais"
-              />
+              <TextField<StepTwoSchema> name="country" label="Pais" />
             </div>
           </div>
           <div className="flex gap-5 justify-end">
             <Button
               type="submit"
-              onClick={() => {
-                setDirection("prev");
-              }}
-              className="bg-blue-600/90 hover:bg-blue-700/70 cursor-pointer">
-              Voltar
-            </Button>
-            <Button
-              type="submit"
-              onClick={() => {
-                setDirection("next");
-              }}
               className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
-              Avançar
+              Salvar e continuar
             </Button>
           </div>
         </div>

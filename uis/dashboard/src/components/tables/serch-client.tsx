@@ -27,7 +27,7 @@ export const SearchClient = () => {
         defaultValue={q}
         className="border-zinc-400 transition-all border-2 focus-visible:border-blue-300 focus-visible:ring-0
        selection:bg-blue-200 selection:text-zinc-800"
-        placeholder="Pesquisar por clients..."
+        placeholder="Pesquisar por clientes..."
       />
       <Search
         className="absolute top-1/2 -translate-y-1/2 right-4 text-zinc-400"

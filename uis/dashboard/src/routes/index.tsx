@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { authenticationRoutes, protectedRoutes } from "./common/routes";
 import { AuthLayout } from "@/layout/auth-layout";
 import { AppLayout } from "@/layout/app-layout";
@@ -11,6 +11,7 @@ export function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Navigate replace to="/dashboard" />} />
         <Route path="/" element={<AuthRouter />}>
           <Route element={<AuthLayout />}>
             {authenticationRoutes.map((route) => (

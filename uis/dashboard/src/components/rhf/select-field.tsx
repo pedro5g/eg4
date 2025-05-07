@@ -38,7 +38,7 @@ export const SelectField = <T extends FieldValues>({
       name={name}
       control={control}
       render={({
-        field: { name, onChange, value },
+        field: { name, onChange, value, ref },
         fieldState: { invalid, error },
       }) => {
         return (
@@ -50,11 +50,13 @@ export const SelectField = <T extends FieldValues>({
               onValueChange={onChange}>
               <div className="relative">
                 <SelectTrigger
+                  ref={ref}
                   disabled={readonly}
+                  aria-readonly={readonly}
                   className={cn(
                     `inline-flex px-3 pb-2.5 pt-4 w-full text-sm text-zinc-500 bg-transparent 
                     duration-300 transform rounded-sm border-2 border-zinc-500/40 appearance-none focus-visible:ring-0
-                    data-[state=open]:border-blue-400 data-[state=open]:[&>label]:text-blue-400 disabled:opacity-100`,
+                    data-[state=open]:border-blue-400 data-[state=open]:[&>label]:text-blue-400 disabled:opacity-100 focus:border-blue-400`,
                     invalid &&
                       "border-red-500 [&>svg]:stroke-red-500 cursor-pointer "
                   )}>
@@ -66,7 +68,8 @@ export const SelectField = <T extends FieldValues>({
                       `absolute text-base text-zinc-500 duration-300 transform 
                     scale-100 z-10 origin-[0] bg-white px-2 not-last:-translate-y-1/2
                     top-1/2 focus:top-2 start-1.5`,
-                      value && "-translate-y-5 top-0 scale-75"
+                      value && "-translate-y-5 top-0 scale-75",
+                      invalid && "text-red-500"
                     )}>
                     {label}
                     {required && <span className="text-xl leading-0">*</span>}

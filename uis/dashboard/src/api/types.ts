@@ -1,4 +1,4 @@
-import { RegisterClientSchemaType } from "@/components/forms/clients-forms/schemas/register-client-form-schema";
+import { RegisterClientSchemaType } from "@/components/forms/register-client-form/schemas/register-client-form-schema";
 import { AxiosInstance } from "axios";
 
 export type MethodType = "get" | "post" | "put" | "patch" | "delete";
@@ -186,4 +186,9 @@ export type ListClientsResponseType = {
       pageCount: number;
     };
   };
+};
+
+export type ClientProfileResponseType = {
+  ok: true;
+  client: Client;
 };

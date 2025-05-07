@@ -1,8 +1,5 @@
-"use client";
-
 import * as React from "react";
 import { Check, ChevronsUpDown, CircleAlert, Loader2 } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import {
   Command,
@@ -35,9 +32,6 @@ export const SelectStore = <T extends FieldValues>({
   const { data, isLoading } = useQuery({
     queryFn: ApiListStores,
     queryKey: ["store-list"],
-    initialData: {
-      stores: [],
-    },
   });
 
   return (
@@ -45,7 +39,7 @@ export const SelectStore = <T extends FieldValues>({
       name={name}
       control={control}
       render={({
-        field: { onChange, name, value },
+        field: { onChange, name, value, ref },
         fieldState: { invalid, error },
       }) => {
         return (
@@ -53,17 +47,19 @@ export const SelectStore = <T extends FieldValues>({
             <Popover open={open} onOpenChange={setOpen}>
               <div className="relative">
                 <PopoverTrigger
+                  ref={ref}
                   role="combobox"
                   aria-expanded={open}
                   className={cn(
                     `inline-flex justify-between  px-3 pb-2.5 pt-4 w-full text-sm text-zinc-500 bg-transparent 
                     duration-300 transform rounded-sm border-2 border-zinc-500/40 appearance-none focus-visible:ring-0
-                    data-[state=open]:border-blue-400 data-[state=open]:[&>label]:text-blue-400 disabled:opacity-100`,
+                    data-[state=open]:border-blue-400 data-[state=open]:[&>label]:text-blue-400 disabled:opacity-100 
+                    focus:border-blue-400 `,
                     invalid &&
                       "border-red-500 [&>svg]:stroke-red-500 cursor-pointer "
                   )}>
-                  {data.stores.find((store) => store.code === value)?.name ||
-                    "''"}
+                  {(data?.stores || []).find((store) => store.code === value)
+                    ?.name || "''"}
                   <ChevronsUpDown className="opacity-50" />
 
                   <label
@@ -98,7 +94,7 @@ export const SelectStore = <T extends FieldValues>({
                       </div>
                     ) : (
                       <CommandGroup>
-                        {data.stores.map((store) => (
+                        {(data?.stores || []).map((store) => (
                           <CommandItem
                             key={store.code}
                             className="flex flex-col items-start cursor-pointer h-11"

@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useParams } from "react-router";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 
 export const BreadcrumbClients = () => {
   const { pathname } = useLocation();
+  const clientCode = useParams()["clientCode"];
 
   return (
     <Breadcrumb>
@@ -45,6 +46,23 @@ export const BreadcrumbClients = () => {
             </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
+        {clientCode && (
+          <>
+            <BreadcrumbSeparator
+              className={cn(clientCode && "text-blue-500 font-semibold")}
+            />
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                className={cn(
+                  "text-base hover:text-blue-400",
+                  clientCode &&
+                    "text-blue-500 hover:text-blue-500 font-semibold"
+                )}>
+                Perfil do cliente
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </>
+        )}
       </BreadcrumbList>
     </Breadcrumb>
   );

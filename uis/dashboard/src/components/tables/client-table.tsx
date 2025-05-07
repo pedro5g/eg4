@@ -43,6 +43,7 @@ import {
   ChevronsRightIcon,
   ColumnsIcon,
   GripVerticalIcon,
+  MoreVerticalIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -72,8 +73,10 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { Link } from "react-router";
 
 function DragHandle({ id }: { id: string }) {
   const { attributes, listeners } = useSortable({
@@ -204,6 +207,28 @@ const columns: ColumnDef<Client>[] = [
       </div>
     ),
   },
+  {
+    id: "actions",
+    cell: ({ row }) => (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="flex size-8 text-muted-foreground data-[state=open]:bg-muted cursor-pointer"
+            size="icon">
+            <MoreVerticalIcon />
+            <span className="sr-only">Abrir menu</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-32">
+          <DropdownMenuItem>
+            <Link to={`/clients/${row.original.code}`}>Perfil do cliente</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem>Arquivos</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ),
+  },
 ];
 
 function DraggableRow({ row }: { row: Row<Client> }) {
@@ -310,7 +335,7 @@ export function DataTableClients({
   });
 
   return (
-    <div className=" space-y-4">
+    <div className="space-y-4">
       <div className="flex items-center">
         <div className="ml-auto flex items-center gap-2">
           <DropdownMenu>
@@ -342,7 +367,14 @@ export function DataTableClients({
                       onCheckedChange={(value) =>
                         column.toggleVisibility(!!value)
                       }>
-                      {column.id}
+                      {
+                        {
+                          taxId: "CPF/CNPJ",
+                          name: "Nome",
+                          state: "Estado",
+                          status: "Status",
+                        }[column.id]
+                      }
                     </DropdownMenuCheckboxItem>
                   );
                 })}

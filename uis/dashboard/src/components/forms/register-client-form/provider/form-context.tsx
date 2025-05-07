@@ -1,23 +1,21 @@
-import { createContext, useCallback, useContext, useState } from "react";
-import { RegisterClientSchemaType } from "./schemas/register-client-form-schema";
+import { createContext, useCallback, useState } from "react";
+import { OverviewSchema } from "../schemas/register-client-form-schema";
 
 type Optional<T> = { [K in keyof T]?: T[K] };
 type Props = {
-  currentFormData: Optional<RegisterClientSchemaType>;
+  currentFormData: Optional<OverviewSchema>;
   clearFormData: () => void;
-  setFormData: (data: Optional<RegisterClientSchemaType>) => void;
+  setFormData: (data: Optional<OverviewSchema>) => void;
 };
 
-const FormProvider = createContext<Props | null>(null);
+export const FormProvider = createContext<Props | null>(null);
 
 const LOCAL_STORAGE_KEY = "register_client_form";
 
 export const RegisterClientFormContext = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
-  const [_formData, _setFormData] = useState<
-    Optional<RegisterClientSchemaType>
-  >(() => {
+  const [_formData, _setFormData] = useState<Optional<OverviewSchema>>(() => {
     const data = localStorage.getItem(LOCAL_STORAGE_KEY);
     return data ? JSON.parse(data) : {};
   });
@@ -28,7 +26,7 @@ export const RegisterClientFormContext = ({
   }, [_setFormData]);
 
   const setFormData = useCallback(
-    (data: Optional<RegisterClientSchemaType>) => {
+    (data: Optional<OverviewSchema>) => {
       _setFormData((prev) => {
         localStorage.setItem(
           LOCAL_STORAGE_KEY,
@@ -50,15 +48,4 @@ export const RegisterClientFormContext = ({
       {children}
     </FormProvider.Provider>
   );
-};
-
-export const useRegisterClientForm = () => {
-  const context = useContext(FormProvider);
-
-  if (!context) {
-    throw new Error(
-      "useRegisterClientForm must be used within RegisterClientFormContext"
-    );
-  }
-  return context;
 };

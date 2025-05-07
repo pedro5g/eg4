@@ -1,6 +1,7 @@
 import { API } from "./axios";
 import { AxiosAdapter, CreateHttpClientAdapter } from "./http-adapter";
 import {
+  ClientProfileResponseType,
   CreateStoreBodyType,
   CreateStoreResponseType,
   GetStoresResponseType,
@@ -79,7 +80,7 @@ export const ApiRegisterClient = async <T = RegisterClientBodyType>(
 };
 
 export const ApiListClients = async ({
-  page = 1,
+  page = 0,
   take = 10,
   q,
   s,
@@ -90,4 +91,10 @@ export const ApiListClients = async ({
     q,
     s: s,
   });
+};
+
+export const ApiClientProfile = async (clientCode: string) => {
+  return await httpClient.GET<ClientProfileResponseType>(
+    `/client/profile/${clientCode}`
+  );
 };

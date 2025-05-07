@@ -31,7 +31,7 @@ export function ClientsTable() {
   return (
     <div className="w-full h-full space-y-4 my-5">
       <div className="w-full">
-        <h3 className="text-zinc-800 font-bold tracking-tight text-2xl">
+        <h3 className="text-zinc-800 font-bold tracking-tight text-4xl text-zinc-80">
           Clientes
         </h3>
       </div>

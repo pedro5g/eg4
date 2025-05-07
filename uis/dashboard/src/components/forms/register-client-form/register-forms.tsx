@@ -1,19 +1,16 @@
-import { useRegisterClientStep } from "@/hooks/use-register-client-step";
+import { useStepsControl } from "@/components/forms/register-client-form/hooks/use-steps-control";
 import { RegisterFormFistStep } from "./step-one";
 import { RegisterFormSecondStep } from "./step-two";
-import { RegisterFormThirdStep } from "./step-three";
 import { Overview } from "./overview";
-import { CheckIcon } from "lucide-react";
 
 const steps = [
-  { id: 1, name: "Initial data" },
-  { id: 2, name: "Address" },
-  { id: 3, name: "Documents" },
-  { id: 4, name: "Overview" },
+  { id: 1, name: "Dados Pessoas" },
+  { id: 2, name: "Endereço" },
+  { id: 3, name: "Overview" },
 ];
 
 export const RegisterClientForms = () => {
-  const { currentStep } = useRegisterClientStep();
+  const { currentStep, navigate } = useStepsControl();
 
   const getFormStep = (currentStep: number) => {
     switch (currentStep) {
@@ -22,8 +19,6 @@ export const RegisterClientForms = () => {
       case 2:
         return <RegisterFormSecondStep />;
       case 3:
-        return <RegisterFormThirdStep />;
-      case 4:
         return <Overview />;
       default:
         return null;
@@ -40,26 +35,26 @@ export const RegisterClientForms = () => {
           <div className="flex justify-center">
             <div className="flex items-center">
               {steps.map((s, i) => (
-                <div key={s.id} className="flex items-center">
+                <div key={s.id} className="relative flex items-center ">
                   <button
                     aria-label={s.name}
                     type="submit"
-                    className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-colors cursor-pointer ${
+                    onClick={() => {
+                      navigate(s.id);
+                    }}
+                    className={`z-5 flex items-center justify-center w-8 h-8 rounded-full border-2 transition-colors cursor-pointer ${
                       currentStep > s.id
                         ? " border-blue-500 text-blue-500"
                         : currentStep === s.id
                         ? "border-blue-500 text-blue-500 ring-3 ring-blue-500/50"
                         : "border-muted-foreground/30 text-muted-foreground/30"
                     }`}>
-                    {currentStep > s.id ? (
-                      <CheckIcon className="h-4 w-4" />
-                    ) : (
-                      s.id
-                    )}
+                    {s.id}
                   </button>
+                  <p className="mx-1 text-zinc-600 text-sm z-10">{s.name}</p>
                   {i < steps.length - 1 && (
                     <div
-                      className={`w-12 h-1 ${
+                      className={`w-30 h-1 mx-1 z-5 ${
                         currentStep >= s.id + 1
                           ? "bg-blue-500"
                           : "bg-muted-foreground/30"
