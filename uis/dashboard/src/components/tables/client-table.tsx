@@ -42,6 +42,7 @@ import {
   ChevronsLeftIcon,
   ChevronsRightIcon,
   ColumnsIcon,
+  DownloadIcon,
   GripVerticalIcon,
   MoreVerticalIcon,
 } from "lucide-react";
@@ -66,9 +67,17 @@ import {
 import { Client } from "@/api/types";
 import { Badge } from "../ui/badge";
 import { Label } from "../ui/label";
-import { cn, formatCNPJ, formatCPF, formatPhone } from "@/lib/utils";
+import {
+  cn,
+  formatCEP,
+  formatCNPJ,
+  formatCPF,
+  formatDate,
+  formatPhone,
+} from "@/lib/utils";
 import { STATUS_MAP, STYLE_STATUS_MAP } from "@/constants";
 import { useTableClientsQuery } from "@/hooks/use-table-clients-query";
+import { mkConfig, generateCsv, download } from "export-to-csv";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -263,6 +272,14 @@ interface DataTableClientsProps {
   };
 }
 
+const csvConfig = mkConfig({
+  fieldSeparator: ",",
+  decimalSeparator: ".",
+  useKeysAsHeaders: true,
+  filename: "Tabela de clientes",
+  title: "Clientes",
+});
+
 export function DataTableClients({
   data: initialData,
   meta,
@@ -306,6 +323,11 @@ export function DataTableClients({
     }
   }
 
+  const handleExportCSV = (data: any) => {
+    const csv = generateCsv(csvConfig)(data);
+    download(csvConfig)(csv);
+  };
+
   const table = useReactTable({
     data,
     columns,
@@ -341,7 +363,7 @@ export function DataTableClients({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                className="px-3 py-3 border-2 border-zinc-500/40 text-zinc-600 cursor-pointer"
+                className="px-3 py-4 border-2 border-zinc-500/40 text-zinc-600 cursor-pointer"
                 variant="outline"
                 size="sm">
                 <ColumnsIcon className="text-zinc-600" />
@@ -380,6 +402,65 @@ export function DataTableClients({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {data && data.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="ml-auto lg:flex px-3 py-4 border-2 border-zinc-500/40 text-zinc-600 cursor-pointer"
+              onClick={() => {
+                const data = table.getFilteredRowModel().rows.map((row) => {
+                  return {
+                    code: row.original.code,
+                    nome: row.original.name,
+                    email: row.original.email || "Email não informado",
+                    telefone:
+                      (row.original.phone &&
+                        formatPhone(
+                          row.original.areaCode + row.original.phone
+                        )) ||
+                      "Telefone não informado",
+                    status: STATUS_MAP[row.original.status],
+                    dd: row.original.areaCode || "Não informado",
+                    cep:
+                      (row.original.zipCode &&
+                        formatCEP(row.original.zipCode)) ||
+                      "Não informado",
+                    endereço: row.original.address,
+                    bairro: row.original.neighborhood,
+                    cidade: row.original.city,
+                    estado: row.original.state,
+                    "cpf/cnpj":
+                      (row.original.taxId &&
+                        (row.original.taxId?.length === 11
+                          ? formatCPF(row.original.taxId)
+                          : formatCNPJ(row.original.taxId))) ||
+                      "Não informado",
+                    "Tipo do registro":
+                      (row.original.taxId &&
+                        (row.original.taxId?.length === 11
+                          ? "Pessoa Física"
+                          : "Pessoa Jurídica")) ||
+                      "Não informado",
+                    "Data de nascimento":
+                      (row.original.openingDate &&
+                        formatDate(row.original.openingDate)) ||
+                      "Não informado",
+                    "Data de abertura":
+                      (row.original.openingDate &&
+                        formatDate(row.original.openingDate)) ||
+                      "Não informado",
+                    "Nome fantasia":
+                      (row.original.tradeName && row.original.tradeName) ||
+                      "Não informado",
+                  };
+                });
+                handleExportCSV(data);
+              }}>
+              <DownloadIcon className="mr-2 size-4" />
+              Exportar como CSV
+            </Button>
+          )}
         </div>
       </div>
       <div className="overflow-hidden rounded-lg border">
