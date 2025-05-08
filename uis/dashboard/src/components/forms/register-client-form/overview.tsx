@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import {
   overviewSchema,
   OverviewSchema,
-} from "./schemas/register-client-form-schema";
+} from "./schemas/register-client-form.schema";
 import { TextField } from "@/components/rhf/text-field";
 import { SelectField } from "@/components/rhf/select-field";
 import { STATES, TYPES } from "@/constants";
@@ -112,7 +112,7 @@ export const Overview = () => {
           })}
           className="w-full">
           <div className="grid space-y-4 w-full py-4">
-            <div className=" flex space-x-5">
+            <div className="flex space-x-5">
               <GoToField step={1} fieldName="storeCode">
                 <TextField<OverviewSchema>
                   className="w-fit py-2"
@@ -166,8 +166,8 @@ export const Overview = () => {
             </div>
             <div className="space-y-3">
               <h3 className="text-zinc-500">Endereço</h3>
-              <div className=" flex space-x-5">
-                {currentFormData.zipCode && (
+              {currentFormData.zipCode && (
+                <div className=" flex space-x-5">
                   <GoToField step={2} fieldName="zipCode">
                     <TextField<OverviewSchema>
                       className="w-fit py-2"
@@ -176,8 +176,8 @@ export const Overview = () => {
                       label="CEP"
                     />
                   </GoToField>
-                )}
-              </div>
+                </div>
+              )}
               <div className="flex space-x-5">
                 <GoToField step={2} fieldName="address">
                   <TextField<OverviewSchema>

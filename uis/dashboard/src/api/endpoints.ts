@@ -17,6 +17,8 @@ import {
   SignUpResponseType,
   UpdateAvatarProfileBodyType,
   UpdateAvatarProfileResponseType,
+  UpdateClienteProfileBodyType,
+  UpdateClientProfileResponseType,
   UpdateProfileBodyType,
   UpdateProfileResponseType,
 } from "./types";
@@ -96,5 +98,14 @@ export const ApiListClients = async ({
 export const ApiClientProfile = async (clientCode: string) => {
   return await httpClient.GET<ClientProfileResponseType>(
     `/client/profile/${clientCode}`
+  );
+};
+
+export const ApiUpdateClientProfile = async <T = UpdateClienteProfileBodyType>(
+  body: T
+) => {
+  return await httpClient.PATCH<UpdateClientProfileResponseType>(
+    "/client/update",
+    body
   );
 };

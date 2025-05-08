@@ -1,4 +1,4 @@
-import { OverviewSchema } from "@/components/forms/register-client-form/schemas/register-client-form-schema";
+import { OverviewSchema } from "@/components/forms/register-client-form/schemas/register-client-form.schema";
 import { AxiosInstance } from "axios";
 
 export type MethodType = "get" | "post" | "put" | "patch" | "delete";
@@ -191,4 +191,30 @@ export type ListClientsResponseType = {
 export type ClientProfileResponseType = {
   ok: true;
   client: Client;
+};
+
+export type UpdateClienteProfileBodyType = {
+  code: string;
+  address: string;
+  state: string;
+  cityCode: string | null;
+  name: string;
+  tradeName: string | null;
+  neighborhood: string | null;
+  zipCode: string | null;
+  city: string;
+  areaCode: string | null;
+  phone: string | null;
+  type: string | null;
+  email: string | null;
+  country: string | null;
+  taxId: string | null;
+  openingDate: string | null;
+  homepage: string | null;
+  status: Status;
+};
+
+export type UpdateClientProfileResponseType = {
+  ok: true;
+  message: string;
 };

@@ -28,6 +28,13 @@ export const STATES = [
   { title: "Tocantins", value: "TO" },
 ];
 
+export const STATUS_OPTIONS = [
+  { title: "Ativo", value: "ACTIVE" },
+  { title: "Inativo", value: "INACTIVE" },
+  { title: "Bloqueado", value: "BLOCKED" },
+  { title: "Pendente", value: "PENDING" },
+];
+
 export const TYPES = [
   { title: "Pessoa Física", value: "F" },
   { title: "Pessoa Jurídica", value: "J" },

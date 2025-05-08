@@ -1,5 +1,5 @@
 import { createContext, useCallback, useState } from "react";
-import { OverviewSchema } from "../schemas/register-client-form-schema";
+import { OverviewSchema } from "../schemas/register-client-form.schema";
 
 type Optional<T> = { [K in keyof T]?: T[K] };
 type Props = {

@@ -18,10 +18,7 @@ export const ClientProfile = () => {
   const { client } = data;
 
   return (
-    <div className="w-full container h-full space-y-4">
-      <div className="w-full py-4">
-        <h3 className="text-4xl font-bold text-zinc-800">Perfil do cliente</h3>
-      </div>
+    <div className="container flex flex-1 flex-col">
       <FormProfile client={client} />
     </div>
   );
