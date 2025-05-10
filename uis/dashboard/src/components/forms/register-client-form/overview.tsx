@@ -6,10 +6,10 @@ import {
 } from "./schemas/register-client-form.schema";
 import { TextField } from "@/components/rhf/text-field";
 import { SelectField } from "@/components/rhf/select-field";
-import { STATES, TYPES } from "@/constants";
+import { COUNTRIES, STATES, TYPES } from "@/constants";
 import { Button } from "@/components/ui/button";
 import { useStepsControl } from "@/components/forms/register-client-form/hooks/use-steps-control";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiRegisterClient } from "@/api/endpoints";
 import { Loader2, RefreshCcw } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,8 +19,8 @@ import { ApiError } from "@/api/types";
 
 export const Overview = () => {
   const { navigate } = useStepsControl();
-
   const { currentFormData, clearFormData, clear } = useMultiStepsForm();
+  const queryClient = useQueryClient();
 
   const methods = useForm({
     resolver: zodResolver(overviewSchema),
@@ -55,9 +55,12 @@ export const Overview = () => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (data: OverviewSchema) => ApiRegisterClient(data),
-    onSuccess: ({ ok }) => {
+    onSuccess: async ({ ok }) => {
       if (ok) {
         window.toast.success("Client cadastrado com sucesso");
+        await queryClient.refetchQueries({
+          queryKey: ["list-clients"],
+        });
         clearFormData();
         navigate(1);
       }
@@ -228,9 +231,10 @@ export const Overview = () => {
                 )}
                 {currentFormData.country && (
                   <GoToField step={2} fieldName="country">
-                    <TextField<OverviewSchema>
+                    <SelectField<OverviewSchema>
                       name="country"
-                      label="Pais"
+                      label="País"
+                      options={COUNTRIES}
                       readonly
                     />
                   </GoToField>

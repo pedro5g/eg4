@@ -3,17 +3,15 @@ import { TextField } from "@/components/rhf/text-field";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useStepsControl } from "@/components/forms/register-client-form/hooks/use-steps-control";
-import { useState } from "react";
 import { SelectField } from "@/components/rhf/select-field";
-import { STATES } from "@/constants";
+import { COUNTRIES, STATES } from "@/constants";
 import { Button } from "@/components/ui/button";
-import { useDebounceCallback } from "@/hooks/use-debounce";
 import { StepTwoSchema, stepTwoSchema } from "./schemas/step-two.schema";
 import { useMultiStepsForm } from "./hooks/use-multi-steps-form";
 import { RefreshCcw } from "lucide-react";
+import { useCep } from "@/hooks/use-cep";
 
 export const RegisterFormSecondStep = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const { navigate, focus } = useStepsControl();
   const { currentFormData, setFormData, clear } = useMultiStepsForm();
 
@@ -27,7 +25,7 @@ export const RegisterFormSecondStep = () => {
         "",
       city: currentFormData.city || "",
       cityCode: currentFormData.cityCode || null,
-      country: currentFormData.country || "",
+      country: currentFormData.country || null,
       state: currentFormData.state || "",
       houseNumber:
         (currentFormData.address && currentFormData.address.split("n°")[1]) ||
@@ -35,29 +33,21 @@ export const RegisterFormSecondStep = () => {
     },
   });
 
-  methods.setFocus(focus as keyof typeof methods.getValues);
+  if (focus) {
+    methods.setFocus(focus as keyof typeof methods.getValues);
+  }
 
-  const handleCep = useDebounceCallback(async (cep: string) => {
-    if (cep.length !== 8) return;
-    try {
-      setIsLoading(true);
-      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-      const data = await response.json();
-      // await new Promise((resolve) => setTimeout(resolve, 500));
-      methods.setValue("address", data.logradouro);
-      methods.setValue("city", data.localidade);
-      methods.setValue("state", data.uf);
-      methods.setValue("neighborhood", data.bairro);
-      methods.setValue("cityCode", data.ibge);
-      methods.setValue("houseNumber", "");
-      methods.clearErrors();
-    } catch (e) {
-      console.log(e);
-      methods.setError("zipCode", { message: "CEP invalido" });
-    } finally {
-      setIsLoading(false);
-    }
-  }, 500);
+  const { handleCep, isFetchingCep } = useCep({
+    setAddress: (value) => methods.setValue("address", value),
+    setCity: (value) => methods.setValue("city", value),
+    setState: (value) => methods.setValue("state", value),
+    setNeighborhood: (value) => methods.setValue("neighborhood", value),
+    setCityCode: (value) => methods.setValue("cityCode", value),
+    setHouseNumber: (value) => methods.setValue("houseNumber", value),
+    setZipError: (error) => methods.setError("zipCode", { message: error }),
+    setCountry: (value) => methods.setValue("country", value),
+    clearError: () => methods.clearErrors("zipCode"),
+  });
 
   const onSubmit = (data: StepTwoSchema) => {
     setFormData(data);
@@ -100,19 +90,19 @@ export const RegisterFormSecondStep = () => {
               <TextField<StepTwoSchema>
                 name="address"
                 label="Endereço"
-                isLoading={isLoading}
+                isLoading={isFetchingCep}
                 required
               />
               <TextField<StepTwoSchema>
                 name="neighborhood"
                 label="Bairro"
-                isLoading={isLoading}
+                isLoading={isFetchingCep}
                 required
               />
               <TextField<StepTwoSchema>
                 name="houseNumber"
                 label="Numero da casa"
-                isLoading={isLoading}
+                isLoading={isFetchingCep}
                 required
               />
             </div>
@@ -120,13 +110,13 @@ export const RegisterFormSecondStep = () => {
               <TextField<StepTwoSchema>
                 name="city"
                 label="Cidade"
-                isLoading={isLoading}
+                isLoading={isFetchingCep}
                 required
               />
               <TextField<StepTwoSchema>
                 name="cityCode"
                 label="Codigo do Município"
-                isLoading={isLoading}
+                isLoading={isFetchingCep}
               />
             </div>
             <div className=" col-span-2 space-x-6 flex">
@@ -137,7 +127,11 @@ export const RegisterFormSecondStep = () => {
                 required
               />
 
-              <TextField<StepTwoSchema> name="country" label="Pais" />
+              <SelectField<StepTwoSchema>
+                name="country"
+                label="País"
+                options={COUNTRIES}
+              />
             </div>
           </div>
           <div className="flex gap-5 justify-end">

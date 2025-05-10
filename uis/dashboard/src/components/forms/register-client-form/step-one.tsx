@@ -5,18 +5,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SelectStore } from "./select-store";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { useDebounceCallback } from "@/hooks/use-debounce";
-import { cnpja } from "@/lib/cnpj";
 import { StepOneSchema, stepOneSchema } from "./schemas/step-one.schema";
 import { SelectField } from "@/components/rhf/select-field";
 import { TYPES } from "@/constants";
 import { useMultiStepsForm } from "./hooks/use-multi-steps-form";
 import { RefreshCcw } from "lucide-react";
+import { useCnpj } from "@/hooks/use-cnpj";
 
 export const RegisterFormFistStep = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
   const { navigate, focus } = useStepsControl();
   const { currentFormData, setFormData, clear } = useMultiStepsForm();
 
@@ -41,50 +37,20 @@ export const RegisterFormFistStep = () => {
   });
 
   const taxIdWatch = methods.watch("taxId");
-  methods.setFocus(focus as keyof typeof methods.getValues);
-  useEffect(() => {
+
+  if (focus) {
     methods.setFocus(focus as keyof typeof methods.getValues);
-    if (taxIdWatch) {
-      const isCNPJ = taxIdWatch.length === 14;
+  }
 
-      if (!isCNPJ && taxIdWatch.length === 11) {
-        methods.setValue("tradeName", null);
-      }
-    } else {
-      methods.setValue("openingDate", null);
-      methods.setValue("tradeName", null);
-    }
-  }, [taxIdWatch, methods.setValue]);
-
-  const handleCpfCnpj = useDebounceCallback(async (value: string) => {
-    if (value.length === 14) {
-      try {
-        setIsLoading(true);
-        methods.clearErrors("taxId");
-
-        const data = await cnpja.office.read({
-          taxId: value,
-        });
-
-        methods.setValue("tradeName", data.alias || data.company.name);
-        methods.setValue(
-          "openingDate",
-          data.founded.split("-").reverse().join("")
-        );
-        methods.setValue("type", "J");
-      } catch (e) {
-        console.log(e);
-        methods.setError("taxId", { message: "CNPJ invalido" });
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    if (value.length === 11) {
-      methods.setValue("tradeName", null);
-      methods.setValue("openingDate", null);
-      methods.setValue("type", "F");
-    }
-  }, 500);
+  const { handleCpfCnpj, isFetchingCnpj } = useCnpj({
+    setTaxId: (value) => methods.setValue("taxId", value),
+    setTradeName: (value) => methods.setValue("tradeName", value),
+    setOpeningDate: (value) => methods.setValue("openingDate", value),
+    setType: (value) => methods.setValue("type", value),
+    setTaxIdError: (error) => methods.setError("taxId", { message: error }),
+    clearError: () => methods.clearErrors("taxId"),
+    focusControl: () => methods.setFocus("taxId"),
+  });
 
   const onSubmit = (data: StepOneSchema) => {
     setFormData(data);
@@ -126,10 +92,12 @@ export const RegisterFormFistStep = () => {
                 label="Numero de contato"
               />
               <TextField<StepOneSchema> name="homepage" label="Home page" />
-
-              <SelectStore<StepOneSchema> name="storeCode" />
             </div>
             <div className="grid gap-5">
+              <div className="col-span-2">
+                <SelectStore<StepOneSchema> name="storeCode" />
+              </div>
+
               <div className="row-span-1 col-span-2">
                 <TextField<StepOneSchema>
                   name="taxId"
@@ -151,7 +119,7 @@ export const RegisterFormFistStep = () => {
                     name="openingDate"
                     label="Data de abertura"
                     mask="date"
-                    isLoading={isLoading}
+                    isLoading={isFetchingCnpj}
                   />
                 )}
                 {taxIdWatch && [11, 14].includes(taxIdWatch.length) && (
@@ -169,7 +137,7 @@ export const RegisterFormFistStep = () => {
                   <TextField<StepOneSchema>
                     name="tradeName"
                     label="Nome fantasia"
-                    isLoading={isLoading}
+                    isLoading={isFetchingCnpj}
                   />
                 </div>
               )}

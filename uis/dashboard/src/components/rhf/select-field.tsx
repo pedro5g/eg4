@@ -51,14 +51,14 @@ export const SelectField = <T extends FieldValues>({
               <div className="relative">
                 <SelectTrigger
                   ref={ref}
-                  disabled={readonly}
                   aria-readonly={readonly}
                   className={cn(
                     `inline-flex px-3 pb-2.5 pt-4 w-full text-sm text-zinc-500 bg-transparent 
                     duration-300 transform rounded-sm border-2 border-zinc-500/40 appearance-none focus-visible:ring-0
                     data-[state=open]:border-blue-400 data-[state=open]:[&>label]:text-blue-400 disabled:opacity-100 focus:border-blue-400`,
                     invalid &&
-                      "border-red-500 [&>svg]:stroke-red-500 cursor-pointer "
+                      "border-red-500 [&>svg]:stroke-red-500 cursor-pointer",
+                    readonly && "pointer-events-none"
                   )}>
                   <SelectValue />
                   <label

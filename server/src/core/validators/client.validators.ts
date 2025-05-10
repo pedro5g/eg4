@@ -31,8 +31,8 @@ const cnpjSchema = stringOrNullSchema.pipe(
 export const mobilePhoneSchema = stringOrNullSchema.pipe(
   z
     .string()
-    .min(11)
-    .max(11)
+    .min(9)
+    .max(9)
     .regex(/[0-9]$/g)
     .nullable(),
 )
@@ -40,8 +40,8 @@ export const mobilePhoneSchema = stringOrNullSchema.pipe(
 export const landlinesSchema = stringOrNullSchema.pipe(
   z
     .string()
-    .min(10)
-    .max(10)
+    .min(8)
+    .max(8)
     .regex(/[0-9]$/g)
     .nullable(),
 )

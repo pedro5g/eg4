@@ -169,6 +169,8 @@ export const taxIdSchema = z
     }
   );
 
+export type TaxIdSchema = z.infer<typeof taxIdSchema>;
+
 export const mobilePhoneSchema = stringOrNullSchema.pipe(
   z
     .string()
@@ -197,6 +199,25 @@ export const areaCodeSchema = stringOrNullSchema.pipe(
 );
 
 export const phoneSchema = z.union([mobilePhoneSchema, landlinesSchema]);
+export const contactSchema = z
+  .object({
+    phone: phoneSchema,
+    areaCode: areaCodeSchema,
+  })
+  .transform((values) => {
+    if (values.phone) {
+      const ddd = values.phone.slice(0, 2);
+      const phone = values.phone.slice(2);
+
+      return { ...values, phone, areaCode: ddd };
+    }
+
+    if (values.areaCode) {
+      return { ...values, areaCode: null };
+    }
+
+    return values;
+  });
 
 export const addressSchema = z
   .string({ required_error: "Endereço é um campo obrigatório" })

@@ -64,9 +64,7 @@ export const FormProfile = ({ client }: FormProfileProps) => {
       name: client.name,
       email: client.email || null,
       phone:
-        (client?.areaCode &&
-          client?.phone &&
-          formatPhone(client.areaCode + client.phone)) ||
+        (client?.areaCode && client?.phone && client.areaCode + client.phone) ||
         "",
       areaCode: client.areaCode || null,
       zipCode: client.zipCode || null,

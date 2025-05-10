@@ -4,6 +4,7 @@ import {
   areaCodeSchema,
   cityCodeSchema,
   citySchema,
+  contactSchema,
   emailSchema,
   homepageSchema,
   nameSchema,
@@ -17,18 +18,12 @@ import { z } from "zod";
 
 export const updateClientProfileSchema = z
   .object({
-    address: addressSchema,
-    state: stateSchema,
-    cityCode: cityCodeSchema,
     name: nameSchema,
-    neighborhood: neighborhoodSchema,
-    city: citySchema,
-    areaCode: areaCodeSchema,
-    phone: phoneSchema,
     email: emailSchema,
     homepage: homepageSchema,
     status: statusSchema,
   })
+  .and(contactSchema)
   .and(taxIdSchema)
   .and(stepTwoSchema);
 

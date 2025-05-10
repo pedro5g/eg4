@@ -39,7 +39,7 @@ export const TextField = <T extends FieldValues = any>({
   const { control } = useFormContext<T>();
 
   const cleanFormat = (value: string) => {
-    return value.replace(/\D/g, "");
+    return value.replace(/\D/g, "").trim();
   };
 
   const applyMask = useCallback((value: string, maskType?: string) => {
@@ -73,8 +73,6 @@ export const TextField = <T extends FieldValues = any>({
             ? applyMask(inputValue, mask)
             : inputValue;
 
-          e.target.value = formattedValue;
-
           if (mask) {
             changeInterceptor && changeInterceptor(cleanFormat(formattedValue));
             onChange(cleanFormat(formattedValue));
@@ -83,8 +81,7 @@ export const TextField = <T extends FieldValues = any>({
             onChange(inputValue);
           }
         };
-        const displayValue =
-          mask && value ? applyMask(value.toString(), mask) : value;
+
         return (
           <div className="w-full space-y-1">
             <div className="relative">
@@ -92,7 +89,11 @@ export const TextField = <T extends FieldValues = any>({
                 name={name}
                 ref={ref}
                 onChange={handleChange}
-                value={displayValue || ""}
+                value={
+                  mask && value
+                    ? applyMask(value.toString(), mask)
+                    : value || ""
+                }
                 {...props}
                 type={type}
                 data-error={invalid}
