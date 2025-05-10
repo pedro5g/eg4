@@ -82,8 +82,8 @@ export const RegisterFormFistStep = () => {
               Insira algumas informações sobre o cliente
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-5">
-            <div className="col-span-1 row-span-4 space-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="col-span-1 space-y-4">
               <TextField<StepOneSchema> name="name" required label="Nome" />
               <TextField<StepOneSchema> name="email" label="Email" />
               <TextField<StepOneSchema>
@@ -93,12 +93,12 @@ export const RegisterFormFistStep = () => {
               />
               <TextField<StepOneSchema> name="homepage" label="Home page" />
             </div>
-            <div className="grid gap-5">
+            <div className="space-y-4">
               <div className="col-span-2">
                 <SelectStore<StepOneSchema> name="storeCode" />
               </div>
 
-              <div className="row-span-1 col-span-2">
+              <div className="col-span-2">
                 <TextField<StepOneSchema>
                   name="taxId"
                   label="CPF/CNPJ"
@@ -106,7 +106,7 @@ export const RegisterFormFistStep = () => {
                   changeInterceptor={handleCpfCnpj}
                 />
               </div>
-              <div className="row-span-1 col-span-2 gap-4 flex">
+              <div className="row-span-1 col-span-2 max-md:space-y-4 md:space-x-4 flex md:flex-row flex-col">
                 {taxIdWatch && taxIdWatch.length === 11 && (
                   <TextField<StepOneSchema>
                     name="openingDate"
@@ -133,7 +133,7 @@ export const RegisterFormFistStep = () => {
                 )}
               </div>
               {taxIdWatch && taxIdWatch.length === 14 && (
-                <div className="row-span-1 col-span-2 space-x-6 flex">
+                <div className="row-span-1 col-span-2">
                   <TextField<StepOneSchema>
                     name="tradeName"
                     label="Nome fantasia"

@@ -142,7 +142,6 @@ export const updateClientSchema = z.object({
   openingDate: openingDateSchema,
   homepage: homepageSchema,
   status: statusSchema,
-  storeCode: storeCodeSchema,
 })
 
 export const getClientSchema = z.object({

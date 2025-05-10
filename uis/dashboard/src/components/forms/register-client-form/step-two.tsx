@@ -76,7 +76,7 @@ export const RegisterFormSecondStep = () => {
               Insira algumas informações sobre cliente
             </p>
           </div>
-          <div className="grid grid-cols-2 grid-rows-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="col-span-2 w-fit">
               <TextField<StepTwoSchema>
                 className="py-2"
@@ -86,7 +86,7 @@ export const RegisterFormSecondStep = () => {
                 changeInterceptor={handleCep}
               />
             </div>
-            <div className=" col-span-2 space-x-6 flex">
+            <div className="col-span-2 md:space-x-4 max-md:space-y-4 flex md:flex-row flex-col">
               <TextField<StepTwoSchema>
                 name="address"
                 label="Endereço"
@@ -106,27 +106,30 @@ export const RegisterFormSecondStep = () => {
                 required
               />
             </div>
-            <div className=" col-span-2 space-x-6 flex">
+            <div className="row-span-1 max-md:col-span-2">
               <TextField<StepTwoSchema>
                 name="city"
                 label="Cidade"
                 isLoading={isFetchingCep}
                 required
               />
+            </div>
+            <div className="row-span-1 max-md:col-span-2">
               <TextField<StepTwoSchema>
                 name="cityCode"
                 label="Codigo do Município"
                 isLoading={isFetchingCep}
               />
             </div>
-            <div className=" col-span-2 space-x-6 flex">
+            <div className="row-span-1 max-md:col-span-2">
               <SelectField<StepTwoSchema>
                 name="state"
                 label="Estado"
                 options={STATES}
                 required
               />
-
+            </div>
+            <div className="row-span-1 max-md:col-span-2">
               <SelectField<StepTwoSchema>
                 name="country"
                 label="País"

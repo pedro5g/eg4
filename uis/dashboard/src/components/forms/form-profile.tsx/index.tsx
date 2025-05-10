@@ -1,4 +1,4 @@
-import { Client } from "@/api/types";
+import { ApiError, Client, UpdateClienteProfileBodyType } from "@/api/types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,7 @@ import { FormWrapper } from "@/components/rhf/form-wrapper";
 import { TextField } from "@/components/rhf/text-field";
 import { SelectField } from "@/components/rhf/select-field";
 import {
+  COUNTRIES,
   STATES,
   STATUS_MAP,
   STATUS_OPTIONS,
@@ -29,11 +30,11 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import {
   AlertCircle,
-  Building2Icon,
   CalendarIcon,
   CheckIcon,
   EditIcon,
   GlobeIcon,
+  Loader2,
   MailIcon,
   MapPinIcon,
   PhoneIcon,
@@ -51,6 +52,10 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { useCnpj } from "@/hooks/use-cnpj";
+import { useCep } from "@/hooks/use-cep";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ApiUpdateClientProfile } from "@/api/endpoints";
 
 interface FormProfileProps {
   client: Client;
@@ -58,6 +63,8 @@ interface FormProfileProps {
 
 export const FormProfile = ({ client }: FormProfileProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const queryClient = useQueryClient();
+
   const methods = useForm({
     resolver: zodResolver(updateClientProfileSchema),
     defaultValues: {
@@ -74,18 +81,82 @@ export const FormProfile = ({ client }: FormProfileProps) => {
       cityCode: client.cityCode || "",
       country: client.country || "",
       state: client.state || "",
-      taxId: client.taxId || "",
-      openingDate: client.openingDate || "",
-      tradeName: client.tradeName || "",
-      type: client.type || "",
+      taxId: client.taxId || null,
+      openingDate: client.openingDate || null,
+      tradeName: client.tradeName || null,
+      type: client.type || null,
       status: client.status || "ACTIVE",
       homepage: client.homepage || "",
       houseNumber: client.address.split("n°")[1] || "",
     },
   });
+
+  const { handleCpfCnpj, isFetchingCnpj } = useCnpj({
+    setTaxId: (value) => methods.setValue("taxId", value),
+    setTradeName: (value) => methods.setValue("tradeName", value),
+    setOpeningDate: (value) => methods.setValue("openingDate", value),
+    setType: (value) => methods.setValue("type", value),
+    setTaxIdError: (error) => methods.setError("taxId", { message: error }),
+    clearError: () => methods.clearErrors("taxId"),
+    focusControl: () => methods.setFocus("taxId"),
+  });
+
+  const { handleCep, isFetchingCep } = useCep({
+    setAddress: (value) => methods.setValue("address", value),
+    setCity: (value) => methods.setValue("city", value),
+    setState: (value) => methods.setValue("state", value),
+    setNeighborhood: (value) => methods.setValue("neighborhood", value),
+    setCityCode: (value) => methods.setValue("cityCode", value),
+    setHouseNumber: (value) => methods.setValue("houseNumber", value),
+    setZipError: (error) => methods.setError("zipCode", { message: error }),
+    setCountry: (value) => methods.setValue("country", value),
+    clearError: () => methods.clearErrors("zipCode"),
+  });
+
   const taxIdWatch = methods.watch("taxId");
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (data: UpdateClienteProfileBodyType) =>
+      ApiUpdateClientProfile(data),
+    onSuccess: async ({ ok }) => {
+      if (ok) {
+        window.toast.success("Alterações aplicadas");
+        await queryClient.refetchQueries({
+          queryKey: ["client-profile", client.code],
+        });
+        await queryClient.refetchQueries({
+          queryKey: ["list-clients"],
+        });
+        setIsEditing(false);
+      }
+    },
+    onError: (error: ApiError) => {
+      console.log(error);
+
+      if (error.errorCode) {
+        if (error.errorCode === "EMAIL_ALREADY_REGISTERED") {
+          methods.setError("email", {
+            message: "Já existe um cliente registrado com este e-mail",
+          });
+          return;
+        }
+        if (error.errorCode === "TAXID_ALREADY_REGISTERED") {
+          methods.setError("taxId", {
+            message: `Já existe um cliente registrado com este ${
+              taxIdWatch && taxIdWatch.length === 11 ? "cpf" : "cnpj"
+            }`,
+          });
+          return;
+        }
+      }
+      window.toast.error("Erro, por favor tente mais tarde");
+    },
+  });
+
   const onSubmit = (data: UpdateClientProfileSchema) => {
-    console.log(data);
+    if (isPending || Object.keys(methods.formState.dirtyFields).length === 0)
+      return;
+    mutate({ code: client.code, ...data });
   };
 
   return (
@@ -130,9 +201,10 @@ export const FormProfile = ({ client }: FormProfileProps) => {
               </Avatar>
               <div>
                 <CardTitle>{client.name}</CardTitle>
-                <CardDescription>
-                  {client.tradeName || client.name}
-                </CardDescription>
+
+                {client.tradeName && (
+                  <CardDescription>{client.tradeName}</CardDescription>
+                )}
               </div>
             </div>
             <div className="text-sm text-muted-foreground">
@@ -176,6 +248,7 @@ export const FormProfile = ({ client }: FormProfileProps) => {
                           name="taxId"
                           label="CPF/CNPJ"
                           mask="cpf/cnpj"
+                          changeInterceptor={handleCpfCnpj}
                         />
                       )}
                       {client.taxId && client.taxId.length === 11 && (
@@ -206,26 +279,20 @@ export const FormProfile = ({ client }: FormProfileProps) => {
                           </p>
                         </div>
                       )}
-                      {taxIdWatch && taxIdWatch.length === 11 && (
-                        <div className="space-y-1 opacity-60 scale-99 pointer-events-none">
-                          <TextField<UpdateClientProfileSchema>
-                            name="openingDate"
-                            label="Data de nascimento"
-                            mask="date"
-                          />
-                          <p className="text-muted-foreground text-sm inline-flex items-center">
-                            Campo não editável
-                            <AlertCircle className="size-5 ml-2" />
-                          </p>
-                        </div>
+                      {client.taxId && client.taxId.length === 11 && (
+                        <TextField<UpdateClientProfileSchema>
+                          name="openingDate"
+                          label="Data de nascimento"
+                          mask="date"
+                        />
                       )}
-                      {taxIdWatch && taxIdWatch.length === 14 && (
+                      {client.taxId && client.taxId.length === 14 && (
                         <div className="space-y-1 opacity-60 scale-99 pointer-events-none">
                           <TextField<UpdateClientProfileSchema>
                             name="openingDate"
                             label="Data de abertura"
+                            readonly
                             mask="date"
-                            // isLoading={isLoading}
                           />
                           <p className="text-muted-foreground text-sm inline-flex items-center">
                             Campo não editável
@@ -233,8 +300,39 @@ export const FormProfile = ({ client }: FormProfileProps) => {
                           </p>
                         </div>
                       )}
-                      {taxIdWatch && [11, 14].includes(taxIdWatch.length) && (
+                      {client.taxId &&
+                        [11, 14].includes(client.taxId.length) && (
+                          <div className="space-y-1 opacity-60 scale-99 pointer-events-none">
+                            <SelectField<UpdateClientProfileSchema>
+                              name="type"
+                              label="Tipo de cadastro"
+                              options={TYPES}
+                              readonly
+                              required
+                            />
+                            <p className="text-muted-foreground text-sm inline-flex items-center">
+                              Campo não editável
+                              <AlertCircle className="size-5 ml-2" />
+                            </p>
+                          </div>
+                        )}
+                      {client.taxId && client.taxId.length === 14 && (
                         <div className="space-y-1 opacity-60 scale-99 pointer-events-none">
+                          <TextField<UpdateClientProfileSchema>
+                            name="tradeName"
+                            label="Nome fantasia"
+                            readonly
+                            isLoading={isFetchingCnpj}
+                          />
+                          <p className="text-muted-foreground text-sm inline-flex items-center">
+                            Campo não editável
+                            <AlertCircle className="size-5 ml-2" />
+                          </p>
+                        </div>
+                      )}
+                      {!client.taxId &&
+                        taxIdWatch &&
+                        [11, 14].includes(taxIdWatch.length) && (
                           <SelectField<UpdateClientProfileSchema>
                             name="type"
                             label="Tipo de cadastro"
@@ -242,26 +340,36 @@ export const FormProfile = ({ client }: FormProfileProps) => {
                             readonly
                             required
                           />
-                          <p className="text-muted-foreground text-sm inline-flex items-center">
-                            Campo não editável
-                            <AlertCircle className="size-5 ml-2" />
-                          </p>
-                        </div>
-                      )}
-                      {taxIdWatch && taxIdWatch.length === 14 && (
-                        <div className="space-y-1 opacity-60 scale-99 pointer-events-none">
+                        )}
+                      {!client.taxId &&
+                        taxIdWatch &&
+                        taxIdWatch.length === 11 && (
+                          <TextField<UpdateClientProfileSchema>
+                            name="openingDate"
+                            label="Data de nascimento"
+                            mask="date"
+                          />
+                        )}
+                      {!client.taxId &&
+                        taxIdWatch &&
+                        taxIdWatch.length === 14 && (
+                          <TextField<UpdateClientProfileSchema>
+                            name="openingDate"
+                            label="Data de abertura"
+                            mask="date"
+                            isLoading={isFetchingCnpj}
+                          />
+                        )}
+
+                      {!client.taxId &&
+                        taxIdWatch &&
+                        taxIdWatch.length === 14 && (
                           <TextField<UpdateClientProfileSchema>
                             name="tradeName"
                             label="Nome fantasia"
-                            readonly
-                            // isLoading={isLoading}
+                            isLoading={isFetchingCnpj}
                           />
-                          <p className="text-muted-foreground text-sm inline-flex items-center">
-                            Campo não editável
-                            <AlertCircle className="size-5 ml-2" />
-                          </p>
-                        </div>
-                      )}
+                        )}
                     </div>
                   </div>
 
@@ -324,9 +432,18 @@ export const FormProfile = ({ client }: FormProfileProps) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <TextField<UpdateClientProfileSchema>
+                          name="zipCode"
+                          label="CEP"
+                          mask="cep"
+                          changeInterceptor={handleCep}
+                        />
+                      </div>
+                      <div>
+                        <TextField<UpdateClientProfileSchema>
                           name="address"
                           label="Endereço"
                           required
+                          isLoading={isFetchingCep}
                         />
                       </div>
                       <div>
@@ -340,27 +457,23 @@ export const FormProfile = ({ client }: FormProfileProps) => {
                         <TextField<UpdateClientProfileSchema>
                           name="neighborhood"
                           label="Bairro"
+                          isLoading={isFetchingCep}
                           required
                         />
                       </div>
 
                       <div>
                         <TextField<UpdateClientProfileSchema>
-                          name="zipCode"
-                          label="CEP"
-                          mask="cep"
-                        />
-                      </div>
-                      <div>
-                        <TextField<UpdateClientProfileSchema>
                           name="city"
                           label="Cidade"
+                          isLoading={isFetchingCep}
                           required
                         />
                       </div>
                       <div>
                         <TextField<UpdateClientProfileSchema>
                           name="cityCode"
+                          isLoading={isFetchingCep}
                           label="Código do município"
                         />
                       </div>
@@ -373,7 +486,8 @@ export const FormProfile = ({ client }: FormProfileProps) => {
                         />
                       </div>
                       <div>
-                        <TextField<UpdateClientProfileSchema>
+                        <SelectField<UpdateClientProfileSchema>
+                          options={COUNTRIES}
                           name="country"
                           label="País"
                         />
@@ -392,7 +506,7 @@ export const FormProfile = ({ client }: FormProfileProps) => {
                 </h3>
                 <div className="grid grid-cols-1 gap-3">
                   <div className="flex items-center gap-2">
-                    <Building2Icon className="h-4 w-4 text-muted-foreground" />
+                    <UserIcon className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm font-medium">Nome:</span>
                     <span>{client.name}</span>
                   </div>
@@ -458,34 +572,45 @@ export const FormProfile = ({ client }: FormProfileProps) => {
                   Informações de Contato
                 </h3>
                 <div className="grid grid-cols-1 gap-3">
-                  {client.email && (
-                    <div className="flex items-center gap-2">
-                      <MailIcon className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">Email:</span>
-                      <span>{client.email}</span>
-                    </div>
-                  )}
+                  {!client.email && !client.phone && !client.homepage ? (
+                    <p className="text-red-500/80 text-sm inline-flex items-center">
+                      Nenhuma informação para contato registrada
+                      <AlertCircle className="size-5 ml-2" />
+                    </p>
+                  ) : (
+                    <>
+                      {client.email && (
+                        <div className="flex items-center gap-2">
+                          <MailIcon className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm font-medium">Email:</span>
+                          <span>{client.email}</span>
+                        </div>
+                      )}
 
-                  {client.phone && client.areaCode && (
-                    <div className="flex items-center gap-2">
-                      <PhoneIcon className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">Telefone:</span>
-                      <span>{formatPhone(client.areaCode + client.phone)}</span>
-                    </div>
-                  )}
+                      {client.phone && client.areaCode && (
+                        <div className="flex items-center gap-2">
+                          <PhoneIcon className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm font-medium">Telefone:</span>
+                          <span>
+                            {formatPhone(client.areaCode + client.phone)}
+                          </span>
+                        </div>
+                      )}
 
-                  {client.homepage && (
-                    <div className="flex items-center gap-2">
-                      <GlobeIcon className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">Website: </span>
-                      <a
-                        href={client.homepage}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline">
-                        {client.homepage}
-                      </a>
-                    </div>
+                      {client.homepage && (
+                        <div className="flex items-center gap-2">
+                          <GlobeIcon className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm font-medium">Website: </span>
+                          <a
+                            href={client.homepage}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline">
+                            {client.homepage}
+                          </a>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
@@ -500,14 +625,13 @@ export const FormProfile = ({ client }: FormProfileProps) => {
                   <div className="flex items-start gap-2">
                     <MapPinIcon className="h-4 w-4 text-muted-foreground mt-0.5" />
                     <span className="text-sm font-medium">Endereço:</span>
-                    <div className="flex flex-col">
+                    <div className="flex flex-col text-sm text-muted-foreground">
                       <span>{client.address}</span>
                       {client.neighborhood && (
                         <span>{client.neighborhood}</span>
                       )}
                       <span>
-                        {client.city}, {client.state}
-                        {", "}
+                        {client.city}, {client.state}{" "}
                         {client.zipCode && `CEP: ${formatCEP(client.zipCode)}`}
                       </span>
                       {client.country && <span>{client.country}</span>}
@@ -520,15 +644,25 @@ export const FormProfile = ({ client }: FormProfileProps) => {
         </CardContent>
         {isEditing && (
           <CardFooter className="flex justify-end gap-2 pt-0">
-            <Button variant="outline" onClick={() => setIsEditing(false)}>
+            <Button
+              className="cursor-pointer"
+              variant="outline"
+              onClick={() => setIsEditing(false)}>
               <XIcon className="h-4 w-4 mr-2" />
               Cancelar
             </Button>
             <Button
               type="submit"
               form="form_update_client_profile"
-              className="bg-blue-600 hover:bg-blue-700 text-white">
-              <CheckIcon className="h-4 w-4 mr-2" />
+              className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+              disabled={
+                Object.keys(methods.formState.dirtyFields).length === 0
+              }>
+              {isPending ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <CheckIcon className="h-4 w-4 mr-2" />
+              )}
               Salvar Alterações
             </Button>
           </CardFooter>

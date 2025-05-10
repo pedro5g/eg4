@@ -1,16 +1,9 @@
 import { stepTwoSchema } from "./step-two.schema";
 import {
-  addressSchema,
-  areaCodeSchema,
-  cityCodeSchema,
-  citySchema,
   contactSchema,
   emailSchema,
   homepageSchema,
   nameSchema,
-  neighborhoodSchema,
-  phoneSchema,
-  stateSchema,
   statusSchema,
   taxIdSchema,
 } from "./utils.schema";

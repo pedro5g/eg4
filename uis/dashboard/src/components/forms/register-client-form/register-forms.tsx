@@ -26,7 +26,7 @@ export const RegisterClientForms = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-4 sm:px-6 md:px-10">
       <div className="w-full py-4">
         <h3 className="text-4xl font-bold text-zinc-800 ">Cadastrar Cliente</h3>
       </div>
@@ -51,10 +51,12 @@ export const RegisterClientForms = () => {
                     }`}>
                     {s.id}
                   </button>
-                  <p className="mx-1 text-zinc-600 text-sm z-10">{s.name}</p>
+                  <p className=" hidden md:block mx-1 text-zinc-600 text-sm z-10">
+                    {s.name}
+                  </p>
                   {i < steps.length - 1 && (
                     <div
-                      className={`w-30 h-1 mx-1 z-5 ${
+                      className={`w-15 md:w-30 h-1 mx-1 z-5 ${
                         currentStep >= s.id + 1
                           ? "bg-blue-500"
                           : "bg-muted-foreground/30"

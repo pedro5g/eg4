@@ -117,15 +117,32 @@ export class ClientServices {
       throw new NotFoundException("Invalid code, clint not found")
     }
 
-    if (
-      (!client.email && email) ||
-      (client.email && email && client.email !== email)
-    ) {
-      const emailAlreadyRegistered =
-        await this.clientRepository.findByEmail(email)
-      if (emailAlreadyRegistered) {
+    if (client.email && email && client.email !== email) {
+      throw new BadRequestException("Email cannot be modified")
+    }
+
+    if (client.taxId && taxId && client.taxId !== taxId) {
+      throw new BadRequestException("TaxId cannot be modified")
+    }
+
+    if (!client.email && email) {
+      const clientAlreadyExist = await this.clientRepository.findByEmail(email)
+
+      if (clientAlreadyExist) {
         throw new BadRequestException(
-          "Invalid email, email already used by another client",
+          "Client with this email already exists",
+          ErrorCode.EMAIL_ALREADY_REGISTERED,
+        )
+      }
+    }
+
+    if (!client.taxId && taxId) {
+      const clientAlreadyExist = await this.clientRepository.findByTaxId(taxId)
+
+      if (clientAlreadyExist) {
+        throw new BadRequestException(
+          "Client with this taxId already exists",
+          ErrorCode.TAXID_ALREADY_REGISTERED,
         )
       }
     }

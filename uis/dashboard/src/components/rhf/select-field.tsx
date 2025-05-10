@@ -76,7 +76,7 @@ export const SelectField = <T extends FieldValues>({
                   </label>
                 </SelectTrigger>
 
-                <SelectContent className="rounded-md pb-2.5 pt-4 ">
+                <SelectContent className="rounded-md pb-2.5 pt-4">
                   <SelectGroup>
                     <SelectLabel className="text-base bg-blue-100 rounded-t-md text-zinc-800">
                       {label}

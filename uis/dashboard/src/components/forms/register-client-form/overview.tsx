@@ -57,7 +57,7 @@ export const Overview = () => {
     mutationFn: (data: OverviewSchema) => ApiRegisterClient(data),
     onSuccess: async ({ ok }) => {
       if (ok) {
-        window.toast.success("Client cadastrado com sucesso");
+        window.toast.success("Cliente cadastrado com sucesso");
         await queryClient.refetchQueries({
           queryKey: ["list-clients"],
         });
@@ -127,7 +127,7 @@ export const Overview = () => {
             </div>
             <div className="space-y-3">
               <h3 className="text-zinc-500">Dados pessoais</h3>
-              <div className=" flex space-x-5">
+              <div className="flex md:flex-row flex-col gap-4">
                 <GoToField step={1} fieldName="name">
                   <TextField<OverviewSchema>
                     name="name"
@@ -156,32 +156,28 @@ export const Overview = () => {
                 )}
               </div>
               {currentFormData.homepage && (
-                <div className="flex space-x-5">
-                  <GoToField step={1} fieldName="homepage">
-                    <TextField<OverviewSchema>
-                      name="homepage"
-                      readonly
-                      label="Home page"
-                    />
-                  </GoToField>
-                </div>
+                <GoToField step={1} fieldName="homepage">
+                  <TextField<OverviewSchema>
+                    name="homepage"
+                    readonly
+                    label="Home page"
+                  />
+                </GoToField>
               )}
             </div>
             <div className="space-y-3">
               <h3 className="text-zinc-500">Endereço</h3>
               {currentFormData.zipCode && (
-                <div className=" flex space-x-5">
-                  <GoToField step={2} fieldName="zipCode">
-                    <TextField<OverviewSchema>
-                      className="w-fit py-2"
-                      name="zipCode"
-                      readonly
-                      label="CEP"
-                    />
-                  </GoToField>
-                </div>
+                <GoToField step={2} fieldName="zipCode">
+                  <TextField<OverviewSchema>
+                    className="w-fit py-2"
+                    name="zipCode"
+                    readonly
+                    label="CEP"
+                  />
+                </GoToField>
               )}
-              <div className="flex space-x-5">
+              <div className="flex md:flex-row flex-col gap-4">
                 <GoToField step={2} fieldName="address">
                   <TextField<OverviewSchema>
                     name="address"
@@ -204,7 +200,7 @@ export const Overview = () => {
                   />
                 </GoToField>
               </div>
-              <div className="flex space-x-5">
+              <div className="flex md:flex-row flex-col gap-4">
                 <GoToField step={2} fieldName="city">
                   <TextField<OverviewSchema>
                     name="city"
@@ -244,7 +240,7 @@ export const Overview = () => {
             {currentFormData.taxId && (
               <div className="space-y-3">
                 <h3 className="text-zinc-500">Documento</h3>
-                <div className="flex space-x-5">
+                <div className="flex md:flex-row flex-col gap-4">
                   {currentFormData.taxId && (
                     <GoToField step={1} fieldName="taxId">
                       <TextField<OverviewSchema>
@@ -288,7 +284,7 @@ export const Overview = () => {
                     </GoToField>
                   )}
                 </div>
-                <div className="flex space-x-5">
+                <div className="flex md:flex-row flex-col gap-4">
                   {currentFormData.tradeName && (
                     <GoToField step={1} fieldName="tradeName">
                       <TextField<OverviewSchema>
