@@ -15,6 +15,7 @@ import {
   SignInResponseType,
   SignUpBodyType,
   SignUpResponseType,
+  SummaryResponseType,
   UpdateAvatarProfileBodyType,
   UpdateAvatarProfileResponseType,
   UpdateClienteProfileBodyType,
@@ -108,4 +109,8 @@ export const ApiUpdateClientProfile = async <T = UpdateClienteProfileBodyType>(
     "/client/update",
     body
   );
+};
+
+export const ApiGetSummary = async () => {
+  return await httpClient.GET<SummaryResponseType>("/client/summary");
 };

@@ -46,4 +46,9 @@ export class ClientControllers {
     })
     reply.status(HTTP_STATUS.OK).send({ ok: true, data: { items, meta } })
   }
+
+  async getSummary(_req: FastifyRequest, reply: FastifyReply) {
+    const { summary } = await this.clientServices.getSummary()
+    reply.status(HTTP_STATUS.OK).send({ ok: true, data: { summary } })
+  }
 }

@@ -17,6 +17,13 @@ export type Meta = {
   }
 }
 
+export type SummaryData = {
+  totalClients: number
+  statusCounts: Record<Status, number>
+  newClientsThisMonth: number
+  percentChange: number
+}
+
 export interface IClientRepository {
   create(args: RegisterClientDto): Promise<void>
   update(client: IClient): Promise<void>
@@ -24,4 +31,5 @@ export interface IClientRepository {
   findByEmail(email: string): Promise<IClient | null>
   findByTaxId(taxId: string): Promise<IClient | null>
   listClient({ page, query, status }: Filter): Promise<Meta>
+  summary(): Promise<SummaryData>
 }

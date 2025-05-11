@@ -30,6 +30,12 @@ export class CLientRoutes {
       this.clientControllers.listClient.bind(this.clientControllers),
     )
 
+    this.app.get(
+      "/summary",
+      { preHandler: [isAuthenticated] },
+      this.clientControllers.getSummary.bind(this.clientControllers),
+    )
+
     return this.app
   }
 }

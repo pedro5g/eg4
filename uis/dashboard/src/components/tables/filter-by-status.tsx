@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Badge } from "../ui/badge";
-import { STATUS_MAP, STYLE_STATUS_MAP } from "@/constants";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
@@ -17,52 +16,7 @@ import {
 } from "../ui/command";
 import { useTableClientsQuery } from "@/hooks/use-table-clients-query";
 import { Status } from "@/api/types";
-
-const STATUS_OPTIONS: {
-  label: React.JSX.Element;
-  value: Status;
-}[] = [
-  {
-    label: (
-      <Badge
-        variant="outline"
-        className={cn("px-3 border-2", STYLE_STATUS_MAP["ACTIVE"])}>
-        {STATUS_MAP["ACTIVE"]}
-      </Badge>
-    ),
-    value: "ACTIVE",
-  },
-  {
-    label: (
-      <Badge
-        variant="outline"
-        className={cn("px-3 border-2", STYLE_STATUS_MAP["INACTIVE"])}>
-        {STATUS_MAP["INACTIVE"]}
-      </Badge>
-    ),
-    value: "INACTIVE",
-  },
-  {
-    label: (
-      <Badge
-        variant="outline"
-        className={cn("px-3 border-2", STYLE_STATUS_MAP["BLOCKED"])}>
-        {STATUS_MAP["BLOCKED"]}
-      </Badge>
-    ),
-    value: "BLOCKED",
-  },
-  {
-    label: (
-      <Badge
-        variant="outline"
-        className={cn("px-3 border-2", STYLE_STATUS_MAP["PENDING"])}>
-        {STATUS_MAP["PENDING"]}
-      </Badge>
-    ),
-    value: "PENDING",
-  },
-];
+import { STATUS_OPTIONS } from "@/constants/status-options";
 
 export const FilterByStatus = () => {
   const { s, setStatus } = useTableClientsQuery();
@@ -97,13 +51,13 @@ export const FilterByStatus = () => {
                   </Badge>
                 ) : (
                   STATUS_OPTIONS.filter((option) =>
-                    selectedValueSet.has(option.value)
+                    selectedValueSet.has(option.value as Status)
                   ).map((option) => (
                     <Badge
                       variant="secondary"
                       key={option.value}
                       className="rounded-sm px-1 font-normal">
-                      {option.label}
+                      {option.title}
                     </Badge>
                   ))
                 )}
@@ -119,7 +73,7 @@ export const FilterByStatus = () => {
             <CommandEmpty>Nenhum resultado encontrado</CommandEmpty>
             <CommandGroup>
               {STATUS_OPTIONS.map((option) => {
-                const isSelected = selectedValueSet.has(option.value);
+                const isSelected = selectedValueSet.has(option.value as Status);
                 return (
                   <CommandItem
                     className="cursor-pointer"
@@ -128,7 +82,7 @@ export const FilterByStatus = () => {
                       const updatedValues = isSelected
                         ? (s || []).filter((val) => val !== option.value)
                         : [...(s || []), option.value];
-                      setStatus(updatedValues);
+                      setStatus(updatedValues as Status[]);
                     }}>
                     <div
                       className={cn(
@@ -140,7 +94,7 @@ export const FilterByStatus = () => {
                       <Check className=" text-zinc-50" />
                     </div>
 
-                    <span>{option.label}</span>
+                    <span>{option.title}</span>
                   </CommandItem>
                 );
               })}

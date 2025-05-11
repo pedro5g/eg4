@@ -188,4 +188,10 @@ export class ClientServices {
 
     return { items, meta }
   }
+
+  async getSummary() {
+    const summary = await this.clientRepository.summary()
+
+    return { summary }
+  }
 }

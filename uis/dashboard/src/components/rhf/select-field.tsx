@@ -10,9 +10,10 @@ import {
 } from "../ui/select";
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 import { CircleAlert } from "lucide-react";
+import React from "react";
 
 type Option = {
-  title: string;
+  title: string | React.JSX.Element;
   value: string;
 };
 
@@ -78,13 +79,13 @@ export const SelectField = <T extends FieldValues>({
 
                 <SelectContent className="rounded-md pb-2.5 pt-4">
                   <SelectGroup>
-                    <SelectLabel className="text-base bg-blue-100 rounded-t-md text-zinc-800">
+                    <SelectLabel className="text-base rounded-t-md text-muted-foreground">
                       {label}
                     </SelectLabel>
                     {options.map(({ value, title }, i) => (
                       <SelectItem
                         className="text-zinc-800"
-                        key={`${title}_${i}`}
+                        key={`${value}_${i}`}
                         value={value}>
                         {title}
                       </SelectItem>

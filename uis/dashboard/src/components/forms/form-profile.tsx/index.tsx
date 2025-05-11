@@ -5,20 +5,13 @@ import { Button } from "@/components/ui/button";
 import { FormWrapper } from "@/components/rhf/form-wrapper";
 import { TextField } from "@/components/rhf/text-field";
 import { SelectField } from "@/components/rhf/select-field";
-import {
-  COUNTRIES,
-  STATES,
-  STATUS_MAP,
-  STATUS_OPTIONS,
-  STYLE_STATUS_MAP,
-  TYPES,
-} from "@/constants";
+import { COUNTRIES, STATES, STATUS_MAP, TYPES } from "@/constants";
+import { STATUS_ICON_MAP, STATUS_OPTIONS } from "@/constants/status-options";
 import {
   UpdateClientProfileSchema,
   updateClientProfileSchema,
 } from "../register-client-form/schemas/update-client-profile.schema";
 import {
-  cn,
   formatCEP,
   formatCNPJ,
   formatCPF,
@@ -169,13 +162,9 @@ export const FormProfile = ({ client }: FormProfileProps) => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge
-            variant="outline"
-            className={cn(
-              "px-3 border-2",
-              STYLE_STATUS_MAP[client.status || "ACTIVE"]
-            )}>
-            {STATUS_MAP[client.status || "ACTIVE"]}
+          <Badge variant="outline" className="text-muted-foreground px-4">
+            {STATUS_MAP[client.status]}
+            {STATUS_ICON_MAP[client.status]}
           </Badge>
           <Button
             variant={isEditing ? "outline" : "default"}

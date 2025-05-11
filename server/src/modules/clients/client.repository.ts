@@ -1,10 +1,11 @@
-import { PrismaClient, Status } from "@prisma/client"
+import { PrismaClient } from "@prisma/client"
 import {
   Filter,
   IClientRepository,
   Meta,
+  SummaryData,
 } from "./domain/repository/client-repository.interface"
-import { IClient, RegisterClientDto } from "./domain/dtos/client.dtos"
+import { IClient, RegisterClientDto, Status } from "./domain/dtos/client.dtos"
 
 export class ClientRepository implements IClientRepository {
   constructor(private readonly db: PrismaClient) {}
@@ -82,6 +83,50 @@ export class ClientRepository implements IClientRepository {
     return {
       items: clients,
       meta: { page, take, total, pageCount: Math.ceil(total / take) },
+    }
+  }
+
+  async summary(): Promise<SummaryData> {
+    const now = new Date()
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+    const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+
+    const [totalClients, newClientsThisMonth, result] = await Promise.all([
+      this.db.client.count(),
+      this.db.client.count({
+        where: {
+          registrationDate: {
+            gte: startOfMonth,
+            lt: startOfNextMonth,
+          },
+        },
+      }),
+      this.db.client.groupBy({
+        by: ["status"],
+        _count: {
+          status: true,
+        },
+      }),
+    ])
+
+    const statuses: Status[] = ["ACTIVE", "INACTIVE", "BLOCKED", "PENDING"]
+
+    const statusCounts: Record<Status, number> = statuses.reduce(
+      (acc, status) => {
+        const match = result.find((r) => r.status === status)
+        acc[status] = match ? match._count.status : 0
+        return acc
+      },
+      {} as Record<Status, number>,
+    )
+
+    const percentChange =
+      totalClients === 0 ? 0 : (newClientsThisMonth / totalClients) * 100
+    return {
+      totalClients,
+      newClientsThisMonth,
+      statusCounts,
+      percentChange,
     }
   }
 }

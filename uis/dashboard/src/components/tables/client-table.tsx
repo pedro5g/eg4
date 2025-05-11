@@ -68,14 +68,13 @@ import { Client } from "@/api/types";
 import { Badge } from "../ui/badge";
 import { Label } from "../ui/label";
 import {
-  cn,
   formatCEP,
   formatCNPJ,
   formatCPF,
   formatDate,
   formatPhone,
 } from "@/lib/utils";
-import { STATUS_MAP, STYLE_STATUS_MAP } from "@/constants";
+import { STATUS_MAP } from "@/constants";
 import { useTableClientsQuery } from "@/hooks/use-table-clients-query";
 import { mkConfig, generateCsv, download } from "export-to-csv";
 import {
@@ -86,6 +85,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Link } from "react-router";
+import { STATUS_ICON_MAP } from "@/constants/status-options";
 
 function DragHandle({ id }: { id: string }) {
   const { attributes, listeners } = useSortable({
@@ -205,13 +205,9 @@ const columns: ColumnDef<Client>[] = [
     header: "Status",
     cell: ({ row }) => (
       <div className="w-32">
-        <Badge
-          variant="outline"
-          className={cn(
-            "px-3 border-2",
-            STYLE_STATUS_MAP[row.original.status]
-          )}>
+        <Badge variant="outline" className="text-muted-foreground px-4">
           {STATUS_MAP[row.original.status]}
+          {STATUS_ICON_MAP[row.original.status]}
         </Badge>
       </div>
     ),

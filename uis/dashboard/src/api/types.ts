@@ -218,3 +218,17 @@ export type UpdateClientProfileResponseType = {
   ok: true;
   message: string;
 };
+
+export type Summary = {
+  totalClients: number;
+  statusCounts: Record<Status, number>;
+  newClientsThisMonth: number;
+  percentChange: number;
+};
+
+export type SummaryResponseType = {
+  ok: true;
+  data: {
+    summary: Summary;
+  };
+};
