@@ -35,6 +35,11 @@ export class CLientRoutes {
       { preHandler: [isAuthenticated] },
       this.clientControllers.getSummary.bind(this.clientControllers),
     )
+    this.app.get(
+      "/export-all-clients",
+      { preHandler: [isAuthenticated] },
+      this.clientControllers.exportClientStream.bind(this.clientControllers),
+    )
 
     return this.app
   }

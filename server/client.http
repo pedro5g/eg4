@@ -125,3 +125,7 @@ Content-Type: application/json
   "status": "ACTIVE",
   "storeId": 1
 }
+
+### @name export_all_clients
+
+GET {{baseUrl}}/client/export-all-clients

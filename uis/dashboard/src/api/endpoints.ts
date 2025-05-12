@@ -114,3 +114,7 @@ export const ApiUpdateClientProfile = async <T = UpdateClienteProfileBodyType>(
 export const ApiGetSummary = async () => {
   return await httpClient.GET<SummaryResponseType>("/client/summary");
 };
+
+export const exportAllClientsEndpoint = `${
+  import.meta.env.VITE_API_URL
+}/client/export-all-clients`;

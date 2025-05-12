@@ -17,7 +17,7 @@ const app = fastify()
 
 app.register(fastifyCors, {
   origin: env.WEB_ORIGEN,
-  methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
+  methods: ["GET", "PUT", "POST", "PATCH", "DELETE", "READ"],
   credentials: true,
 })
 

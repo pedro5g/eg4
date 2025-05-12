@@ -4,8 +4,10 @@ import {
   UpdateClientServiceDto,
 } from "./domain/dtos/client.dtos"
 import {
+  CHUNK_SIZE,
   Filter,
   IClientRepository,
+  StreamChunk,
 } from "./domain/repository/client-repository.interface"
 import { randomString } from "@/core/helpers"
 import { IStoreRepository } from "../store/domain/repository/store-repository.interface"
@@ -193,5 +195,35 @@ export class ClientServices {
     const summary = await this.clientRepository.summary()
 
     return { summary }
+  }
+
+  async *createExportPipeline(): AsyncGenerator<StreamChunk, void, unknown> {
+    try {
+      const totalClients = await this.clientRepository.count()
+
+      yield { type: "info", totalCount: totalClients }
+
+      let processedCount = 0
+
+      for await (const clientsChunk of this.clientRepository.streamAllClients(
+        CHUNK_SIZE,
+      )) {
+        yield { type: "data", clients: clientsChunk }
+
+        processedCount += clientsChunk.length
+        yield {
+          type: "progress",
+          processed: processedCount,
+          total: totalClients,
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 50))
+      }
+
+      yield { type: "complete" }
+    } catch (error) {
+      console.error("Erro durante exportação de clientes:", error)
+      yield { type: "error", message: "Erro ao exportar clientes" }
+    }
   }
 }

@@ -140,4 +140,33 @@ export class ClientRepository implements IClientRepository {
       statesCounts,
     }
   }
+
+  async count(): Promise<number> {
+    return await this.db.client.count()
+  }
+
+  async findManyPaginated(skip: number, take: number): Promise<IClient[]> {
+    return await this.db.client.findMany({
+      skip,
+      take,
+    })
+  }
+
+  async *streamAllClients(
+    chunkSize: number,
+  ): AsyncGenerator<IClient[], void, unknown> {
+    let skip = 0
+    let hasMoreData = true
+
+    while (hasMoreData) {
+      const clients = await this.findManyPaginated(skip, chunkSize)
+
+      if (clients.length === 0) {
+        hasMoreData = false
+      } else {
+        yield clients
+        skip += chunkSize
+      }
+    }
+  }
 }

@@ -25,6 +25,17 @@ export type SummaryData = {
   percentChange: number
 }
 
+export interface StreamChunk {
+  type: "info" | "data" | "progress" | "complete" | "error"
+  totalCount?: number
+  clients?: IClient[]
+  processed?: number
+  total?: number
+  message?: string
+}
+
+export const CHUNK_SIZE = 1000
+
 export interface IClientRepository {
   create(args: RegisterClientDto): Promise<void>
   update(client: IClient): Promise<void>
@@ -33,4 +44,7 @@ export interface IClientRepository {
   findByTaxId(taxId: string): Promise<IClient | null>
   listClient({ page, query, status }: Filter): Promise<Meta>
   summary(): Promise<SummaryData>
+  count(): Promise<number>
+  findManyPaginated(skip: number, take: number): Promise<IClient[]>
+  streamAllClients(chunkSize: number): AsyncGenerator<IClient[], void, unknown>
 }

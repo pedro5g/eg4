@@ -51,4 +51,44 @@ export class ClientControllers {
     const { summary } = await this.clientServices.getSummary()
     reply.status(HTTP_STATUS.OK).send({ ok: true, data: { summary } })
   }
+
+  async exportClientStream(
+    _request: FastifyRequest,
+    reply: FastifyReply,
+  ): Promise<void> {
+    try {
+      reply.raw.writeHead(200, {
+        "Content-Type": "application/json",
+        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+      })
+
+      const exportPipeline = this.clientServices.createExportPipeline()
+
+      for await (const chunk of exportPipeline) {
+        reply.raw.write(JSON.stringify(chunk) + "\n")
+      }
+
+      reply.raw.end()
+    } catch (error) {
+      console.error("Erro ao processar stream de exportação:", error)
+
+      if (!reply.sent) {
+        reply.status(500).send({ error: "Erro ao exportar clientes" })
+      } else {
+        try {
+          reply.raw.write(
+            JSON.stringify({
+              type: "error",
+              message: "Erro ao exportar clientes",
+            }) + "\n",
+          )
+          reply.raw.end()
+        } catch (e) {
+          reply.raw.end()
+        }
+      }
+    }
+  }
 }
