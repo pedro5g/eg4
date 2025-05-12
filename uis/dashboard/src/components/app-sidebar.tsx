@@ -22,8 +22,8 @@ const NAV_MAIN = [
     icon: LayoutDashboardIcon,
   },
   {
-    title: "Clients",
-    url: "/clients",
+    title: "Clientes",
+    url: "/clients/table",
     icon: Users,
   },
 ];

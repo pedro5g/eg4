@@ -30,8 +30,8 @@ export const FilterByStatus = () => {
         <Button
           variant="outline"
           size="sm"
-          className="h-8 border-2 border-dashed w-full lg:w-auto max-lg:justify-start 
-          text-zinc-600 data-[state=open]:border-blue-300 data-[state=open]:text-blue-300">
+          className="h-8 py-5 border-2 border-zinc-400 rounded-sm text-muted-foreground w-full lg:w-auto max-lg:justify-start 
+           data-[state=open]:border-blue-300 ">
           <PlusCircle />
           Filtrar por status
           {selectedValueSet.size > 0 && (
@@ -43,7 +43,7 @@ export const FilterByStatus = () => {
                 {selectedValueSet.size}
               </Badge>
               <div className="hidden space-x-1 lg:flex">
-                {selectedValueSet.size > 4 ? (
+                {selectedValueSet.size > 3 ? (
                   <Badge
                     variant="secondary"
                     className="rounded-sm px-1 font-normal">

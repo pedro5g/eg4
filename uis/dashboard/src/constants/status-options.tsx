@@ -1,10 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { STATUS_MAP } from "./index";
-import { CircleCheckBig, Loader, LockKeyhole, Snowflake } from "lucide-react";
+import { CircleCheckBig, CirclePause, Loader, LockKeyhole } from "lucide-react";
 
 export const STATUS_ICON_MAP = {
   ACTIVE: <CircleCheckBig className="text-green-500" />,
-  INACTIVE: <Snowflake className="text-sky-500" />,
+  INACTIVE: <CirclePause className="text-sky-500" />,
   BLOCKED: <LockKeyhole className="text-red-500" />,
   PENDING: <Loader />,
 };
