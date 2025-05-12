@@ -224,6 +224,7 @@ export type Summary = {
   statusCounts: Record<Status, number>;
   newClientsThisMonth: number;
   percentChange: number;
+  statesCounts: Record<string, number>;
 };
 
 export type SummaryResponseType = {

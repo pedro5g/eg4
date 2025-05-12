@@ -91,33 +91,43 @@ export class ClientRepository implements IClientRepository {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
     const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
 
-    const [totalClients, newClientsThisMonth, result] = await Promise.all([
-      this.db.client.count(),
-      this.db.client.count({
-        where: {
-          registrationDate: {
-            gte: startOfMonth,
-            lt: startOfNextMonth,
+    const [totalClients, newClientsThisMonth, resultCountByStatus, topStates] =
+      await Promise.all([
+        this.db.client.count(),
+        this.db.client.count({
+          where: {
+            registrationDate: {
+              gte: startOfMonth,
+              lt: startOfNextMonth,
+            },
           },
-        },
-      }),
-      this.db.client.groupBy({
-        by: ["status"],
-        _count: {
-          status: true,
-        },
-      }),
-    ])
+        }),
+        this.db.client.groupBy({
+          by: ["status"],
+          _count: {
+            status: true,
+          },
+        }),
+        this.db.client.groupBy({
+          by: "state",
+          _count: {
+            state: true,
+          },
+          orderBy: {
+            _count: {
+              state: "desc",
+            },
+          },
+          take: 6,
+        }),
+      ])
 
-    const statuses: Status[] = ["ACTIVE", "INACTIVE", "BLOCKED", "PENDING"]
+    const statusCounts = Object.fromEntries(
+      resultCountByStatus.map((data) => [data.status, data._count.status]),
+    ) as Record<Status, number>
 
-    const statusCounts: Record<Status, number> = statuses.reduce(
-      (acc, status) => {
-        const match = result.find((r) => r.status === status)
-        acc[status] = match ? match._count.status : 0
-        return acc
-      },
-      {} as Record<Status, number>,
+    const statesCounts = Object.fromEntries(
+      topStates.map((state) => [state.state, state._count.state]),
     )
 
     const percentChange =
@@ -127,6 +137,7 @@ export class ClientRepository implements IClientRepository {
       newClientsThisMonth,
       statusCounts,
       percentChange,
+      statesCounts,
     }
   }
 }

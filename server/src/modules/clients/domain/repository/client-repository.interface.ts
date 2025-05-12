@@ -20,6 +20,7 @@ export type Meta = {
 export type SummaryData = {
   totalClients: number
   statusCounts: Record<Status, number>
+  statesCounts: Record<string, number>
   newClientsThisMonth: number
   percentChange: number
 }
