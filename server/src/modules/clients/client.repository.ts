@@ -122,12 +122,24 @@ export class ClientRepository implements IClientRepository {
         }),
       ])
 
-    const statusCounts = Object.fromEntries(
-      resultCountByStatus.map((data) => [data.status, data._count.status]),
+    const statusCounts = (
+      resultCountByStatus.length
+        ? Object.fromEntries(
+            resultCountByStatus.map((data) => [
+              data.status,
+              data._count.status,
+            ]),
+          )
+        : {
+            ACTIVE: 0,
+            INACTIVE: 0,
+            PENDING: 0,
+            BLOCKED: 0,
+          }
     ) as Record<Status, number>
 
     const statesCounts = Object.fromEntries(
-      topStates.map((state) => [state.state, state._count.state]),
+      topStates.map((state) => [state.state, state._count.state]) || {},
     )
 
     const percentChange =

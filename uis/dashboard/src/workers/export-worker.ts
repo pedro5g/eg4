@@ -9,6 +9,7 @@ import {
 } from "@/lib/utils";
 import { utils, write } from "xlsx";
 
+console.log("load worker");
 let config = {
   format: "xlsx",
   chunkSize: 1000,
@@ -29,7 +30,7 @@ function processData(data: any) {
       data: { processed: processedClients, total: totalClients },
     });
   } else if (data.type === "data") {
-    clientsData = [...clientsData, ...data.clients];
+    clientsData.push(...data.clients);
     processedClients += data.clients.length;
     postMessage({
       type: "progress",
@@ -45,60 +46,6 @@ function processData(data: any) {
   }
 }
 
-function exportToCSV() {
-  try {
-    let csvContent = "data:text/csv;charset=utf-8,";
-
-    csvContent +=
-      "Código,Nome,Email,Telefone,Status,DDD,CEP,Endereço,Bairro,Cidade,Estado,CPF/CNPJ,Tipo do Registro,Data de Nascimento/Abertura,Nome Fantasia\n";
-
-    clientsData.forEach((client) => {
-      const row = [
-        client.code,
-        client.name,
-        client.email || "Email não informado",
-        (client.phone && formatPhone(client.areaCode + client.phone)) ||
-          "Telefone não informado",
-        STATUS_MAP[client.status] || client.status,
-        client.areaCode || "Não informado",
-        (client.zipCode && formatCEP(client.zipCode)) || "Não informado",
-        client.address || "Não informado",
-        client.neighborhood || "Não informado",
-        client.city,
-        client.state,
-        (client.taxId &&
-          (client.taxId.length === 11
-            ? formatCPF(client.taxId)
-            : formatCNPJ(client.taxId))) ||
-          "Não informado",
-        (client.taxId &&
-          (client.taxId.length === 11 ? "Pessoa Física" : "Pessoa Jurídica")) ||
-          "Não informado",
-        (client.openingDate && formatDate(client.openingDate)) ||
-          "Não informado",
-        client.tradeName || "Não informado",
-      ]
-        .map((value) => `"${String(value).replace(/"/g, '""')}"`)
-        .join(",");
-
-      csvContent += row + "\n";
-    });
-
-    postMessage({
-      type: "complete",
-      data: {
-        content: csvContent,
-        format: "csv",
-        filename: `${config.filename}.csv`,
-      },
-    });
-  } catch (error: any) {
-    postMessage({
-      type: "error",
-      data: { message: `Erro ao gerar CSV: ${error.message}` },
-    });
-  }
-}
 function exportToXLSX() {
   try {
     const data = clientsData.map((client) => {
@@ -216,7 +163,7 @@ function exportToXLSX() {
   } catch (error: any) {
     postMessage({
       type: "error",
-      data: { message: `Erro ao gerar XLSX: ${error.message}` },
+      data: { message: `Error to generate XLSX: ${error.message}` },
     });
   }
 }
@@ -224,8 +171,6 @@ function exportToXLSX() {
 function finalizeExport() {
   if (config.format === "xlsx") {
     exportToXLSX();
-  } else {
-    exportToCSV();
   }
 }
 
@@ -253,7 +198,12 @@ self.onmessage = function (event) {
 
     case "cancel":
       clientsData = [];
-      postMessage({ type: "error", data: { message: "Exportação cancelada" } });
+      postMessage({
+        type: "error",
+        data: { message: "canceled export" },
+      });
       break;
   }
 };
+
+export {};

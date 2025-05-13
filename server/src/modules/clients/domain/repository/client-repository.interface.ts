@@ -34,7 +34,7 @@ export interface StreamChunk {
   message?: string
 }
 
-export const CHUNK_SIZE = 1000
+export const CHUNK_SIZE = 500
 
 export interface IClientRepository {
   create(args: RegisterClientDto): Promise<void>

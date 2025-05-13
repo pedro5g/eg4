@@ -31,6 +31,22 @@ export const TopStatesChart = ({ statesCounts }: TopStatesChartProps) => {
     return { state, quantity };
   });
 
+  if (chartData.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Estados com mais clientes</CardTitle>
+          <CardDescription>
+            estados onde temos mais clientes registrados
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="text-sm text-muted-foreground">
+          Nenhum dado disponível para exibir o gráfico.
+        </CardContent>
+      </Card>
+    );
+  }
+
   const biggestResult = chartData.reduce((acc, curr) => {
     if (acc.quantity < curr.quantity) {
       return (acc = curr);

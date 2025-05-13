@@ -13,6 +13,7 @@ import { randomString } from "@/core/helpers"
 import { IStoreRepository } from "../store/domain/repository/store-repository.interface"
 import { IStore } from "../store/domain/dtos/store.dtos"
 import { ErrorCode } from "@/core/constraints"
+import { logger } from "@/core/logger"
 
 export class ClientServices {
   constructor(
@@ -222,8 +223,8 @@ export class ClientServices {
 
       yield { type: "complete" }
     } catch (error) {
-      console.error("Erro durante exportação de clientes:", error)
-      yield { type: "error", message: "Erro ao exportar clientes" }
+      logger.error("Error during customer export:", error)
+      yield { type: "error", message: "Error to export clients" }
     }
   }
 }

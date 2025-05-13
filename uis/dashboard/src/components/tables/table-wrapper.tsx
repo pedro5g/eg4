@@ -1,4 +1,4 @@
-import { DownloadIcon, Loader } from "lucide-react";
+import { DownloadIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -14,35 +14,57 @@ import { useDataExport } from "@/hooks/use-data-export";
 import { exportAllClientsEndpoint } from "@/api/endpoints";
 
 export const TableWrapper = ({ children }: { children: React.ReactNode }) => {
-  const { exportData, isExporting } = useDataExport();
-
+  const { exportData, isExporting, error, progress, cancelExport } =
+    useDataExport();
+  console.log(error);
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-3xl">Clientes</CardTitle>
         <CardDescription>Encontre todos os seus clientes aqui</CardDescription>
-        <div className="w-full flex items-center gap-2">
+        <div className="w-full flex md:flex-row flex-col md:items-center gap-2 ">
           <FilterByStatus />
           <SearchClient />
 
-          <div className="ml-auto">
-            <Button
-              variant="outline"
-              size="sm"
-              className=" lg:flex px-3 py-5 rounded-sm border-2 border-zinc-500/40 text-zinc-600 cursor-pointer"
-              onClick={() =>
-                exportData({
-                  endpoint: exportAllClientsEndpoint,
-                  format: "xlsx",
-                })
-              }>
-              {!isExporting ? (
+          <div className="md:ml-auto">
+            {isExporting ? (
+              <Button
+                variant="outline"
+                size="sm"
+                className=" lg:flex px-3 py-5 rounded-sm border-2 border-zinc-500/40 text-zinc-600 cursor-pointer"
+                onClick={cancelExport}>
+                <div className="flex select-none relative text-slate-500 items-center justify-center">
+                  <div
+                    className="radial-progress size-8"
+                    style={{
+                      //@ts-ignore
+                      "--value": progress.percentage,
+                      "--progress-color": "var(--color-blue-500)",
+                      "--thickness": " 0.3rem",
+                    }}></div>
+                  <div className="absolute font-bold text-[8px]">
+                    {progress.percentage}%
+                  </div>
+                </div>
+                Cancelar download
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                className=" lg:flex px-3 py-5 rounded-sm border-2 border-zinc-500/40 text-zinc-600 cursor-pointer"
+                onClick={() =>
+                  exportData({
+                    endpoint: exportAllClientsEndpoint,
+                    format: "xlsx",
+                    filename: "clientes",
+                    title: "Lista de Clientes",
+                  })
+                }>
                 <DownloadIcon className="mr-2 size-4" />
-              ) : (
-                <Loader className="mr-2 size-4 animate-spin" />
-              )}
-              Exportar todos os clientes
-            </Button>
+                Exportar todos os clientes
+              </Button>
+            )}
           </div>
         </div>
         <p className="text-muted-foreground text-xs">

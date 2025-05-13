@@ -111,6 +111,20 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+.radial-progress {
+  display: inline-block;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--progress-color, #93c5fd) calc(var(--value) * 1%),
+    var(--mask-color, #e5e7eb) 0
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - var(--thickness)),
+    white calc(100% - var(--thickness) + 1px)
+  );
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

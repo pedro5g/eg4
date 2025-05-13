@@ -61,6 +61,9 @@ export const Overview = () => {
         await queryClient.refetchQueries({
           queryKey: ["list-clients"],
         });
+        await queryClient.refetchQueries({
+          queryKey: ["summary"],
+        });
         clearFormData();
         navigate(1);
       }

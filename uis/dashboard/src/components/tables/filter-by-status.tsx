@@ -30,7 +30,7 @@ export const FilterByStatus = () => {
         <Button
           variant="outline"
           size="sm"
-          className="h-8 py-5 border-2 border-zinc-400 rounded-sm text-muted-foreground w-full lg:w-auto max-lg:justify-start 
+          className="h-8 py-5 border-2 border-zinc-400 rounded-sm text-muted-foreground cursor-pointer w-auto max-lg:justify-start 
            data-[state=open]:border-blue-300 ">
           <PlusCircle />
           Filtrar por status

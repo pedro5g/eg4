@@ -8,6 +8,9 @@ import {
 } from "@/core/validators/client.validators"
 import { HTTP_STATUS } from "@/core/constraints"
 import { Status } from "./domain/dtos/client.dtos"
+import { env } from "@/core/env"
+import { CHUNK_SIZE } from "./domain/repository/client-repository.interface"
+import { logger } from "@/core/logger"
 
 export class ClientControllers {
   constructor(private readonly clientServices: ClientServices) {}
@@ -52,12 +55,14 @@ export class ClientControllers {
     reply.status(HTTP_STATUS.OK).send({ ok: true, data: { summary } })
   }
 
-  async exportClientStream(
+  async exportClientsStream(
     _request: FastifyRequest,
     reply: FastifyReply,
   ): Promise<void> {
     try {
       reply.raw.writeHead(200, {
+        "access-control-allow-origin": env.WEB_ORIGEN,
+        "Access-Control-Allow-Credentials": "true",
         "Content-Type": "application/json",
         "Transfer-Encoding": "chunked",
         "Cache-Control": "no-cache",
@@ -66,22 +71,30 @@ export class ClientControllers {
 
       const exportPipeline = this.clientServices.createExportPipeline()
 
+      let clientDisconnected = false
+
+      reply.raw.on("close", () => {
+        logger.error("Client aborted export data")
+        clientDisconnected = true
+      })
+
       for await (const chunk of exportPipeline) {
+        if (clientDisconnected) break
         reply.raw.write(JSON.stringify(chunk) + "\n")
       }
 
       reply.raw.end()
     } catch (error) {
-      console.error("Erro ao processar stream de exportação:", error)
+      logger.error("Error to process export stream", error)
 
       if (!reply.sent) {
-        reply.status(500).send({ error: "Erro ao exportar clientes" })
+        reply.status(500).send({ error: "Error to export clients" })
       } else {
         try {
           reply.raw.write(
             JSON.stringify({
               type: "error",
-              message: "Erro ao exportar clientes",
+              message: "Error to export clients",
             }) + "\n",
           )
           reply.raw.end()

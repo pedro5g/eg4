@@ -147,10 +147,10 @@ export function DataTableClients({
   return (
     <>
       <div className="flex items-center justify-between">
-        <p className="text-muted-foreground inline-flex items-center">
+        <p className="text-muted-foreground inline-flex items-center text-sm">
           Selecione as linhas que quiser exportar como cvs
         </p>
-        <div className="flex items-center gap-2 justify-end">
+        <div className="flex md:flex-row flex-col md:items-center gap-2 justify-end">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
