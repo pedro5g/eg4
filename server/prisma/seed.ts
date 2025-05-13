@@ -12,6 +12,12 @@ function formatDateToString(date: Date): string {
   return `${day}${month}${year}`
 }
 
+function uniqueEmail(email: string) {
+  const [start, end] = email.split("@")
+  const uniqueCode = randomString(12)
+  return `${start}${uniqueCode}@${end}`
+}
+
 function generateTaxIdAndDetails() {
   const isCpf = Math.random() < 0.5
 
@@ -35,6 +41,8 @@ function generateTaxIdAndDetails() {
 }
 
 async function main() {
+  const length = parseInt(process.argv[2]) || 1000
+
   const author = await prisma.user.findFirst()
 
   if (!author) {
@@ -47,7 +55,7 @@ async function main() {
 
   const statuses = ["ACTIVE", "INACTIVE", "BLOCKED", "PENDING"] as const
 
-  const clients = Array.from({ length: 50 }, (_, i) => {
+  const clients = Array.from({ length }, (_, i) => {
     const { taxId, type, openingDate, tradeName } = generateTaxIdAndDetails()
 
     const state = faker.helpers.arrayElement(states)
@@ -75,7 +83,10 @@ async function main() {
           ? faker.string.numeric({ length: Math.random() > 0.2 ? 8 : 9 })
           : null,
       type,
-      email: Math.random() > 0.2 ? faker.internet.email().toLowerCase() : null,
+      email:
+        Math.random() > 0.2
+          ? uniqueEmail(faker.internet.email().toLowerCase())
+          : null,
       country: "BR",
       taxId,
       openingDate,
