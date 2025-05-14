@@ -28,6 +28,15 @@ export class ClientRepository implements IClientRepository {
     })
   }
 
+  async findById(id: string): Promise<IClient | null> {
+    const client = await this.db.client.findUnique({
+      where: {
+        id,
+      },
+    })
+    return client
+  }
+
   async findByEmail(email: string): Promise<IClient | null> {
     const client = await this.db.client.findUnique({
       where: {
