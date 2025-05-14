@@ -46,30 +46,32 @@ enum Status {
 }
 
 model Client {
-  id               String   @id @default(cuid())
-  code             String   @unique // Código *
+  id               String       @id @default(cuid())
+  code             String       @unique // Código *
   address          String // Endereço *
   state            String // Estado *
-  cityCode         String?  @map("city_code") // Código Município
+  cityCode         String?      @map("city_code") // Código Município
   name             String // Nome *
-  tradeName        String?  @map("trade_name") // Nome Fantasia 
+  tradeName        String?      @map("trade_name") // Nome Fantasia 
   neighborhood     String? // Bairro
-  zipCode          String?  @map("zip_code") // CEP
+  zipCode          String?      @map("zip_code") // CEP
   city             String // Município *
-  areaCode         String?  @map("area_code") // DDD
+  areaCode         String?      @map("area_code") // DDD
   phone            String? // Telefone
   type             String? // Tipo *
-  email            String?  @unique // E-mail
+  email            String?      @unique // E-mail
   country          String? // País
-  taxId            String?  @unique @map("tax_id") // CNPJ/CPF
-  openingDate      String?  @map("opening_date") // Dt. Abert/Nasc
+  taxId            String?      @unique @map("tax_id") // CNPJ/CPF
+  openingDate      String?      @map("opening_date") // Dt. Abert/Nasc
   homepage         String? // Home-Page
-  status           Status   @default(ACTIVE)
-  registrationDate DateTime @default(now()) @map("registration_date")
-  store            Store?   @relation(fields: [storeId], references: [id], onDelete: SetNull)
-  storeId          Int?     @map("store_id")
-  author           User     @relation(fields: [authorId], references: [id])
-  authorId         String   @map("author_id")
+  status           Status       @default(ACTIVE)
+  registrationDate DateTime     @default(now()) @map("registration_date")
+  store            Store?       @relation(fields: [storeId], references: [id], onDelete: SetNull)
+  storeId          Int?         @map("store_id")
+  author           User         @relation(fields: [authorId], references: [id])
+  authorId         String       @map("author_id")
+  clientFiles      ClientFile[]
+  Invoice          Invoice[]
 
   @@map("clients")
 }
@@ -82,4 +84,39 @@ model Store {
   clients Client[]
 
   @@map("stores")
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  CANCELED
+
+  @@map("invoice_status")
+}
+
+model Invoice {
+  id        String        @id @default(cuid())
+  number    String        @unique
+  client    Client        @relation(fields: [clientId], references: [id])
+  clientId  String        @map("client_id")
+  issueDate DateTime      @map("issue_date")
+  dueDate   DateTime      @map("due_date")
+  amount    Float
+  status    InvoiceStatus @default(PENDING)
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  @@map("invoices")
+}
+
+model ClientFile {
+  id         String   @id @default(cuid())
+  clientId   String   @map("client_id")
+  client     Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  name       String
+  path       String
+  url        String
+  uploadedAt DateTime @default(now()) @map("uploaded_at")
+
+  @@map("client_files")
 }
