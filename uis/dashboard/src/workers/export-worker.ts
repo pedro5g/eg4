@@ -17,12 +17,20 @@ let config = {
   title: "Dados Exportados",
 };
 
-let clientsData: Client[] = [];
 let totalClients = 0;
 let processedClients = 0;
-let processingComplete = false;
+let ws = utils.aoa_to_sheet([]);
+let currentRow = 3; // skip header
 
-function processData(data: any) {
+interface WorkerData {
+  type: "info" | "data" | "progress" | "complete" | "error";
+  totalCount: number;
+  processed?: number;
+  total?: number;
+  clients: Client[];
+}
+
+function processData(data: WorkerData) {
   if (data.type === "info") {
     totalClients = data.totalCount;
     postMessage({
@@ -30,62 +38,66 @@ function processData(data: any) {
       data: { processed: processedClients, total: totalClients },
     });
   } else if (data.type === "data") {
-    clientsData.push(...data.clients);
-    processedClients += data.clients.length;
-    postMessage({
-      type: "progress",
-      data: { processed: processedClients, total: totalClients },
-    });
+    processRows(data.clients);
   } else if (data.type === "progress") {
     postMessage({
       type: "progress",
       data: { processed: data.processed, total: data.total },
     });
-  } else if (data.type === "complete") {
-    processingComplete = true;
   }
+}
+
+function processRows(clients: Client[]) {
+  const rows = clients.map((client) => {
+    return {
+      code: client.code,
+      nome: client.name,
+      email: client.email || "Email não informado",
+      telefone:
+        (client.phone && formatPhone(client.areaCode + client.phone)) ||
+        "Telefone não informado",
+      status: STATUS_MAP[client.status] || client.status,
+      dd: client.areaCode || "Não informado",
+      cep: (client.zipCode && formatCEP(client.zipCode)) || "Não informado",
+      endereço: client.address || "Não informado",
+      bairro: client.neighborhood || "Não informado",
+      cidade: client.city,
+      estado: client.state,
+      "cpf/cnpj":
+        (client.taxId &&
+          (client.taxId.length === 11
+            ? formatCPF(client.taxId)
+            : formatCNPJ(client.taxId))) ||
+        "Não informado",
+      "Tipo do registro":
+        (client.taxId &&
+          (client.taxId.length === 11 ? "Pessoa Física" : "Pessoa Jurídica")) ||
+        "Não informado",
+      "Data de nascimento":
+        (client.openingDate && formatDate(client.openingDate)) ||
+        "Não informado",
+      "Data de abertura":
+        (client.openingDate && formatDate(client.openingDate)) ||
+        "Não informado",
+      "Nome fantasia":
+        (client.tradeName && client.tradeName) || "Não informado",
+    };
+  });
+
+  utils.sheet_add_json(ws, rows, {
+    origin: `${currentRow}`,
+    skipHeader: true,
+  });
+  currentRow += rows.length;
+  processedClients += rows.length;
+  postMessage({
+    type: "process",
+    data: { processed: processedClients, total: totalClients },
+  });
 }
 
 function exportToXLSX() {
   try {
-    const data = clientsData.map((client) => {
-      return {
-        code: client.code,
-        nome: client.name,
-        email: client.email || "Email não informado",
-        telefone:
-          (client.phone && formatPhone(client.areaCode + client.phone)) ||
-          "Telefone não informado",
-        status: STATUS_MAP[client.status] || client.status,
-        dd: client.areaCode || "Não informado",
-        cep: (client.zipCode && formatCEP(client.zipCode)) || "Não informado",
-        endereço: client.address || "Não informado",
-        bairro: client.neighborhood || "Não informado",
-        cidade: client.city,
-        estado: client.state,
-        "cpf/cnpj":
-          (client.taxId &&
-            (client.taxId.length === 11
-              ? formatCPF(client.taxId)
-              : formatCNPJ(client.taxId))) ||
-          "Não informado",
-        "Tipo do registro":
-          (client.taxId &&
-            (client.taxId.length === 11
-              ? "Pessoa Física"
-              : "Pessoa Jurídica")) ||
-          "Não informado",
-        "Data de nascimento":
-          (client.openingDate && formatDate(client.openingDate)) ||
-          "Não informado",
-        "Data de abertura":
-          (client.openingDate && formatDate(client.openingDate)) ||
-          "Não informado",
-        "Nome fantasia":
-          (client.tradeName && client.tradeName) || "Não informado",
-      };
-    });
-
     const headers = {
       code: "Código",
       nome: "Nome",
@@ -107,17 +119,10 @@ function exportToXLSX() {
 
     const wb = utils.book_new();
 
-    const ws = utils.aoa_to_sheet([]);
-
     utils.sheet_add_aoa(ws, [[config.title]], { origin: "A1" });
 
     const headerRow = Object.values(headers);
     utils.sheet_add_aoa(ws, [headerRow], { origin: "A2" });
-
-    utils.sheet_add_json(ws, data, {
-      origin: "A3",
-      skipHeader: true,
-    });
 
     const columnWidths = [
       { wch: 10 },
@@ -174,7 +179,18 @@ function finalizeExport() {
   }
 }
 
-self.onmessage = function (event) {
+interface MessageData {
+  type: "init" | "process" | "finalize" | "cancel";
+  data: WorkerData;
+  config: {
+    format: "xlsx" | "csv";
+    chunkSize: number;
+    filename: string;
+    title: string;
+  };
+}
+
+self.onmessage = function (event: MessageEvent<MessageData>) {
   const { type, data, config: newConfig } = event.data;
 
   switch (type) {
@@ -182,10 +198,8 @@ self.onmessage = function (event) {
       if (newConfig) {
         config = { ...config, ...newConfig };
       }
-      clientsData = [];
       totalClients = 0;
       processedClients = 0;
-      processingComplete = false;
       break;
 
     case "process":
@@ -197,7 +211,6 @@ self.onmessage = function (event) {
       break;
 
     case "cancel":
-      clientsData = [];
       postMessage({
         type: "error",
         data: { message: "canceled export" },

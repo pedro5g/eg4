@@ -45,6 +45,6 @@ export interface IClientRepository {
   listClient({ page, query, status }: Filter): Promise<Meta>
   summary(): Promise<SummaryData>
   count(): Promise<number>
-  findManyPaginated(skip: number, take: number): Promise<IClient[]>
+  findManyPaginated(take: number, cursor?: string): Promise<IClient[]>
   streamAllClients(chunkSize: number): AsyncGenerator<IClient[], void, unknown>
 }
