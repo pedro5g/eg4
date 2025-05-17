@@ -1,10 +1,11 @@
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 import { CircleAlert, Loader2 } from "lucide-react";
-import { useCallback } from "react";
+import { JSX, useCallback } from "react";
 import {
   cn,
   formatCEP,
   formatCpfCnpj,
+  formatCurrency,
   formatDate,
   formatPhone,
 } from "@/lib/utils";
@@ -17,11 +18,12 @@ export interface TextFieldProps<T extends FieldValues>
   name: Path<T>;
   label: string;
   type?: "text" | "email";
-  mask?: "phone" | "cpf/cnpj" | "cep" | "date";
+  mask?: "phone" | "cpf/cnpj" | "cep" | "date" | "currency";
   required?: boolean;
   readonly?: boolean;
   changeInterceptor?: (...value: any[]) => void;
   isLoading?: boolean;
+  IconLeft?: () => JSX.Element | null;
 }
 
 export const TextField = <T extends FieldValues = any>({
@@ -34,6 +36,7 @@ export const TextField = <T extends FieldValues = any>({
   changeInterceptor,
   isLoading,
   className,
+  IconLeft,
   ...props
 }: TextFieldProps<T>) => {
   const { control } = useFormContext<T>();
@@ -54,6 +57,8 @@ export const TextField = <T extends FieldValues = any>({
         return formatCEP(value);
       case "date":
         return formatDate(value);
+      case "currency":
+        return formatCurrency(value);
       default:
         return value;
     }
@@ -104,19 +109,24 @@ export const TextField = <T extends FieldValues = any>({
                   `block px-3 pb-2.5 pt-4 w-full text-sm text-zinc-500 bg-transparent duration-300 transform   
               rounded-sm border-2 border-zinc-500/40 appearance-none data-[error=true]:border-red-500
               focus:outline-none focus:ring-0 focus:border-blue-400 peer`,
+                  IconLeft && "pl-10",
                   className
                 )}
-                placeholder=" "
+                placeholder={" "}
               />
               <label
                 htmlFor={`floating_outlined_${label}`}
                 data-error={invalid}
-                className="absolute text-base text-zinc-500 duration-300 transform 
-            -translate-y-5 scale-75 top-2 z-10 origin-[0] bg-white px-2 
-            peer-focus:px-2 peer-focus:text-blue-400 data-[error=true]:text-red-500
-            peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 
-            peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-5
-            rtl:peer-focus:translate-x-2/4 rtl:peer-focus:left-auto start-1.5">
+                className={cn(
+                  `absolute text-base text-zinc-500 duration-300 transform 
+                -translate-y-5 scale-75 top-2 z-10 origin-[0] bg-white px-2 start-1.5
+                peer-focus:px-2 peer-focus:text-blue-400 data-[error=true]:text-red-500
+                `,
+                  !IconLeft &&
+                    ` peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 
+                    peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-5
+                    rtl:peer-focus:translate-x-2/4 rtl:peer-focus:left-auto `
+                )}>
                 {label}
                 {required && <span className="text-xl leading-0">*</span>}
               </label>
@@ -124,6 +134,11 @@ export const TextField = <T extends FieldValues = any>({
                 <span className="absolute top-1/2 -translate-y-1/2 right-3">
                   <Loader2 className="text-zinc-300 animate-spin" size={16} />
                 </span>
+              )}
+              {IconLeft && (
+                <div className="absolute left-3 top-1/2 -translate-y-1/3 text-zinc-500 peer-focus:text-blue-500">
+                  <IconLeft />
+                </div>
               )}
             </div>
             {invalid && error?.message && (

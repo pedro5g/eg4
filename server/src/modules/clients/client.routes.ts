@@ -40,6 +40,11 @@ export class CLientRoutes {
       { preHandler: [isAuthenticated] },
       this.clientControllers.exportClientsStream.bind(this.clientControllers),
     )
+    this.app.get(
+      "/cursor",
+      { preHandler: [isAuthenticated] },
+      this.clientControllers.cursorPagination.bind(this.clientControllers),
+    )
 
     return this.app
   }

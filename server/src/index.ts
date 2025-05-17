@@ -12,6 +12,7 @@ import { UploadModule } from "./modules/uploads/upload.module"
 import { StoreModule } from "./modules/store/store.module"
 import { ClientModule } from "./modules/clients/client.module"
 import { UserModule } from "./modules/user/user.module"
+import { InvoiceModule } from "./modules/invoice/invoice.module"
 
 const app = fastify()
 
@@ -47,6 +48,7 @@ app.register(AuthModule.build, { prefix: `${env.API_PREFIX}/auth` })
 app.register(UserModule.build, { prefix: `${env.API_PREFIX}/user` })
 app.register(StoreModule.build, { prefix: `${env.API_PREFIX}/store` })
 app.register(ClientModule.build, { prefix: `${env.API_PREFIX}/client` })
+app.register(InvoiceModule.build, { prefix: `${env.API_PREFIX}/invoice` })
 app.register(UploadModule.build, { prefix: `${env.API_PREFIX}/upload` })
 
 app.setErrorHandler(globalErrorHandler)

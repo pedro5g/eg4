@@ -90,3 +90,17 @@ export interface UpdateClientServiceDto {
   homepage: string | null
   status: Status
 }
+
+export interface CursorPaginationDto {
+  name?: string
+  take?: number
+  lastCursor?: string
+}
+
+export interface CursorPaginationReturnDto {
+  data: IClient[]
+  meta: {
+    lastCursor: string | null
+    hasNextPage: boolean
+  }
+}

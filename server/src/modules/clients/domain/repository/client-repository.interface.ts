@@ -1,4 +1,10 @@
-import { IClient, RegisterClientDto, Status } from "../dtos/client.dtos"
+import {
+  CursorPaginationDto,
+  CursorPaginationReturnDto,
+  IClient,
+  RegisterClientDto,
+  Status,
+} from "../dtos/client.dtos"
 
 export type Filter = {
   page: number
@@ -40,6 +46,7 @@ export interface IClientRepository {
   create(args: RegisterClientDto): Promise<void>
   update(client: IClient): Promise<void>
   findByCode(code: string): Promise<IClient | null>
+  findById(id: string): Promise<IClient | null>
   findByEmail(email: string): Promise<IClient | null>
   findByTaxId(taxId: string): Promise<IClient | null>
   listClient({ page, query, status }: Filter): Promise<Meta>
@@ -47,4 +54,9 @@ export interface IClientRepository {
   count(): Promise<number>
   findManyPaginated(take: number, cursor?: string): Promise<IClient[]>
   streamAllClients(chunkSize: number): AsyncGenerator<IClient[], void, unknown>
+  cursorPagination({
+    name,
+    take,
+    lastCursor,
+  }: CursorPaginationDto): Promise<CursorPaginationReturnDto>
 }

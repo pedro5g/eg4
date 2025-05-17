@@ -14,7 +14,7 @@ const cpfSchema = stringOrNullSchema.pipe(
     .trim()
     .min(11)
     .max(11)
-    .regex(/[0-9]$/g, "CPF should only have numbers")
+    .regex(/^\d+$/, "CPF should only have numbers")
     .nullable(),
 )
 
@@ -24,26 +24,16 @@ const cnpjSchema = stringOrNullSchema.pipe(
     .trim()
     .min(14)
     .max(14)
-    .regex(/[0-9]$/g, "CNPJ should only have numbers")
+    .regex(/^\d+$/, "CNPJ should only have numbers")
     .nullable(),
 )
 
 export const mobilePhoneSchema = stringOrNullSchema.pipe(
-  z
-    .string()
-    .min(9)
-    .max(9)
-    .regex(/[0-9]$/g)
-    .nullable(),
+  z.string().min(9).max(9).regex(/^\d+$/).nullable(),
 )
 
 export const landlinesSchema = stringOrNullSchema.pipe(
-  z
-    .string()
-    .min(8)
-    .max(8)
-    .regex(/[0-9]$/g)
-    .nullable(),
+  z.string().min(8).max(8).regex(/^\d+$/).nullable(),
 )
 
 const baseStringSchema = z.string().trim().min(3).max(255)
@@ -68,21 +58,11 @@ const neighborhoodSchema = stringOrNullSchema.pipe(
   z.string().trim().min(2).max(255).nullable(),
 )
 const zipCodeSchema = stringOrNullSchema.pipe(
-  z
-    .string()
-    .min(8)
-    .max(8)
-    .regex(/[0-9]$/g)
-    .nullable(),
+  z.string().min(8).max(8).regex(/^\d+$/).nullable(),
 )
 const citySchema = baseStringSchema
 const areaCodeSchema = stringOrNullSchema.pipe(
-  z
-    .string()
-    .min(2)
-    .max(2)
-    .regex(/[0-9]$/g)
-    .nullable(),
+  z.string().min(2).max(2).regex(/^\d+$/).nullable(),
 )
 
 export const phoneSchema = z.union([mobilePhoneSchema, landlinesSchema])
@@ -176,4 +156,10 @@ export const listClientsSchema = z.object({
     .pipe(
       z.array(z.enum(["ACTIVE", "INACTIVE", "BLOCKED", "PENDING"])).optional(),
     ),
+})
+
+export const cursorPaginationSchema = z.object({
+  take: z.coerce.number().optional().default(10),
+  lastCursor: z.string().trim().optional(),
+  name: z.string().trim().optional(),
 })

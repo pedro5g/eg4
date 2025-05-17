@@ -54,9 +54,8 @@ export const SelectStore = <T extends FieldValues>({
                     `inline-flex justify-between px-3 pb-2.5 pt-3 w-full text-sm text-zinc-500 bg-transparent 
                     duration-300 transform rounded-sm border-2 border-zinc-500/40 appearance-none focus-visible:ring-0
                     data-[state=open]:border-blue-400 data-[state=open]:[&>label]:text-blue-400 disabled:opacity-100 
-                    focus:border-blue-400 `,
-                    invalid &&
-                      "border-red-500 [&>svg]:stroke-red-500 cursor-pointer "
+                    focus:border-blue-400 cursor-pointer`,
+                    invalid && "border-red-500 [&>svg]:stroke-red-500  "
                   )}>
                   {(data?.stores || []).find((store) => store.code === value)
                     ?.name || "''"}

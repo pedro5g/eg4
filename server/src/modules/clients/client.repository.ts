@@ -5,7 +5,13 @@ import {
   Meta,
   SummaryData,
 } from "./domain/repository/client-repository.interface"
-import { IClient, RegisterClientDto, Status } from "./domain/dtos/client.dtos"
+import {
+  CursorPaginationDto,
+  CursorPaginationReturnDto,
+  IClient,
+  RegisterClientDto,
+  Status,
+} from "./domain/dtos/client.dtos"
 
 export class ClientRepository implements IClientRepository {
   constructor(private readonly db: PrismaClient) {}
@@ -28,8 +34,17 @@ export class ClientRepository implements IClientRepository {
     })
   }
 
-  async findByEmail(email: string): Promise<IClient | null> {
+  async findById(id: string): Promise<IClient | null> {
     const client = await this.db.client.findUnique({
+      where: {
+        id,
+      },
+    })
+    return client
+  }
+
+  async findByEmail(email: string): Promise<IClient | null> {
+    const client = await this.db.client.findFirst({
       where: {
         email,
       },
@@ -84,6 +99,57 @@ export class ClientRepository implements IClientRepository {
       items: clients,
       meta: { page, take, total, pageCount: Math.ceil(total / take) },
     }
+  }
+
+  async cursorPagination({
+    name,
+    take = 10,
+    lastCursor,
+  }: CursorPaginationDto): Promise<CursorPaginationReturnDto> {
+    const result = await this.db.client.findMany({
+      where: { ...(name && { name: { contains: name } }) },
+      take: take,
+      ...(lastCursor && {
+        skip: 1,
+        cursor: {
+          id: lastCursor as string,
+        },
+      }),
+      orderBy: {
+        name: "asc",
+      },
+    })
+    console.log(name)
+    if (result.length == 0) {
+      return {
+        data: [],
+        meta: {
+          lastCursor: null,
+          hasNextPage: false,
+        },
+      }
+    }
+
+    const cursor = result[result.length - 1].id
+
+    const nextPage = await this.db.client.findMany({
+      where: { ...(name && { name }) },
+      take: take,
+      skip: 1,
+      cursor: {
+        id: cursor,
+      },
+    })
+
+    const data = {
+      data: result,
+      meta: {
+        lastCursor: cursor,
+        hasNextPage: nextPage.length > 0,
+      },
+    }
+
+    return data
   }
 
   async summary(): Promise<SummaryData> {

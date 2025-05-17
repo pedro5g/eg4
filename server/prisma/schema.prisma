@@ -59,7 +59,7 @@ model Client {
   areaCode         String?      @map("area_code") // DDD
   phone            String? // Telefone
   type             String? // Tipo *
-  email            String?      @unique // E-mail
+  email            String?
   country          String? // País
   taxId            String?      @unique @map("tax_id") // CNPJ/CPF
   openingDate      String?      @map("opening_date") // Dt. Abert/Nasc
@@ -97,6 +97,7 @@ enum InvoiceStatus {
 model Invoice {
   id        String        @id @default(cuid())
   number    String        @unique
+  product   String
   client    Client        @relation(fields: [clientId], references: [id])
   clientId  String        @map("client_id")
   issueDate DateTime      @map("issue_date")

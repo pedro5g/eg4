@@ -60,6 +60,8 @@ export type ApiError = {
   ok: false;
 } & Error;
 export type Status = "ACTIVE" | "INACTIVE" | "BLOCKED" | "PENDING";
+export type InvoiceStatus = "PENDING" | "PAID" | "CANCELED";
+
 export type User = {
   name: string;
   email: string;
@@ -92,6 +94,19 @@ export type Client = {
   registrationDate: Date | null;
   storeId: number | null;
   authorId: string;
+};
+
+export type Invoice = {
+  id: string;
+  product: string;
+  number: string;
+  issueDate: Date | string;
+  dueDate: Date | string;
+  amount: number;
+  status: InvoiceStatus;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  clientId: string;
 };
 
 export type SignUpBodyType = {
@@ -232,4 +247,61 @@ export type SummaryResponseType = {
   data: {
     summary: Summary;
   };
+};
+
+export type RegisterInvoiceBodyType = {
+  number: string;
+  product: string;
+  issueDate: Date | string;
+  dueDate: Date | string;
+  amount: string;
+  clientId: string;
+};
+
+export type RegisterInvoiceResponseType = {
+  ok: true;
+  message: string;
+};
+
+export type UpdateInvoiceStatusBodyType = {
+  number: string;
+};
+export type UpdateInvoiceStatusResponseType = {
+  ok: true;
+  message: string;
+};
+
+export type GetInvoiceBodyType = {
+  number: string;
+};
+export type GetInvoiceResponseType = {
+  ok: true;
+  invoice: Invoice;
+};
+
+export type ListClientInvoicesBodyType = {
+  clientId: string;
+};
+export type ListClientInvoicesResponseType = {
+  ok: true;
+  invoices: Invoice[];
+};
+
+export type CursorPaginationBodyType = {
+  take?: number;
+  lastCursor?: string;
+  name?: string;
+};
+
+type CursorMetaType = {
+  hasNextPage: boolean;
+} & (
+  | { hasNextPage: true; lastCursor: string }
+  | { hasNextPage: false; lastCursor: null }
+);
+
+export type CursorPaginationResponseType = {
+  ok: true;
+  clients: Client[];
+  meta: CursorMetaType;
 };

@@ -6,6 +6,7 @@ export const AUTH_ROUTES = {
 export const PROTECTED_ROUTES = {
   DASHBOARD: "/dashboard",
   CLIENTS: "/clients",
+  INVOICE: "/invoice/:clientCode?",
   CLIENT_PROFILE: "/clients/:clientCode",
   CLIENTS_TABLE: "/clients/table",
 };

@@ -12,7 +12,12 @@ import {
 import { Logo } from "./logo";
 import { Link, useLocation } from "react-router";
 import { NavUser } from "./nav-user";
-import { LayoutDashboardIcon, Users } from "lucide-react";
+import {
+  LayoutDashboardIcon,
+  ReceiptText,
+  UserPlus,
+  Users,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_MAIN = [
@@ -25,6 +30,16 @@ const NAV_MAIN = [
     title: "Clientes",
     url: "/clients/table",
     icon: Users,
+  },
+  {
+    title: "Registrar cliente",
+    url: "/clients",
+    icon: UserPlus,
+  },
+  {
+    title: "Faturas",
+    url: "/invoice",
+    icon: ReceiptText,
   },
 ];
 
@@ -53,19 +68,18 @@ export const AppSidebar = ({
           <SidebarGroupContent className="flex flex-col gap-2">
             <SidebarMenu>
               {NAV_MAIN.map((item) => {
-                const isCurrentPath = pathname.startsWith(item.url);
+                const isCurrentPath = pathname.endsWith(item.url);
 
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       className={cn(
-                        "hover:bg-blue-100 hover:text-blue-500 hover:font-semibold transition-all",
-                        isCurrentPath &&
-                          "text-blue-500 font-semibold bg-blue-100"
+                        "hover:bg-blue-100 hover:text-blue-500 transition-all ease-in duration-100 font-medium",
+                        isCurrentPath && "text-blue-500  bg-blue-100"
                       )}
                       asChild
                       tooltip={item.title}>
-                      <Link to={item.url}>
+                      <Link to={item.url} viewTransition>
                         {item.icon && <item.icon />}
                         <span>{item.title}</span>
                       </Link>

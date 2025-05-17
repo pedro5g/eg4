@@ -18,6 +18,7 @@ export const BreadcrumbClients = () => {
         <BreadcrumbItem>
           <BreadcrumbLink className="hover:text-blue-400" asChild>
             <Link
+              viewTransition
               className={cn(
                 "text-base ",
                 pathname === "/clients" &&
@@ -36,6 +37,7 @@ export const BreadcrumbClients = () => {
         <BreadcrumbItem>
           <BreadcrumbLink className="hover:text-blue-400" asChild>
             <Link
+              viewTransition
               className={cn(
                 "text-base ",
                 pathname === "/clients/table" &&

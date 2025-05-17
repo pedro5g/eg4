@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify"
 import { ClientServices } from "./client.services"
 import {
+  cursorPaginationSchema,
   getClientSchema,
   listClientsSchema,
   registerClientSchema,
@@ -103,5 +104,19 @@ export class ClientControllers {
         }
       }
     }
+  }
+
+  async cursorPagination(request: FastifyRequest, reply: FastifyReply) {
+    const { take, lastCursor, name } = cursorPaginationSchema.parse(
+      request.query,
+    )
+
+    const { data, meta } = await this.clientServices.cursorPagination({
+      take,
+      lastCursor,
+      name,
+    })
+
+    reply.status(HTTP_STATUS.OK).send({ ok: true, clients: data, meta })
   }
 }

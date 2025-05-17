@@ -1,5 +1,6 @@
 import { BadRequestException, NotFoundException } from "@/core/exceptions"
 import {
+  CursorPaginationDto,
   RegisterClientServiceDto,
   UpdateClientServiceDto,
 } from "./domain/dtos/client.dtos"
@@ -226,5 +227,15 @@ export class ClientServices {
       logger.error("Error during customer export:", error)
       yield { type: "error", message: "Error to export clients" }
     }
+  }
+
+  async cursorPagination({ name, take, lastCursor }: CursorPaginationDto) {
+    const result = await this.clientRepository.cursorPagination({
+      name,
+      take,
+      lastCursor,
+    })
+
+    return result
   }
 }
