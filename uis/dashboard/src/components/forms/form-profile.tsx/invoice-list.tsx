@@ -12,7 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 import { InvoiceCard } from "./invoice-card";
-import { InvoiceCardSkeleton } from "./invoice-card-skeleton";
+import { InvoiceCardSkeleton } from "../../skeleton-loader/invoice-card-skeleton";
 
 interface InvoiceListProps {
   client: Client;

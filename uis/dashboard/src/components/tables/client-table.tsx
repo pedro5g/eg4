@@ -67,6 +67,7 @@ import { exportCustomXLSX } from "./export-custom-csv";
 import { useEffect, useId, useMemo, useState } from "react";
 import { columns } from "./client-table-columns";
 import { DraggableRow } from "./table-drag-components";
+import { TableSkeleton } from "../skeleton-loader/table-skeleton";
 
 interface DataTableClientsProps {
   data: Client[];
@@ -74,11 +75,13 @@ interface DataTableClientsProps {
     pageCount: number;
     total: number;
   };
+  isPending: boolean;
 }
 
 export function DataTableClients({
   data: initialData,
   meta,
+  isPending,
 }: DataTableClientsProps) {
   const [data, setData] = useState<Client[]>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -241,7 +244,12 @@ export function DataTableClients({
                 ))}
               </TableHeader>
               <TableBody className="**:data-[slot=table-cell]:first:w-8">
-                {table.getRowModel().rows.length ? (
+                {isPending ? (
+                  <TableSkeleton
+                    columns={table.getAllColumns().length}
+                    rows={table.getState().pagination.pageSize}
+                  />
+                ) : table.getRowModel().rows.length ? (
                   <SortableContext
                     items={dataIds}
                     strategy={verticalListSortingStrategy}>
