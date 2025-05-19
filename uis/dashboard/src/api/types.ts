@@ -305,3 +305,12 @@ export type CursorPaginationResponseType = {
   clients: Client[];
   meta: CursorMetaType;
 };
+
+export type DeleteInvoiceBodyType = {
+  invoiceId: string;
+};
+
+export type DeleteInvoiceResponseType = {
+  ok: true;
+  message: string;
+};

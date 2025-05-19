@@ -6,6 +6,8 @@ import {
   CreateStoreResponseType,
   CursorPaginationBodyType,
   CursorPaginationResponseType,
+  DeleteInvoiceBodyType,
+  DeleteInvoiceResponseType,
   GetInvoiceBodyType,
   GetInvoiceResponseType,
   GetStoresResponseType,
@@ -189,4 +191,12 @@ export const ApiClientsCursorPagination = async ({
     lastCursor,
     name,
   });
+};
+
+export const ApiDeleteInvoice = async <T extends DeleteInvoiceBodyType>({
+  invoiceId,
+}: T) => {
+  return await httpClient.DELETE<DeleteInvoiceResponseType>(
+    `/invoice/${invoiceId}`
+  );
 };

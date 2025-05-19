@@ -1,5 +1,5 @@
 import {
-  Barcode,
+  BarcodeIcon,
   DollarSign,
   Eye,
   FileText,
@@ -27,6 +27,7 @@ import { SelectClient } from "./select-client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import { useGenPdf } from "@/hooks/use-gen-pdf";
+import Barcode from "react-barcode";
 
 const formSchema = z.object({
   clientId: z.string().trim().min(1, "Selecione um cliente"),
@@ -169,7 +170,7 @@ export function RegisterInvoiceForm({ clientCode }: RegisterInvoiceFormProps) {
               className="space-y-6">
               <div className="space-y-4">
                 <TextField<RegisterInvoiceFormSchema>
-                  IconLeft={() => <Barcode className="size-4" />}
+                  IconLeft={() => <BarcodeIcon className="size-4" />}
                   name="number"
                   label="Código da fatura"
                   readonly
@@ -363,6 +364,16 @@ export function RegisterInvoiceForm({ clientCode }: RegisterInvoiceFormProps) {
                 </span>
               </div>
             </div>
+            {watchedValues.number && (
+              <div>
+                <Barcode
+                  className="w-full h-20"
+                  value={`${import.meta.env.VITE_API_URL}/invoice/${
+                    watchedValues.number
+                  }/paid`}
+                />
+              </div>
+            )}
 
             <div className="text-center text-sm text-gray-500 mt-4">
               Esta é uma prévia da sua fatura.

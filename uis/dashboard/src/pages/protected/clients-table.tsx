@@ -4,14 +4,18 @@ import { DataTableClients } from "@/components/tables/client-table";
 import { TableWrapper } from "@/components/tables/table-wrapper";
 import { useTableClientsQuery } from "@/hooks/use-table-clients-query";
 import { useQuery } from "@tanstack/react-query";
+import { Helmet } from "react-helmet-async";
 
 export function ClientsTable() {
   return (
-    <div className="w-full h-full my-5">
-      <TableWrapper>
-        <LoadingTable />
-      </TableWrapper>
-    </div>
+    <>
+      <Helmet title="Clientes" />
+      <div className="w-full h-full my-5">
+        <TableWrapper>
+          <LoadingTable />
+        </TableWrapper>
+      </div>
+    </>
   );
 }
 

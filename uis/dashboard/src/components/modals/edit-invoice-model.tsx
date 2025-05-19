@@ -75,8 +75,9 @@ export const EditInvoiceModel = ({
   });
 
   return (
-    <Dialog open={open} onOpenChange={setIsOpen}>
+    <Dialog modal open={open} onOpenChange={setIsOpen}>
       <DialogContent
+        onOpenAutoFocus={(e) => e.preventDefault()}
         aria-describedby="edite sua fatura aqui"
         className="overflow-hidden px-0 pt-0">
         <DialogHeader className="bg-blue-500 rounded-t-lg px-2 py-5 [&>h1]:text-white">

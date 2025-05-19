@@ -21,16 +21,14 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import { Button } from "@/components/ui/button";
 import { InvoiceModal } from "@/components/modals/invoice-modal";
-import { useState } from "react";
-import { EditInvoiceModel } from "@/components/modals/edit-invoice-model";
 
 interface InvoiceCardProps {
   invoice: Invoice;
   client: Client;
+  onEdit: () => void;
 }
 
-export const InvoiceCard = ({ invoice, client }: InvoiceCardProps) => {
-  const [open, setOpen] = useState(false);
+export const InvoiceCard = ({ invoice, client, onEdit }: InvoiceCardProps) => {
   const { handlerDownloadPdf, PdfTemplate, PdfTemplateHidden } = useGenPdf({
     client,
     invoice: {
@@ -134,9 +132,7 @@ export const InvoiceCard = ({ invoice, client }: InvoiceCardProps) => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setOpen(true)}>
-                      Editar
-                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={onEdit}>Editar</DropdownMenuItem>
                     <DropdownMenuItem onClick={handlerDownloadPdf}>
                       Download do PDF
                     </DropdownMenuItem>
@@ -152,7 +148,6 @@ export const InvoiceCard = ({ invoice, client }: InvoiceCardProps) => {
         </div>
       </Card>
       <PdfTemplateHidden />
-      <EditInvoiceModel open={open} setIsOpen={setOpen} invoice={invoice} />
     </>
   );
 };

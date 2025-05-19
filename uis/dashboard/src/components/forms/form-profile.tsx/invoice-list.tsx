@@ -1,5 +1,5 @@
 import { ApiListClientInvoices } from "@/api/endpoints";
-import { Client } from "@/api/types";
+import { Client, Invoice } from "@/api/types";
 import {
   Card,
   CardHeader,
@@ -13,12 +13,15 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 import { InvoiceCard } from "./invoice-card";
 import { InvoiceCardSkeleton } from "../../skeleton-loader/invoice-card-skeleton";
+import { useState } from "react";
+import { EditInvoiceModel } from "@/components/modals/edit-invoice-model";
 
 interface InvoiceListProps {
   client: Client;
 }
 
 export const InvoiceList = ({ client }: InvoiceListProps) => {
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const navigate = useNavigate();
 
   const { data, isPending } = useQuery({
@@ -59,12 +62,20 @@ export const InvoiceList = ({ client }: InvoiceListProps) => {
                   key={invoice.id}
                   client={client}
                   invoice={invoice}
+                  onEdit={() => setSelectedInvoice(invoice)}
                 />
               ))
             )}
           </div>
         </CardContent>
       </Card>
+      {selectedInvoice && (
+        <EditInvoiceModel
+          open={!!selectedInvoice}
+          setIsOpen={() => setSelectedInvoice(null)}
+          invoice={selectedInvoice}
+        />
+      )}
     </>
   );
 };

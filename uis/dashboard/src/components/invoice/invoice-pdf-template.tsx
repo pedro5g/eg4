@@ -13,6 +13,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Client } from "@/api/types";
 import { Logo } from "../logo";
+import Barcode from "react-barcode";
 
 interface InvoiceData {
   number: string;
@@ -64,7 +65,6 @@ export function InvoicePdfTemplate({
                 <p className="text-sm text-gray-500">#{number}</p>
               </div>
             </div>
-
             {client ? (
               <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
                 <h4 className="text-sm font-medium text-blue-700 mb-1">
@@ -90,9 +90,7 @@ export function InvoicePdfTemplate({
                 </p>
               </div>
             )}
-
             <Separator className="my-4 bg-blue-100" />
-
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Produto:</span>
@@ -105,9 +103,7 @@ export function InvoicePdfTemplate({
                 </span>
               </div>
             </div>
-
             <Separator className="my-4 bg-blue-100" />
-
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Data de emissão:</span>
@@ -126,7 +122,6 @@ export function InvoicePdfTemplate({
                 </span>
               </div>
             </div>
-
             <div className="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
               <div className="flex justify-between items-center">
                 <span className="text-gray-700 font-medium">Total:</span>
@@ -135,6 +130,12 @@ export function InvoicePdfTemplate({
                 </span>
               </div>
             </div>
+            <div>
+              <Barcode
+                className="w-full h-20"
+                value={`${import.meta.env.VITE_API_URL}/invoice/${number}/paid`}
+              />
+            </div>{" "}
             <div className="text-center text-sm text-gray-500 mt-4">
               <p>Obrigado por fazer negócios conosco!</p>
             </div>
