@@ -12,35 +12,27 @@ import {
   updateClientProfileSchema,
 } from "../register-client-form/schemas/update-client-profile.schema";
 import {
-  cn,
   formatCEP,
   formatCNPJ,
   formatCPF,
-  formatCurrency,
   formatDate,
   formatPhone,
   getInitials,
 } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import {
   AlertCircle,
-  ArrowRightIcon,
-  Barcode,
   CalendarIcon,
-  CheckCircleIcon,
   CheckIcon,
-  ClockIcon,
   EditIcon,
   GlobeIcon,
   Loader2,
   MailIcon,
   MapPinIcon,
-  MoreHorizontalIcon,
   PhoneIcon,
   TagIcon,
   UserIcon,
-  XCircleIcon,
   XIcon,
 } from "lucide-react";
 import {
@@ -55,19 +47,10 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { useCnpj } from "@/hooks/use-cnpj";
 import { useCep } from "@/hooks/use-cep";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ApiListClientInvoices, ApiUpdateClientProfile } from "@/api/endpoints";
-import { useNavigate } from "react-router";
-import { Skeleton } from "@/components/ui/skeleton";
-import { format } from "date-fns";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ptBR } from "date-fns/locale/pt-BR";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ApiUpdateClientProfile } from "@/api/endpoints";
+
+import { InvoiceList } from "./invoice-list";
 
 interface FormProfileProps {
   client: Client;
@@ -681,182 +664,8 @@ export const FormProfile = ({ client }: FormProfileProps) => {
             </CardFooter>
           )}
         </Card>
-        <InvoicesCard clientCode={client.code} clientId={client.id} />
+        <InvoiceList client={client} />
       </div>
     </div>
-  );
-};
-
-interface InvoicesCardProps {
-  clientId: string;
-  clientCode: string;
-}
-
-export const InvoicesCard = ({ clientId, clientCode }: InvoicesCardProps) => {
-  const navigate = useNavigate();
-  const { data, isPending } = useQuery({
-    queryFn: () => ApiListClientInvoices({ clientId }),
-    queryKey: ["client-invoices", clientId],
-  });
-
-  const getDueDays = useCallback((dueDate: Date | string) => {
-    const today = new Date();
-    const due = new Date(dueDate);
-    const diffTime = due.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays > 0) {
-      return `Vence em ${diffDays} dia${diffDays !== 1 ? "s" : ""}`;
-    } else if (diffDays < 0) {
-      return `${Math.abs(diffDays)} dia${
-        Math.abs(diffDays) !== 1 ? "s" : ""
-      } atrasada`;
-    } else {
-      return "Com vencimento hoje";
-    }
-  }, []);
-
-  return (
-    <Card className="md:col-span-2 max-h-svh">
-      <CardHeader>
-        <CardTitle className="text-2xl">Faturas do cliente</CardTitle>
-        <CardDescription className="text-xs">
-          Todas as faturas do cliente são listadas aqui
-        </CardDescription>
-        <Button
-          size="sm"
-          onClick={() => {
-            navigate(`/invoice/${clientCode}`);
-          }}
-          className="bg-blue-600 hover:bg-blue-700 text-white">
-          Cadastrar Fatura
-        </Button>
-      </CardHeader>
-      <Separator />
-      <CardContent>
-        <div className=" w-full space-y-2 max-h-[400px] scroll-py-1 overflow-x-hidden overflow-y-auto">
-          {isPending ? (
-            Array.from({ length: 8 }).map((_, i) => (
-              <div
-                className="flex-col space-y-2 px-3 items-center space-x-4 border bg-blue-100 rounded-md animate-pulse py-2"
-                key={i}>
-                <div className="flex items-center justify-center space-x-4">
-                  <Skeleton className="size-8 rounded-full" />
-                  <div className="space-y-1">
-                    <Skeleton className="h-3 w-[100px]" />
-                    <Skeleton className="h-3 w-[50px]" />
-                  </div>
-                  <div className="ml-auto mb-auto">
-                    <Skeleton className=" h-3 w-[50px]" />
-                  </div>
-                </div>
-                <Separator className="my-2" />
-                <Skeleton className="h-1 w-[250px]" />
-                <Skeleton className="h-1 w-[250px]" />
-              </div>
-            ))
-          ) : data?.invoices?.length === 0 ? (
-            <div>
-              <p>Nenhuma fatura cadastrada</p>
-            </div>
-          ) : (
-            (data?.invoices || []).map((invoice) => (
-              <Card
-                key={invoice.id}
-                className="group overflow-hidden transition-all hover:shadow-md py-2">
-                <div className="relative">
-                  <div className="p-4">
-                    <div className="flex justify-between items-center mb-3">
-                      <div className="flex items-center">
-                        <div
-                          className={cn(
-                            "h-8 w-8 rounded-full flex items-center justify-center mr-3",
-                            invoice.status === "PAID"
-                              ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
-                              : invoice.status === "CANCELED"
-                              ? "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
-                              : "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                          )}>
-                          {invoice.status === "PAID" ? (
-                            <CheckCircleIcon className="h-4 w-4" />
-                          ) : invoice.status === "CANCELED" ? (
-                            <XCircleIcon className="h-4 w-4" />
-                          ) : (
-                            <ClockIcon className="h-4 w-4" />
-                          )}
-                        </div>
-                        <div>
-                          <h3 className="font-medium text-sm inline-flex gap-1 items-center">
-                            <Barcode className="size-4" />
-                            {invoice.number}
-                          </h3>
-                          <p className="text-xs text-muted-foreground truncate max-w-[120px]">
-                            {invoice.product}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-base">
-                          {formatCurrency(invoice.amount.toString())}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {getDueDays(invoice.dueDate)}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-between items-center pt-3 border-t">
-                      <div className="text-xs text-muted-foreground">
-                        <p>
-                          Emitida:{" "}
-                          {format(invoice.issueDate, "dd/MM/yyyy", {
-                            locale: ptBR,
-                          })}
-                        </p>
-                        <p>
-                          Vencimento:{" "}
-                          {format(invoice.dueDate, "dd/MM/yyyy", {
-                            locale: ptBR,
-                          })}
-                        </p>
-                      </div>
-                      <div className="flex items-center">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 px-2 text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-blue-950/50 opacity-0 group-hover:opacity-100 transition-opacity">
-                          Visualizar
-                          <ArrowRightIcon className="ml-1 h-3.5 w-3.5" />
-                        </Button>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-7 w-7">
-                              <MoreHorizontalIcon className="h-3.5 w-3.5" />
-                              <span className="sr-only">Menu</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>Editar</DropdownMenuItem>
-                            <DropdownMenuItem>Download do PDF</DropdownMenuItem>
-                            <DropdownMenuItem>Enviar lembrete</DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-red-600 dark:text-red-400">
-                              Deletar
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))
-          )}
-        </div>
-      </CardContent>
-    </Card>
   );
 };

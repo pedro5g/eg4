@@ -1,6 +1,6 @@
 import { ApiClientProfile } from "@/api/endpoints";
 import { useParams } from "react-router";
-import { FormProfile } from "@/components/forms/form-profile.tsx";
+import { FormProfile } from "@/components/forms/form-profile.tsx/edit-client-profile-form";
 import { useQuery } from "@tanstack/react-query";
 
 export const ClientProfile = () => {

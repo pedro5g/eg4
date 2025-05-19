@@ -26,6 +26,7 @@ import { Skeleton } from "../ui/skeleton";
 import { SelectClient } from "./select-client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
+import { useGenPdf } from "@/hooks/use-gen-pdf";
 
 const formSchema = z.object({
   clientId: z.string().trim().min(1, "Selecione um cliente"),
@@ -59,17 +60,10 @@ interface RegisterInvoiceFormProps {
 }
 
 export function RegisterInvoiceForm({ clientCode }: RegisterInvoiceFormProps) {
+  const [showActions, setShowActions] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+
   const queryClient = useQueryClient();
-  const {
-    data,
-    isPending: isPendingGetClient,
-    isError: isErrorGetClient,
-  } = useQuery({
-    queryFn: () => ApiClientProfile(clientCode!),
-    queryKey: ["client-profile", clientCode],
-    enabled: !!clientCode,
-  });
 
   const form = useForm<RegisterInvoiceFormSchema>({
     resolver: zodResolver(formSchema),
@@ -82,6 +76,25 @@ export function RegisterInvoiceForm({ clientCode }: RegisterInvoiceFormProps) {
       dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     },
   });
+  const watchedValues = form.watch();
+
+  const { handlerDownloadPdf, PdfTemplateHidden } = useGenPdf({
+    client: selectedClient,
+    invoice: {
+      ...watchedValues,
+    },
+  });
+
+  const {
+    data,
+    isPending: isPendingGetClient,
+    isError: isErrorGetClient,
+  } = useQuery({
+    queryFn: () => ApiClientProfile(clientCode!),
+    queryKey: ["client-profile", clientCode],
+    enabled: !!clientCode,
+  });
+
   useEffect(() => {
     if (data) {
       setSelectedClient(data.client);
@@ -89,7 +102,16 @@ export function RegisterInvoiceForm({ clientCode }: RegisterInvoiceFormProps) {
     }
   }, [data, isPendingGetClient]);
 
-  const watchedValues = form.watch();
+  function resetForm() {
+    form.reset({
+      clientId: clientCode && data?.client.id,
+      number: randomString(13, "n"),
+      product: "",
+      amount: "0.00",
+      issueDate: new Date(),
+      dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    });
+  }
 
   const { mutate, isPending } = useMutation({
     mutationFn: (data: RegisterInvoiceFormSchema) => ApiRegisterInvoice(data),
@@ -98,17 +120,14 @@ export function RegisterInvoiceForm({ clientCode }: RegisterInvoiceFormProps) {
         window.toast.success("Fatura registrada com sucesso!", {
           description: `A fatura nº ${number} para ${product} foi criada.`,
           duration: 5000,
+          classNames: {
+            description: "text-xs",
+          },
         });
         await queryClient.refetchQueries({
           queryKey: ["client-invoices", selectedClient?.id],
         });
-        form.reset({
-          number: randomString(13, "n"),
-          product: "",
-          amount: "0.00",
-          issueDate: new Date(),
-          dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        });
+        setShowActions(true);
       }
     },
     onError: (error) => {
@@ -117,6 +136,12 @@ export function RegisterInvoiceForm({ clientCode }: RegisterInvoiceFormProps) {
     },
   });
 
+  async function downloadPdf() {
+    await handlerDownloadPdf();
+    resetForm();
+    setShowActions(false);
+  }
+
   async function onSubmit(data: RegisterInvoiceFormSchema) {
     if (isPending) return;
     mutate(data);
@@ -124,7 +149,7 @@ export function RegisterInvoiceForm({ clientCode }: RegisterInvoiceFormProps) {
 
   return (
     <div className="grid gap-8 md:grid-cols-5">
-      <Card className="md:col-span-3 border-blue-100 shadow-lg overflow-hidden p-0">
+      <Card className="md:col-span-3 border-blue-100 shadow-lg overflow-hidden h-fit p-0">
         <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-6 text-white">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <ReceiptIcon className="h-5 w-5" />
@@ -343,8 +368,31 @@ export function RegisterInvoiceForm({ clientCode }: RegisterInvoiceFormProps) {
               Esta é uma prévia da sua fatura.
             </div>
           </div>
+          <div className="pt-4 flex items-center justify-between">
+            {showActions && (
+              <>
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  onClick={() => {
+                    resetForm();
+                    form.setFocus("product");
+                    setShowActions(false);
+                  }}>
+                  Cadastra nova fatura
+                </Button>
+                <Button
+                  type="button"
+                  onClick={downloadPdf}
+                  className=" bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 transition-all duration-300">
+                  Baixar pdf
+                </Button>
+              </>
+            )}
+          </div>
         </CardContent>
       </Card>
+      {<PdfTemplateHidden />}
     </div>
   );
 }
