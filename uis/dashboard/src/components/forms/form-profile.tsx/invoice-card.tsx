@@ -1,7 +1,7 @@
 import { Invoice, Client } from "@/api/types";
 import { Card } from "@/components/ui/card";
 import { useGenPdf } from "@/hooks/use-gen-pdf";
-import { cn, formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency, getDueDays } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -19,9 +19,10 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
-import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { InvoiceModal } from "@/components/modals/invocie-modal";
+import { InvoiceModal } from "@/components/modals/invoice-modal";
+import { useState } from "react";
+import { EditInvoiceModel } from "@/components/modals/edit-invoice-model";
 
 interface InvoiceCardProps {
   invoice: Invoice;
@@ -29,6 +30,7 @@ interface InvoiceCardProps {
 }
 
 export const InvoiceCard = ({ invoice, client }: InvoiceCardProps) => {
+  const [open, setOpen] = useState(false);
   const { handlerDownloadPdf, PdfTemplate, PdfTemplateHidden } = useGenPdf({
     client,
     invoice: {
@@ -39,23 +41,6 @@ export const InvoiceCard = ({ invoice, client }: InvoiceCardProps) => {
       issueDate: invoice.issueDate,
     },
   });
-
-  const getDueDays = useCallback((dueDate: Date | string) => {
-    const today = new Date();
-    const due = new Date(dueDate);
-    const diffTime = due.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays > 0) {
-      return `Vence em ${diffDays} dia${diffDays !== 1 ? "s" : ""}`;
-    } else if (diffDays < 0) {
-      return `${Math.abs(diffDays)} dia${
-        Math.abs(diffDays) !== 1 ? "s" : ""
-      } atrasada`;
-    } else {
-      return "Com vencimento hoje";
-    }
-  }, []);
 
   return (
     <>
@@ -82,6 +67,15 @@ export const InvoiceCard = ({ invoice, client }: InvoiceCardProps) => {
                   ) : (
                     <ClockIcon className="h-4 w-4" />
                   )}
+                  <span className="sr-only">
+                    {
+                      {
+                        PAID: "status pago",
+                        PENDING: "status pendente",
+                        CANCELED: "status cancelado",
+                      }[invoice.status]
+                    }
+                  </span>
                 </div>
                 <div>
                   <h3 className="font-medium text-sm inline-flex gap-1 items-center">
@@ -140,11 +134,12 @@ export const InvoiceCard = ({ invoice, client }: InvoiceCardProps) => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Editar</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setOpen(true)}>
+                      Editar
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={handlerDownloadPdf}>
                       Download do PDF
                     </DropdownMenuItem>
-                    <DropdownMenuItem>Enviar lembrete</DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="text-red-600 dark:text-red-400">
                       Deletar
@@ -157,6 +152,7 @@ export const InvoiceCard = ({ invoice, client }: InvoiceCardProps) => {
         </div>
       </Card>
       <PdfTemplateHidden />
+      <EditInvoiceModel open={open} setIsOpen={setOpen} invoice={invoice} />
     </>
   );
 };

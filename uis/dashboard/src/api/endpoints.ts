@@ -153,7 +153,7 @@ export const ApiPaidInvoice = async <T extends UpdateInvoiceStatusBodyType>({
     `/invoice/${number}/paid`
   );
 };
-export const ApiCAnceledInvoice = async <
+export const ApiCanceledInvoice = async <
   T extends UpdateInvoiceStatusBodyType
 >({
   number,

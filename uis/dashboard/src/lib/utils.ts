@@ -110,3 +110,20 @@ export function randomString(len: number = 10, an?: "a" | "n") {
   }
   return str;
 }
+
+export const getDueDays = (dueDate: Date | string) => {
+  const today = new Date();
+  const due = new Date(dueDate);
+  const diffTime = due.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays > 0) {
+    return `Vence em ${diffDays} dia${diffDays !== 1 ? "s" : ""}`;
+  } else if (diffDays < 0) {
+    return `${Math.abs(diffDays)} dia${
+      Math.abs(diffDays) !== 1 ? "s" : ""
+    } atrasada`;
+  } else {
+    return "Com vencimento hoje";
+  }
+};
