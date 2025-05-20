@@ -21,6 +21,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import { Button } from "@/components/ui/button";
 import { InvoiceModal } from "@/components/modals/invoice-modal";
+import { useConfirmDeleteInvoice } from "@/components/modals/confirm-delete-invoice";
 
 interface InvoiceCardProps {
   invoice: Invoice;
@@ -39,6 +40,7 @@ export const InvoiceCard = ({ invoice, client, onEdit }: InvoiceCardProps) => {
       issueDate: invoice.issueDate,
     },
   });
+  const { onOpen } = useConfirmDeleteInvoice();
 
   return (
     <>
@@ -137,7 +139,9 @@ export const InvoiceCard = ({ invoice, client, onEdit }: InvoiceCardProps) => {
                       Download do PDF
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-red-600 dark:text-red-400">
+                    <DropdownMenuItem
+                      onClick={() => onOpen(invoice)}
+                      className="text-red-600 dark:text-red-400">
                       Deletar
                     </DropdownMenuItem>
                   </DropdownMenuContent>

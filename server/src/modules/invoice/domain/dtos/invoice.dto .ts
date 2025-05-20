@@ -43,3 +43,7 @@ export interface GetInvoiceServiceDto {
 export interface ListAllClientInvoicesServiceDto {
   clientId: string
 }
+
+export interface DeleteInvoiceServiceDto {
+  invoiceId: string
+}

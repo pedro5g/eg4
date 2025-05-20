@@ -28,3 +28,7 @@ export const getInvoiceSchema = z.object({
 export const listClintInvoiceSchema = z.object({
   clientId: clientIdSchema,
 })
+
+export const deleteInvoiceSchema = z.object({
+  invoiceId: z.string().trim(),
+})

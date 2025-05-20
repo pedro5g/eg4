@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify"
 import { InvoiceServices } from "./invoice.services"
 import {
+  deleteInvoiceSchema,
   getInvoiceSchema,
   listClintInvoiceSchema,
   registerInvoiceSchema,
@@ -60,5 +61,15 @@ export class InvoiceControllers {
     })
 
     reply.status(HTTP_STATUS.OK).send({ ok: true, invoices })
+  }
+
+  async deleteInvoice(request: FastifyRequest, reply: FastifyReply) {
+    const { invoiceId } = deleteInvoiceSchema.parse(request.params)
+
+    await this.invoiceServices.deleteInvoice({ invoiceId })
+
+    reply
+      .status(HTTP_STATUS.OK)
+      .send({ ok: true, message: "Invoice deleted successfully" })
   }
 }

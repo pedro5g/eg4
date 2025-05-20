@@ -3,6 +3,7 @@ import { IClientRepository } from "../clients/domain/repository/client-repositor
 import {
   CanceledInvoiceServiceDto,
   CreateInvoiceServiceDto,
+  DeleteInvoiceServiceDto,
   GetInvoiceServiceDto,
   ListAllClientInvoicesServiceDto,
   PaidInvoiceServiceDto,
@@ -37,6 +38,16 @@ export class InvoiceServices {
       dueDate,
       clientId,
     })
+  }
+
+  async deleteInvoice({ invoiceId }: DeleteInvoiceServiceDto) {
+    const invoice = await this.invoiceRepository.findById(invoiceId)
+
+    if (!invoice) {
+      throw new NotFoundException("Invalid invoice number, invoice not found")
+    }
+
+    await this.invoiceRepository.delete(invoiceId)
   }
 
   async paidInvoice({ number }: PaidInvoiceServiceDto) {

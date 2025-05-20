@@ -14,6 +14,11 @@ export class InvoiceRoutes {
       { preHandler: [isAuthenticated] },
       this.invoiceControllers.registerInvoice.bind(this.invoiceControllers),
     )
+    this.app.delete(
+      "/:invoiceId",
+      { preHandler: [isAuthenticated] },
+      this.invoiceControllers.deleteInvoice.bind(this.invoiceControllers),
+    )
     this.app.patch(
       "/:number/paid",
       { preHandler: [isAuthenticated] },

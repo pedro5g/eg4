@@ -15,6 +15,10 @@ import { InvoiceCard } from "./invoice-card";
 import { InvoiceCardSkeleton } from "../../skeleton-loader/invoice-card-skeleton";
 import { useState } from "react";
 import { EditInvoiceModel } from "@/components/modals/edit-invoice-model";
+import {
+  ConfirmDeleteInvoice,
+  useConfirmDeleteInvoice,
+} from "@/components/modals/confirm-delete-invoice";
 
 interface InvoiceListProps {
   client: Client;
@@ -22,6 +26,7 @@ interface InvoiceListProps {
 
 export const InvoiceList = ({ client }: InvoiceListProps) => {
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const { open } = useConfirmDeleteInvoice();
   const navigate = useNavigate();
 
   const { data, isPending } = useQuery({
@@ -76,6 +81,7 @@ export const InvoiceList = ({ client }: InvoiceListProps) => {
           invoice={selectedInvoice}
         />
       )}
+      {open && <ConfirmDeleteInvoice />}
     </>
   );
 };

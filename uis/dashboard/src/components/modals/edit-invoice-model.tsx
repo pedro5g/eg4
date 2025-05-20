@@ -50,7 +50,7 @@ export const EditInvoiceModel = ({
       },
       onError: (error) => {
         console.error(error);
-        window.toast.error("Um inesperado ocorreu, tente mais tarde");
+        window.toast.error("Um erro inesperado ocorreu, tente mais tarde");
       },
     });
 
@@ -70,12 +70,12 @@ export const EditInvoiceModel = ({
     },
     onError: (error) => {
       console.error(error);
-      window.toast.error("Um inesperado ocorreu, tente mais tarde");
+      window.toast.error("Um inesperado erro ocorreu, tente mais tarde");
     },
   });
 
   return (
-    <Dialog modal open={open} onOpenChange={setIsOpen}>
+    <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
         aria-describedby="edite sua fatura aqui"
@@ -88,6 +88,7 @@ export const EditInvoiceModel = ({
             Edite a fatura aqui
           </DialogDescription>
         </DialogHeader>
+        <DialogTitle className="sr-only">Editar fatura</DialogTitle>
         <div className="px-2 my-4">
           <Card className="group overflow-hidden transition-all hover:shadow-md py-2">
             <div className="relative">
