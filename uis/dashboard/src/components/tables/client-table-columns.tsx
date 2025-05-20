@@ -58,7 +58,9 @@ export const columns: ColumnDef<Client>[] = [
 
       return (
         <div className="flex flex-col gap-1">
-          <span className="text-sm text-zinc-800 font-bold">{name}</span>
+          <span className="text-sm text-zinc-800 font-bold [&>a]:hover:underline underline-offset-2 ">
+            <Link to={`/clients/${row.original.code}`}>{name}</Link>
+          </span>
           {email && (
             <span className="text-xs text-zinc-500 font-light leading-1">
               {email}

@@ -130,7 +130,7 @@ export const SelectClient = <T extends FieldValues>({
                                       {getInitials(client.name)}
                                     </AvatarFallback>
                                   </Avatar>
-                                  <div className="flex flex-col ">
+                                  <div className="flex flex-col max-w-[120px]">
                                     <span className="font-medium">
                                       {client.name}
                                     </span>
@@ -156,43 +156,52 @@ export const SelectClient = <T extends FieldValues>({
                               );
                             } else {
                               return (
-                                <CommandItem
-                                  key={client.id}
-                                  value={client.id}
-                                  onSelect={() => {
-                                    onChange(client.id);
-                                    setSelectedClient(client);
-                                    setClientSearchOpen(false);
-                                  }}
-                                  className="flex items-center gap-2 py-3">
-                                  <Avatar className="h-8 w-8">
-                                    <AvatarFallback className="bg-blue-100 text-blue-700">
-                                      {getInitials(client.name)}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <div className="flex flex-col max-w-[200px]">
-                                    <span className="font-medium">
-                                      {client.name}
-                                    </span>
-                                    {client.email && (
-                                      <span className="text-xs text-muted-foreground truncate">
-                                        {client.email}
+                                <>
+                                  <CommandItem
+                                    key={client.id}
+                                    value={client.id}
+                                    onSelect={() => {
+                                      onChange(client.id);
+                                      setSelectedClient(client);
+                                      setClientSearchOpen(false);
+                                    }}
+                                    className="flex items-center gap-2 py-3">
+                                    <Avatar className="h-8 w-8">
+                                      <AvatarFallback className="bg-blue-100 text-blue-700">
+                                        {getInitials(client.name)}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex flex-col max-w-[120px]">
+                                      <span className="font-medium">
+                                        {client.name}
                                       </span>
-                                    )}
-                                  </div>
-                                  {client.type && (
-                                    <Badge
-                                      variant="outline"
-                                      className="ml-auto">
-                                      {
+                                      {client.email && (
+                                        <span className="text-xs text-muted-foreground truncate">
+                                          {client.email}
+                                        </span>
+                                      )}
+                                    </div>
+                                    {client.type && (
+                                      <Badge
+                                        variant="outline"
+                                        className="ml-auto">
                                         {
-                                          J: "Pessoa Jurídica",
-                                          F: "Pessoa Física",
-                                        }[client.type as string]
-                                      }
-                                    </Badge>
+                                          {
+                                            J: "Pessoa Jurídica",
+                                            F: "Pessoa Física",
+                                          }[client.type as string]
+                                        }
+                                      </Badge>
+                                    )}
+                                  </CommandItem>
+                                  {index === page.clients.length - 1 && (
+                                    <CommandLoading>
+                                      <div className="w-full flex items-center justify-center py-5">
+                                        <Loader2 className="size-4 animate-spin text-zinc-600" />
+                                      </div>
+                                    </CommandLoading>
                                   )}
-                                </CommandItem>
+                                </>
                               );
                             }
                           })
