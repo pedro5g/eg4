@@ -2,6 +2,7 @@ import { ApiClientProfile } from "@/api/endpoints";
 import { useParams } from "react-router";
 import { FormProfile } from "@/components/forms/form-profile.tsx/edit-client-profile-form";
 import { useQuery } from "@tanstack/react-query";
+import { ClientProfileSkeleton } from "@/components/skeleton-loader/client-profile-skeleton";
 
 export const ClientProfile = () => {
   const clientCode = useParams().clientCode;
@@ -13,7 +14,7 @@ export const ClientProfile = () => {
     refetchOnMount: false,
   });
 
-  if (isLoading || !data?.client) return <p>Carregando ...</p>;
+  if (isLoading || !data?.client) return <ClientProfileSkeleton />;
 
   const { client } = data;
 
