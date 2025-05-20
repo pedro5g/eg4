@@ -61,7 +61,7 @@ export class ClientServices {
     }
 
     await this.clientRepository.create({
-      code: randomString(10),
+      code: randomString(6),
       name,
       email,
       address,

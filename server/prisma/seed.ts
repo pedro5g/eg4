@@ -1,7 +1,9 @@
 import { PrismaClient } from "@prisma/client"
-import { faker } from "@faker-js/faker"
+import { ar, faker } from "@faker-js/faker"
 import { randomString } from "@/core/helpers"
 import { subMonths } from "date-fns"
+import { EncrypterModule } from "@/modules/encrypter/encrypter.module"
+import { z } from "zod"
 
 const prisma = new PrismaClient()
 
@@ -40,10 +42,75 @@ function generateTaxIdAndDetails() {
   }
 }
 
-async function main() {
-  const length = parseInt(process.argv[2]) || 1000
+const seedCLISchema = z
+  .strictObject({
+    "-q": z.coerce.number().positive().default(100),
+    "-u": z.string().trim().min(1).optional(),
+    "-e": z.string().trim().min(1).email().optional(),
+    "-p": z.string().trim().min(6).max(255).optional(),
+  })
+  .refine((args) => {
+    if (args["-u"] && args["-p"] && args["-u"]) return true
+    if (!args["-u"] && !args["-p"] && !args["-u"]) return true
+    return false
+  }, "if one of these [-u -e -p] is passed, all must be passed")
+  .transform((args) => {
+    return {
+      mockQuantity: args["-q"],
+      userName: args["-u"] || "UserTest",
+      userEmail: args["-e"] || "UserTest@gmail.com",
+      userPassword: args["-u"] || "123456",
+    }
+  })
 
-  const author = await prisma.user.findFirst()
+function seedCli() {
+  const args = process.argv.slice(2, 10)
+
+  if (args.length === 1 && args[0] === "-h") {
+    console.log(
+      "seed cli args\n-q: quantity of client to be mock on db \n-u: userName \n-e: userEmail \n-u: userPassword",
+    )
+    process.exit(0)
+  }
+
+  const _sameConfig = args.reduce(
+    (a, v, i, arr) => {
+      if (i % 2 === 0) {
+        return { ...a, [v]: arr[i + 1] }
+      }
+      return { ...a }
+    },
+    {} as Record<string, string>,
+  )
+
+  const { data, error, success } = seedCLISchema.safeParse(_sameConfig)
+
+  if (!success) {
+    console.error(error?.errors[0].message)
+    process.exit(1)
+  }
+
+  return data
+}
+
+async function main() {
+  const { mockQuantity, ...user } = seedCli()
+
+  let author = await prisma.user.findUnique({
+    where: {
+      email: user.userEmail,
+    },
+  })
+
+  if (!author) {
+    author = await prisma.user.create({
+      data: {
+        name: user.userName,
+        email: user.userEmail,
+        password: await EncrypterModule.factory().toHash(user.userPassword),
+      },
+    })
+  }
 
   if (!author) {
     throw new Error(
@@ -55,12 +122,12 @@ async function main() {
 
   const statuses = ["ACTIVE", "INACTIVE", "BLOCKED", "PENDING"] as const
 
-  const clients = Array.from({ length }, (_, i) => {
+  const clients = Array.from({ length: mockQuantity }, (_, i) => {
     const { taxId, type, openingDate, tradeName } = generateTaxIdAndDetails()
 
     const state = faker.helpers.arrayElement(states)
     const name = faker.person.fullName()
-    const code = randomString(10)
+    const code = randomString(6)
 
     return {
       code,
@@ -105,7 +172,10 @@ async function main() {
     data: clients,
   })
 
-  console.log("Customer seed generated successfully 🌱🌱🌱🌱")
+  console.log("All done 🌱🌱🌱")
+  console.log(
+    `Access app using \nEmail: ${user.userName} \nPassword: ${user.userPassword}`,
+  )
 }
 
 main()
