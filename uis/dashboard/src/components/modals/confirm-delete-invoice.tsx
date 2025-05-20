@@ -11,12 +11,20 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "../ui/button";
-import { parseAsBoolean, parseAsString, useQueryStates } from "nuqs";
 
-export function ConfirmDeleteInvoice() {
-  const { open, invoice, onClose } = useConfirmDeleteInvoice();
+interface ConfirmDeleteInvoiceProps {
+  invoice: Invoice;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}
+
+export function ConfirmDeleteInvoice({
+  open,
+  setOpen,
+  invoice,
+}: ConfirmDeleteInvoiceProps) {
   const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
@@ -27,7 +35,7 @@ export function ConfirmDeleteInvoice() {
         await queryClient.refetchQueries({
           queryKey: ["client-invoices", invoice.clientId],
         });
-        onClose();
+        setOpen(false);
       }
     },
     onError: (error) => {
@@ -42,10 +50,12 @@ export function ConfirmDeleteInvoice() {
   }
 
   return (
-    <AlertDialog open={open} onOpenChange={onClose}>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Você tem certeza absoluta?</AlertDialogTitle>
+          <AlertDialogTitle className="inline-flex items-center gap-2 text-red-500 text-xl">
+            Você tem certeza absoluta? <AlertCircle />
+          </AlertDialogTitle>
           <AlertDialogDescription>
             Esta ação não pode ser desfeita. Isso excluirá permanentemente essa
             fatura.
@@ -69,39 +79,3 @@ export function ConfirmDeleteInvoice() {
     </AlertDialog>
   );
 }
-
-export const useConfirmDeleteInvoice = () => {
-  const [data, setData] = useQueryStates({
-    alert: parseAsBoolean.withDefault(false),
-    invoice: parseAsString.withDefault(""),
-  });
-
-  const invoice = (data.invoice
-    ? JSON.parse(decodeURIComponent(data.invoice))
-    : null) as unknown as Invoice;
-
-  function onOpen(_data: Invoice) {
-    setData(() => {
-      return {
-        alert: true,
-        invoice: encodeURIComponent(JSON.stringify(_data)),
-      };
-    });
-  }
-
-  function onClose() {
-    setData(() => {
-      return {
-        alert: false,
-        invoice: "",
-      };
-    });
-  }
-
-  return {
-    open: data.alert,
-    invoice,
-    onOpen,
-    onClose,
-  };
-};

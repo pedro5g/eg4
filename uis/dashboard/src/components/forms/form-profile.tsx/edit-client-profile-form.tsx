@@ -129,12 +129,6 @@ export const FormProfile = ({ client }: FormProfileProps) => {
       console.log(error);
 
       if (error.errorCode) {
-        if (error.errorCode === "EMAIL_ALREADY_REGISTERED") {
-          methods.setError("email", {
-            message: "Já existe um cliente registrado com este e-mail",
-          });
-          return;
-        }
         if (error.errorCode === "TAXID_ALREADY_REGISTERED") {
           methods.setError("taxId", {
             message: `Já existe um cliente registrado com este ${
@@ -378,25 +372,10 @@ export const FormProfile = ({ client }: FormProfileProps) => {
                       )}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          {!client.email && (
-                            <TextField<UpdateClientProfileSchema>
-                              name="email"
-                              label="Email"
-                            />
-                          )}
-                          {client.email && (
-                            <div className="space-y-1 opacity-60 scale-99 pointer-events-none">
-                              <TextField<UpdateClientProfileSchema>
-                                name="email"
-                                label="Email"
-                                readonly
-                              />
-                              <p className="text-muted-foreground text-sm inline-flex items-center">
-                                Campo não editável
-                                <AlertCircle className="size-5 ml-2" />
-                              </p>
-                            </div>
-                          )}
+                          <TextField<UpdateClientProfileSchema>
+                            name="email"
+                            label="Email"
+                          />
                         </div>
                         <div>
                           <TextField<UpdateClientProfileSchema>

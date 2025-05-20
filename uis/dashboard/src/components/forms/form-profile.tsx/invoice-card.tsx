@@ -21,7 +21,8 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import { Button } from "@/components/ui/button";
 import { InvoiceModal } from "@/components/modals/invoice-modal";
-import { useConfirmDeleteInvoice } from "@/components/modals/confirm-delete-invoice";
+import { ConfirmDeleteInvoice } from "@/components/modals/confirm-delete-invoice";
+import { useState } from "react";
 
 interface InvoiceCardProps {
   invoice: Invoice;
@@ -30,6 +31,7 @@ interface InvoiceCardProps {
 }
 
 export const InvoiceCard = ({ invoice, client, onEdit }: InvoiceCardProps) => {
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const { handlerDownloadPdf, PdfTemplate, PdfTemplateHidden } = useGenPdf({
     client,
     invoice: {
@@ -40,7 +42,6 @@ export const InvoiceCard = ({ invoice, client, onEdit }: InvoiceCardProps) => {
       issueDate: invoice.issueDate,
     },
   });
-  const { onOpen } = useConfirmDeleteInvoice();
 
   return (
     <>
@@ -133,15 +134,17 @@ export const InvoiceCard = ({ invoice, client, onEdit }: InvoiceCardProps) => {
                       <span className="sr-only">Menu</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent
+                    className="[&_div]:cursor-pointer"
+                    align="end">
                     <DropdownMenuItem onClick={onEdit}>Editar</DropdownMenuItem>
                     <DropdownMenuItem onClick={handlerDownloadPdf}>
                       Download do PDF
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      onClick={() => onOpen(invoice)}
-                      className="text-red-600 dark:text-red-400">
+                      onClick={() => setShowConfirmModal(true)}
+                      className="text-red-600">
                       Deletar
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -152,6 +155,13 @@ export const InvoiceCard = ({ invoice, client, onEdit }: InvoiceCardProps) => {
         </div>
       </Card>
       <PdfTemplateHidden />
+      {setShowConfirmModal && (
+        <ConfirmDeleteInvoice
+          open={showConfirmModal}
+          setOpen={setShowConfirmModal}
+          invoice={invoice}
+        />
+      )}
     </>
   );
 };

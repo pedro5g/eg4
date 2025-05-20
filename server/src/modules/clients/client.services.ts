@@ -43,17 +43,6 @@ export class ClientServices {
     zipCode,
     authorId,
   }: RegisterClientServiceDto) {
-    if (email) {
-      const clientAlreadyExist = await this.clientRepository.findByEmail(email)
-
-      if (clientAlreadyExist) {
-        throw new BadRequestException(
-          "Client with this email already exists",
-          ErrorCode.EMAIL_ALREADY_REGISTERED,
-        )
-      }
-    }
-
     if (taxId) {
       const clientAlreadyExist = await this.clientRepository.findByTaxId(taxId)
 
@@ -121,23 +110,8 @@ export class ClientServices {
       throw new NotFoundException("Invalid code, clint not found")
     }
 
-    if (client.email && email && client.email !== email) {
-      throw new BadRequestException("Email cannot be modified")
-    }
-
     if (client.taxId && taxId && client.taxId !== taxId) {
       throw new BadRequestException("TaxId cannot be modified")
-    }
-
-    if (!client.email && email) {
-      const clientAlreadyExist = await this.clientRepository.findByEmail(email)
-
-      if (clientAlreadyExist) {
-        throw new BadRequestException(
-          "Client with this email already exists",
-          ErrorCode.EMAIL_ALREADY_REGISTERED,
-        )
-      }
     }
 
     if (!client.taxId && taxId) {

@@ -72,12 +72,6 @@ export const Overview = () => {
       console.log(error);
 
       if (error.errorCode) {
-        if (error.errorCode === "EMAIL_ALREADY_REGISTERED") {
-          methods.setError("email", {
-            message: "Já existe um cliente registrado com este e-mail",
-          });
-          return;
-        }
         if (error.errorCode === "TAXID_ALREADY_REGISTERED") {
           methods.setError("taxId", {
             message: `Já existe um cliente registrado com este ${
