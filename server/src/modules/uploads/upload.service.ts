@@ -115,6 +115,11 @@ export class UploadService {
       const bucketPath = path.join(dirname, UPLOAD_DIR, bucketName)
       const filePath = path.join(bucketPath, fileName)
       await fs.unlink(filePath)
+      const isEmpty = (await fs.readdir(bucketPath)).length === 0
+      if (isEmpty) {
+        await fs.rmdir(bucketPath)
+      }
+
       return { message: "File deleted successfully" }
     } catch (error) {
       logger.error("Error on delete file", error)

@@ -51,6 +51,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiUpdateClientProfile } from "@/api/endpoints";
 
 import { InvoiceList } from "./invoice-list";
+import { TableSheet } from "@/components/tables/table-sheet";
 
 interface FormProfileProps {
   client: Client;
@@ -171,6 +172,11 @@ export const FormProfile = ({ client }: FormProfileProps) => {
             <EditIcon className="h-4 w-4 mr-2" />
             Editar Perfil
           </Button>
+          <TableSheet client={client}>
+            <Button variant="outline" size={"sm"}>
+              Arquivos
+            </Button>
+          </TableSheet>
         </div>
       </div>
       <div className="grid md:grid-cols-5 gap-4">

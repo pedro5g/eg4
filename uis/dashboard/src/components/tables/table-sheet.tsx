@@ -20,16 +20,20 @@ import {
 import { FileTree } from "./file-tree";
 import {
   ConfirmDeleteFile,
-  useConfirmDeleteFiles,
+  useConfirmDeleteFile,
 } from "../modals/confirm-delete-file";
+import { parseAsBoolean, parseAsString, useQueryStates } from "nuqs";
+import React, { useCallback, useMemo } from "react";
 
 interface TableSheetProps {
   client: Client;
+  children: React.ReactNode;
 }
 
-export const TableSheet = ({ client }: TableSheetProps) => {
-  const { open } = useConfirmDeleteFiles();
-  const { open: openForm, onOpen } = useUploadClientFileModal();
+export const TableSheet = ({ client, children }: TableSheetProps) => {
+  const { openConfirmDeleteFile } = useConfirmDeleteFile();
+  const { openUploadClientFileModal, onOpenUploadClientFileModal } =
+    useUploadClientFileModal();
 
   const { data, isLoading } = useQuery({
     queryFn: () => ApiListClientFiles({ clientId: client.id }),
@@ -39,14 +43,7 @@ export const TableSheet = ({ client }: TableSheetProps) => {
   return (
     <>
       <Sheet>
-        <SheetTrigger asChild>
-          <Button
-            variant="outline"
-            size={"sm"}
-            className="cursor-pointer w-full border-none font-normal focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*='text-'])]:text-muted-foreground relative flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4">
-            Arquivos
-          </Button>
-        </SheetTrigger>
+        <SheetTrigger asChild>{children}</SheetTrigger>
         <SheetContent side="right" className="flex flex-col">
           <SheetHeader className="gap-1">
             <SheetTitle>Arquivos do {client.name}</SheetTitle>
@@ -57,14 +54,14 @@ export const TableSheet = ({ client }: TableSheetProps) => {
               <div className="inline-flex items-center justify-end w-full bg-blue-50 py-1 px-4">
                 <div className="inline-flex items-center gap-2 text-zinc-600">
                   <button
-                    onClick={() => onOpen(client.id)}
+                    onClick={() => onOpenUploadClientFileModal(client.id)}
                     className="rounded-full cursor-pointer p-1 hover:bg-blue-50/50">
                     <FilePlus size={16} />
                     <span className="sr-only">salvar novo arquivo</span>
                   </button>
                 </div>
               </div>
-              <div className="px-2">
+              <div className="w-full space-y-2 max-h-[600px] scroll-py-1 overflow-x-hidden overflow-y-auto px-2 text-center">
                 {isLoading ? (
                   <p>carregando...</p>
                 ) : data && data.clientFiles.length > 0 ? (
@@ -72,7 +69,7 @@ export const TableSheet = ({ client }: TableSheetProps) => {
                     <FileTree item={file} clientId={client.id} key={i} />
                   ))
                 ) : (
-                  "Nenhum Arquivo"
+                  <p>Nenhum Arquivo</p>
                 )}
               </div>
             </div>
@@ -86,8 +83,50 @@ export const TableSheet = ({ client }: TableSheetProps) => {
           </SheetFooter>
         </SheetContent>
       </Sheet>
-      {openForm && <UploadClientFileModal />}
-      {open && <ConfirmDeleteFile />}
+      {openUploadClientFileModal && <UploadClientFileModal />}
+      {openConfirmDeleteFile && <ConfirmDeleteFile />}
     </>
   );
+};
+
+export const useFileSheet = () => {
+  const [datas, setDatas] = useQueryStates({
+    openFShee: parseAsBoolean.withDefault(false),
+    clt: parseAsString.withDefault(""),
+  });
+
+  const onOpenFileSheet = useCallback((client: Client) => {
+    setDatas(() => {
+      return {
+        openFShee: true,
+        clt: encodeURIComponent(JSON.stringify(client)),
+      };
+    });
+  }, []);
+
+  const onCloseFolderSheet = useCallback(() => {
+    setDatas(() => {
+      return {
+        openFShee: false,
+        clt: "",
+      };
+    });
+  }, []);
+
+  const openFolderSheet = datas.openFShee;
+  const client = useMemo(() => {
+    try {
+      return JSON.parse(decodeURIComponent(datas.clt)) as Client;
+    } catch (e) {
+      onCloseFolderSheet();
+      return null;
+    }
+  }, [datas.clt]);
+
+  return {
+    openFolderSheet,
+    client,
+    onOpenFileSheet,
+    onCloseFolderSheet,
+  };
 };

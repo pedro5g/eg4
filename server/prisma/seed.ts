@@ -14,12 +14,6 @@ function formatDateToString(date: Date): string {
   return `${day}${month}${year}`
 }
 
-function uniqueEmail(email: string) {
-  const [start, end] = email.split("@")
-  const uniqueCode = randomString(12)
-  return `${start}${uniqueCode}@${end}`
-}
-
 function generateTaxIdAndDetails() {
   const isCpf = Math.random() < 0.5
 
@@ -150,10 +144,7 @@ async function main() {
           ? faker.string.numeric({ length: Math.random() > 0.2 ? 8 : 9 })
           : null,
       type,
-      email:
-        Math.random() > 0.2
-          ? uniqueEmail(faker.internet.email().toLowerCase())
-          : null,
+      email: Math.random() > 0.2 ? faker.internet.email().toLowerCase() : null,
       country: "BR",
       taxId,
       openingDate,

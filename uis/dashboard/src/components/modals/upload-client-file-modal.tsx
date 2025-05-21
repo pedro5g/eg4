@@ -20,8 +20,16 @@ import { useCallback } from "react";
 const uploadFormSchema = z
   .object({
     clientId: z.string().trim().cuid(),
-    bucket: z.string().trim().min(2).max(100),
-    file: z.instanceof(File),
+    bucket: z
+      .string({
+        required_error: "Diga a pasta que você deseja salvar o arquivo",
+      })
+      .trim()
+      .min(1, { message: "Diga a pasta que você deseja salvar o arquivo" })
+      .max(100),
+    file: z.instanceof(File, {
+      message: "Faça upload de algum arquivo",
+    }),
   })
   .transform(({ bucket, ...rest }) => {
     return { ...rest, bucket: bucket.replace(/^\/|\/$/g, "") };
@@ -30,7 +38,12 @@ const uploadFormSchema = z
 type UploadFromSchemaType = z.infer<typeof uploadFormSchema>;
 
 export const UploadClientFileModal = () => {
-  const { open, onClose, clientId, folderPath } = useUploadClientFileModal();
+  const {
+    openUploadClientFileModal,
+    onCloseUploadClientFileModal,
+    clientId,
+    folderPath,
+  } = useUploadClientFileModal();
   const queryClient = useQueryClient();
 
   const methods = useForm({
@@ -49,7 +62,7 @@ export const UploadClientFileModal = () => {
           queryKey: ["client-files", clientId],
         });
         window.toast.success("Arquivo salvo com sucesso", { duration: 1000 });
-        onClose();
+        onCloseUploadClientFileModal();
       }
     },
     onError: (error) => {
@@ -69,11 +82,15 @@ export const UploadClientFileModal = () => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog
+      open={openUploadClientFileModal}
+      onOpenChange={onCloseUploadClientFileModal}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Upar arquivos do cliente</DialogTitle>
-          <DialogDescription></DialogDescription>
+          <DialogTitle>Salve os arquivos do cliente aqui</DialogTitle>
+          <DialogDescription>
+            Faça upload de todos os arquivos importante do client
+          </DialogDescription>
         </DialogHeader>
         <FormWrapper method={methods}>
           <form
@@ -89,7 +106,7 @@ export const UploadClientFileModal = () => {
                 required
               />
               <span className="text-xs text-zinc-600">
-                Passa o nome da pasta que deseja salvar o arquivo,{" "}
+                Diga o nome da pasta que deseja salvar o arquivo,{" "}
                 <b>(Ex): /pdfs ou /arquivos/pdfs</b>
               </span>
             </div>
@@ -107,40 +124,43 @@ export const UploadClientFileModal = () => {
 
 export const useUploadClientFileModal = () => {
   const [datas, setDatas] = useQueryStates({
-    openUm: parseAsBoolean.withDefault(false),
+    openCfm: parseAsBoolean.withDefault(false),
     folderP: parseAsString.withDefault(""),
     cTarget: parseAsString.withDefault(""),
   });
 
-  const onOpen = useCallback((clientId: string, folderP: string = "") => {
-    setDatas(() => {
-      return {
-        openUm: true,
-        folderP: encodeURIComponent(folderP),
-        cTarget: clientId,
-      };
-    });
-  }, []);
+  const onOpenUploadClientFileModal = useCallback(
+    (clientId: string, folderP: string = "") => {
+      setDatas(() => {
+        return {
+          openCfm: true,
+          folderP: encodeURIComponent(folderP),
+          cTarget: clientId,
+        };
+      });
+    },
+    []
+  );
 
-  const onClose = useCallback(() => {
+  const onCloseUploadClientFileModal = useCallback(() => {
     setDatas(() => {
       return {
-        openUm: false,
+        openCfm: false,
         folderP: "",
         cTarget: "",
       };
     });
   }, []);
 
-  const open = datas.openUm;
+  const openUploadClientFileModal = datas.openCfm;
   const folderPath = decodeURIComponent(datas.folderP);
   const clientId = datas.cTarget;
 
   return {
-    open,
+    openUploadClientFileModal,
     folderPath,
     clientId,
-    onOpen,
-    onClose,
+    onOpenUploadClientFileModal,
+    onCloseUploadClientFileModal,
   };
 };

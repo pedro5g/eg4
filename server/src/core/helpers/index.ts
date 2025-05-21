@@ -81,43 +81,43 @@ export interface DirectoryNode {
   name: string
   path: string
   itemCount: number
-  children: (FileNode | DirectoryNode)[]
+  children: FileNode | DirectoryNode
 }
 
 export type TreeNode = FileNode | DirectoryNode
 
 export function groupByPath(files: IClientFile[]) {
-  const result: Record<string, any> = {}
+  const result: Record<string, TreeNode> = {}
 
   for (const file of files) {
     if (!file.path) continue
 
     const segments = file.path.split("/")
 
-    let current = result
+    let current: Record<string, TreeNode> | TreeNode = result
 
     for (let i = 0; i < segments.length - 1; i++) {
       const segment = segments[i]
 
-      if (!current[segment]) {
+      if (!("type" in current) && !current[segment]) {
         current[segment] = {
           type: "directory",
           name: segment,
-          children: {},
-
+          children: {} as FileNode | DirectoryNode,
           itemCount: 0,
           path: segments.slice(0, i + 1).join("/"),
         }
       }
 
-      current[segment].itemCount++
-
-      current = current[segment].children
+      if (!("type" in current) && current[segment].type === "directory") {
+        current[segment].itemCount++
+        current = current[segment].children
+      }
     }
 
     const fileName = segments[segments.length - 1]
 
-    if (fileName) {
+    if (fileName && !("type" in current)) {
       current[fileName] = {
         type: "file",
         name: file.name,
@@ -130,7 +130,9 @@ export function groupByPath(files: IClientFile[]) {
     }
   }
 
-  function convertToArray(obj: Record<string, any>): TreeNode[] {
+  function convertToArray(
+    obj: Record<string, TreeNode> | TreeNode,
+  ): TreeNode[] {
     const nodes = Object.values(obj)
 
     const directories = nodes.filter((node) => node.type === "directory")

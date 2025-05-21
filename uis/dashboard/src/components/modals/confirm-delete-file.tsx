@@ -18,7 +18,8 @@ import { z } from "zod";
 
 export function ConfirmDeleteFile() {
   const queryClient = useQueryClient();
-  const { open, close, fileId, clientId } = useConfirmDeleteFiles();
+  const { openConfirmDeleteFile, onCloseConfirmDeleteFile, fileId, clientId } =
+    useConfirmDeleteFile();
 
   const { mutate, isPending } = useMutation({
     mutationFn: () => ApiDeleteClientFile({ id: fileId }),
@@ -28,7 +29,7 @@ export function ConfirmDeleteFile() {
         await queryClient.refetchQueries({
           queryKey: ["client-files", clientId],
         });
-        close();
+        onCloseConfirmDeleteFile();
       }
     },
     onError: (error) => {
@@ -43,7 +44,9 @@ export function ConfirmDeleteFile() {
   }
 
   return (
-    <AlertDialog open={open} onOpenChange={close}>
+    <AlertDialog
+      open={openConfirmDeleteFile}
+      onOpenChange={onCloseConfirmDeleteFile}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="inline-flex items-center gap-2 text-red-500 text-xl">
@@ -73,45 +76,48 @@ export function ConfirmDeleteFile() {
   );
 }
 
-export const useConfirmDeleteFiles = () => {
+export const useConfirmDeleteFile = () => {
   const [datas, setDatas] = useQueryStates({
-    open: parseAsBoolean.withDefault(false),
+    openCdf: parseAsBoolean.withDefault(false),
     fileTarget: parseAsString.withDefault(""),
     cTarget: parseAsString.withDefault(""),
   });
 
-  const alert = useCallback((fileId: string, clientId: string) => {
-    const { success } = z.string().trim().cuid().safeParse(fileId);
-    if (!success) return;
+  const onOpenConfirmDeleteFile = useCallback(
+    (fileId: string, clientId: string) => {
+      const { success } = z.string().trim().cuid().safeParse(fileId);
+      if (!success) return;
 
+      setDatas(() => {
+        return {
+          openCdf: true,
+          fileTarget: fileId,
+          cTarget: clientId,
+        };
+      });
+    },
+    []
+  );
+
+  const onCloseConfirmDeleteFile = useCallback(() => {
     setDatas(() => {
       return {
-        open: true,
-        fileTarget: fileId,
-        cTarget: clientId,
-      };
-    });
-  }, []);
-
-  const close = useCallback(() => {
-    setDatas(() => {
-      return {
-        open: false,
+        openCdf: false,
         fileTarget: "",
         cTarget: "",
       };
     });
   }, []);
 
-  const open = datas.open;
+  const openConfirmDeleteFile = datas.openCdf;
   const fileId = datas.fileTarget;
   const clientId = datas.cTarget;
 
   return {
-    open,
+    openConfirmDeleteFile,
     fileId,
     clientId,
-    alert,
-    close,
+    onOpenConfirmDeleteFile,
+    onCloseConfirmDeleteFile,
   };
 };

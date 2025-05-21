@@ -21,13 +21,13 @@ import {
 import { TreeNode } from "@/api/types";
 import { Csv, ImageIcon, PDF, TextIcon } from "../icons";
 import { cn } from "@/lib/utils";
-import { useConfirmDeleteFiles } from "../modals/confirm-delete-file";
+import { useConfirmDeleteFile } from "../modals/confirm-delete-file";
 import { useUploadClientFileModal } from "../modals/upload-client-file-modal";
 
 const iconResolve = (extension: string) => {
   if (extension === "pdf") return <PDF />;
   if (extension === "txt") return <TextIcon />;
-  if (["cvs", "xlsx"].includes(extension)) return <Csv />;
+  if (["cvs", "xlsx", "xls"].includes(extension)) return <Csv />;
   if (["svg", "jpeg", "png", "jpg", "webp", "gif"].includes(extension))
     return <ImageIcon />;
 
@@ -48,8 +48,8 @@ export const FileTree = ({
   item: TreeNode;
   clientId: string;
 }) => {
-  const { alert } = useConfirmDeleteFiles();
-  const { onOpen } = useUploadClientFileModal();
+  const { onOpenConfirmDeleteFile } = useConfirmDeleteFile();
+  const { onOpenUploadClientFileModal } = useUploadClientFileModal();
 
   if (item.type === "file") {
     const [_, extension] = item.name.split(".");
@@ -78,9 +78,10 @@ export const FileTree = ({
               <Download />
             </a>
             <button
-              onClick={() => alert(item.id, item.clientId)}
+              onClick={() => onOpenConfirmDeleteFile(item.id, item.clientId)}
               className="hidden group-hover:block text-sm transition-transform">
               <Trash />
+              <span className="sr-only">deletar arquivo</span>
             </button>
           </div>
         </div>
@@ -102,7 +103,7 @@ export const FileTree = ({
           <CollapsibleTrigger
             className="data-[state='open']:[&>svg[data-folder='close']]:hidden data-[state='closed']:[&>svg[data-folder='open']]:hidden"
             asChild>
-            <button className="[&_svg]:size-4 inline-flex items-center gap-2">
+            <button className="[&_svg]:size-4 inline-flex items-center gap-2 w-9/10">
               <ChevronRight className="transition-transform" />
               <Folder data-folder={"close"} />
               <FolderOpen data-folder={"open"} />
@@ -110,9 +111,12 @@ export const FileTree = ({
             </button>
           </CollapsibleTrigger>
           <button
-            onClick={() => onOpen(clientId, "/" + item.path)}
-            className="hidden group-hover:block z-20">
+            onClick={() =>
+              onOpenUploadClientFileModal(clientId, "/" + item.path)
+            }
+            className="hidden group-hover:block text-zinc-600">
             <FilePlus className="size-4" />
+            <span className="sr-only">salvar novo arquivo</span>
           </button>
         </div>
 

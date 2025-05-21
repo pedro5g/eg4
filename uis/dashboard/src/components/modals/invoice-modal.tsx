@@ -19,7 +19,7 @@ export const InvoiceModal = ({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
         aria-describedby="Pdf da fatura"
-        className="max-h-[600px] scroll-py-1 overflow-x-hidden overflow-y-auto">
+        className="max-h-[600px] scroll-py-1 overflow-x-hidden overflow-y-auto p-0 rounded-none">
         <DialogTitle className="sr-only">
           Pre visualização da fatura
         </DialogTitle>
