@@ -9,7 +9,7 @@ export class UploadRoutes {
 
   public build() {
     this.app.get(
-      "/files/:bucketName/:fileName",
+      "/files/*",
       this.uploadController.download.bind(this.uploadController),
     )
 

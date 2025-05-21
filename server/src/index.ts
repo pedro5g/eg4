@@ -13,6 +13,7 @@ import { StoreModule } from "./modules/store/store.module"
 import { ClientModule } from "./modules/clients/client.module"
 import { UserModule } from "./modules/user/user.module"
 import { InvoiceModule } from "./modules/invoice/invoice.module"
+import { ClientFilesModule } from "./modules/client-files/client-files.module"
 
 const app = fastify()
 
@@ -40,7 +41,16 @@ app.register(fastifyCookie, {
     },
   },
 })
-app.register(fastifyMultipart)
+app.register(fastifyMultipart, {
+  limits: {
+    fieldNameSize: 100,
+    fieldSize: 1000000,
+    fields: 10,
+    fileSize: 10000000,
+    files: 5,
+  },
+  attachFieldsToBody: true,
+})
 
 decorate(app)
 
@@ -50,6 +60,9 @@ app.register(StoreModule.build, { prefix: `${env.API_PREFIX}/store` })
 app.register(ClientModule.build, { prefix: `${env.API_PREFIX}/client` })
 app.register(InvoiceModule.build, { prefix: `${env.API_PREFIX}/invoice` })
 app.register(UploadModule.build, { prefix: `${env.API_PREFIX}/upload` })
+app.register(ClientFilesModule.build, {
+  prefix: `${env.API_PREFIX}/client-files`,
+})
 
 app.setErrorHandler(globalErrorHandler)
 app

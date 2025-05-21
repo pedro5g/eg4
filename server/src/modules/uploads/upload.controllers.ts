@@ -7,11 +7,19 @@ export class UploadControllers {
   constructor(private readonly uploadServices: UploadService) {}
 
   async download(request: FastifyRequest, reply: FastifyReply) {
-    const { bucketName, fileName } = downloadSchema.parse(request.params)
+    const fullPath = decodeURIComponent((request.params as any)["*"])
+    const match = fullPath.match(/^(.*)\/([^\/]+)$/)
+
+    const { bucketName, fileName, download } = downloadSchema.parse({
+      bucketName: match?.[1] || "",
+      fileName: match?.[2] || "",
+      ...(request.query as object),
+    })
 
     const { file, headers } = await this.uploadServices.download({
       bucketName,
       fileName,
+      download,
     })
 
     reply

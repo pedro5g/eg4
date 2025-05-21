@@ -4,6 +4,8 @@ import {
   AllowedExtensionsTypes,
   BrowserViewableTypes,
 } from "../constraints"
+import { IClientFile } from "@/modules/client-files/domain/dtos/client-files.dtos"
+import { env } from "node:process"
 
 export function sanitizeFilename(fileName: string) {
   const name = path.basename(fileName)
@@ -19,13 +21,13 @@ export function isAllowedMineType(
   return type in ALLOWED_TYPES
 }
 
-export function getMimeTypeFromExtension(fileExt: AllowedExtensionsTypes) {
+export function getMimeTypeFromExtension(fileExt: string) {
   for (const [mimeType, extensions] of Object.entries(ALLOWED_TYPES)) {
     if (extensions.includes(fileExt.toLowerCase())) {
       return mimeType
     }
-    return null
   }
+  return null
 }
 
 export function canShowInBrowser(fileExt: string) {
@@ -63,4 +65,90 @@ export function randomString(len: number = 10, an?: "a" | "n") {
     str += String.fromCharCode((r += r > 9 ? (r < 36 ? 55 : 61) : 48))
   }
   return str
+}
+
+export interface FileNode {
+  type: "file"
+  name: string
+  id: string
+  clientId: string
+  url: string
+  uploadedAt: string | Date
+  path: string
+}
+export interface DirectoryNode {
+  type: "directory"
+  name: string
+  path: string
+  itemCount: number
+  children: (FileNode | DirectoryNode)[]
+}
+
+export type TreeNode = FileNode | DirectoryNode
+
+export function groupByPath(files: IClientFile[]) {
+  const result: Record<string, any> = {}
+
+  for (const file of files) {
+    if (!file.path) continue
+
+    const segments = file.path.split("/")
+
+    let current = result
+
+    for (let i = 0; i < segments.length - 1; i++) {
+      const segment = segments[i]
+
+      if (!current[segment]) {
+        current[segment] = {
+          type: "directory",
+          name: segment,
+          children: {},
+
+          itemCount: 0,
+          path: segments.slice(0, i + 1).join("/"),
+        }
+      }
+
+      current[segment].itemCount++
+
+      current = current[segment].children
+    }
+
+    const fileName = segments[segments.length - 1]
+
+    if (fileName) {
+      current[fileName] = {
+        type: "file",
+        name: file.name,
+        id: file.id,
+        clientId: file.clientId,
+        url: `http://localhost:8080/${env.API_PREFIX}/upload/files/${file.url}`,
+        uploadedAt: file.uploadedAt,
+        path: file.path,
+      }
+    }
+  }
+
+  function convertToArray(obj: Record<string, any>): TreeNode[] {
+    const nodes = Object.values(obj)
+
+    const directories = nodes.filter((node) => node.type === "directory")
+    const files = nodes.filter((node) => node.type === "file")
+
+    directories.sort((a, b) => a.name.localeCompare(b.name))
+    files.sort((a, b) => a.name.localeCompare(b.name))
+
+    const processedDirectories = directories.map(
+      (dir) =>
+        ({
+          ...dir,
+          children: convertToArray(dir.children),
+        }) as DirectoryNode,
+    )
+
+    return [...processedDirectories, ...files]
+  }
+
+  return convertToArray(result)
 }

@@ -6,6 +6,7 @@ export interface UploadDTO {
 export interface DownloadDTO {
   fileName: string
   bucketName: string
+  download: boolean
 }
 export interface DeleteDTO {
   fileName: string

@@ -109,6 +109,15 @@ export type Invoice = {
   clientId: string;
 };
 
+export type ClientFile = {
+  id: string;
+  clientId: string;
+  name: string;
+  path: string;
+  url: string;
+  uploadedAt: string | Date;
+};
+
 export type SignUpBodyType = {
   name: string;
   email: string;
@@ -313,4 +322,45 @@ export type DeleteInvoiceBodyType = {
 export type DeleteInvoiceResponseType = {
   ok: true;
   message: string;
+};
+
+export type CreateClientFileBodyType = FormData;
+export type CreateClientFileReposeType = {
+  ok: true;
+  message: string;
+};
+
+export type DeleteClientFileBodyType = {
+  id: string;
+};
+export type DeleteClientFileReturnType = {
+  ok: true;
+  message: string;
+};
+export type ListClientFilesBodyType = {
+  clientId: string;
+};
+
+export interface FileNode {
+  type: "file";
+  name: string;
+  id: string;
+  clientId: string;
+  url: string;
+  uploadedAt: string | Date;
+  path: string;
+}
+export interface DirectoryNode {
+  type: "directory";
+  name: string;
+  path: string;
+  itemCount: number;
+  children: (FileNode | DirectoryNode)[];
+}
+
+export type TreeNode = FileNode | DirectoryNode;
+
+export type ListClientFilesResponseType = {
+  ok: true;
+  clientFiles: TreeNode[];
 };

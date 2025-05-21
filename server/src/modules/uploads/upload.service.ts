@@ -64,7 +64,7 @@ export class UploadService {
     }
   }
 
-  async download({ fileName, bucketName }: DownloadDTO) {
+  async download({ fileName, bucketName, download }: DownloadDTO) {
     const fileExt = path.extname(fileName).toLowerCase()
     const contentType = getMimeTypeFromExtension(fileExt)
 
@@ -88,7 +88,11 @@ export class UploadService {
     }
 
     const file = await fs.readFile(filePath)
-    const disposition = canShowInBrowser(fileExt) ? "inline" : "attachment"
+    const disposition = download
+      ? "attachment"
+      : canShowInBrowser(fileExt)
+        ? "inline"
+        : "attachment"
 
     return {
       file,

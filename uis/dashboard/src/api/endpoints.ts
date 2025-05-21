@@ -2,15 +2,21 @@ import { API } from "./axios";
 import { AxiosAdapter, CreateHttpClientAdapter } from "./http-adapter";
 import {
   ClientProfileResponseType,
+  CreateClientFileBodyType,
+  CreateClientFileReposeType,
   CreateStoreBodyType,
   CreateStoreResponseType,
   CursorPaginationBodyType,
   CursorPaginationResponseType,
+  DeleteClientFileBodyType,
+  DeleteClientFileReturnType,
   DeleteInvoiceBodyType,
   DeleteInvoiceResponseType,
   GetInvoiceBodyType,
   GetInvoiceResponseType,
   GetStoresResponseType,
+  ListClientFilesBodyType,
+  ListClientFilesResponseType,
   ListClientInvoicesBodyType,
   ListClientInvoicesResponseType,
   ListClientsBodyType,
@@ -198,5 +204,33 @@ export const ApiDeleteInvoice = async <T extends DeleteInvoiceBodyType>({
 }: T) => {
   return await httpClient.DELETE<DeleteInvoiceResponseType>(
     `/invoice/${invoiceId}`
+  );
+};
+
+export const ApiCreateClientFile = async <T extends CreateClientFileBodyType>(
+  body: T
+) => {
+  return await httpClient.POST<CreateClientFileReposeType, T>(
+    "/client-files/create",
+    body,
+    {
+      "Content-Type": "multipart/form-data",
+    }
+  );
+};
+
+export const ApiListClientFiles = async <T extends ListClientFilesBodyType>({
+  clientId,
+}: T) => {
+  return await httpClient.GET<ListClientFilesResponseType>(
+    `/client-files/${clientId}/list`
+  );
+};
+
+export const ApiDeleteClientFile = async <T extends DeleteClientFileBodyType>({
+  id,
+}: T) => {
+  return await httpClient.DELETE<DeleteClientFileReturnType>(
+    `/client-files/${id}`
   );
 };
