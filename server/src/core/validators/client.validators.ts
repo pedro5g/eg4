@@ -80,7 +80,7 @@ const statusSchema = z.enum(["ACTIVE", "INACTIVE", "BLOCKED", "PENDING"])
 
 const storeCodeSchema = z.string().trim().min(10).max(10)
 
-const codeSchema = z.string().trim().min(10).max(10)
+const codeSchema = z.string().trim()
 
 export const registerClientSchema = z.object({
   address: addressSchema,

@@ -16,8 +16,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMultiStepsForm } from "./hooks/use-multi-steps-form";
 import { GoToField } from "./go-to-field";
 import { ApiError } from "@/api/types";
+import { AnimationDiv } from "./animation-div";
 
-export const Overview = () => {
+export const Overview = ({ direction }: { direction: number }) => {
   const { navigate } = useStepsControl();
   const { currentFormData, clearFormData, clear } = useMultiStepsForm();
   const queryClient = useQueryClient();
@@ -91,221 +92,223 @@ export const Overview = () => {
   };
 
   return (
-    <div className="grid w-full h-full space-y-5">
-      <div>
-        <div className="inline-flex items-center gap-5">
-          <h2 className="text-zinc-800 text-2xl font-bold"> Overview</h2>
-          <button
-            type="button"
-            onClick={clear}
-            className="text-zinc-800 cursor-pointer">
-            <RefreshCcw size={20} />
-            <span className="sr-only">Limpar o formulário</span>
-          </button>
+    <AnimationDiv direction={direction}>
+      <div className="grid w-full h-full space-y-5">
+        <div>
+          <div className="inline-flex items-center gap-5">
+            <h2 className="text-zinc-800 text-2xl font-bold"> Overview</h2>
+            <button
+              type="button"
+              onClick={clear}
+              className="text-zinc-800 cursor-pointer">
+              <RefreshCcw size={20} />
+              <span className="sr-only">Limpar o formulário</span>
+            </button>
+          </div>
+          <p className="text-zinc-400">Clique no campo para ir até ele</p>
         </div>
-        <p className="text-zinc-400">Clique no campo para ir até ele</p>
-      </div>
-      <FormWrapper method={methods}>
-        <form
-          onSubmit={methods.handleSubmit(onSubmit, (data) => {
-            console.log(data);
-          })}
-          className="w-full">
-          <div className="grid space-y-4 w-full py-4">
-            <div className="flex space-x-5">
-              <GoToField step={1} fieldName="storeCode">
-                <TextField<OverviewSchema>
-                  className="w-fit py-2"
-                  name="storeCode"
-                  readonly
-                  label="Codigo da loja"
-                />
-              </GoToField>
-            </div>
-            <div className="space-y-3">
-              <h3 className="text-zinc-500">Dados pessoais</h3>
-              <div className="flex md:flex-row flex-col gap-4">
-                <GoToField step={1} fieldName="name">
-                  <TextField<OverviewSchema>
-                    name="name"
-                    readonly
-                    label="Nome"
-                  />
-                </GoToField>
-                {currentFormData.email && (
-                  <GoToField step={1} fieldName="email">
-                    <TextField<OverviewSchema>
-                      name="email"
-                      readonly
-                      label="Email"
-                    />
-                  </GoToField>
-                )}
-                {currentFormData.phone && (
-                  <GoToField step={1} fieldName="phone">
-                    <TextField<OverviewSchema>
-                      name="phone"
-                      readonly
-                      label="Numero para contato"
-                      mask="phone"
-                    />
-                  </GoToField>
-                )}
-              </div>
-              {currentFormData.homepage && (
-                <GoToField step={1} fieldName="homepage">
-                  <TextField<OverviewSchema>
-                    name="homepage"
-                    readonly
-                    label="Home page"
-                  />
-                </GoToField>
-              )}
-            </div>
-            <div className="space-y-3">
-              <h3 className="text-zinc-500">Endereço</h3>
-              {currentFormData.zipCode && (
-                <GoToField step={2} fieldName="zipCode">
+        <FormWrapper method={methods}>
+          <form
+            onSubmit={methods.handleSubmit(onSubmit, (data) => {
+              console.log(data);
+            })}
+            className="w-full">
+            <div className="grid space-y-4 w-full py-4">
+              <div className="flex space-x-5">
+                <GoToField step={1} fieldName="storeCode">
                   <TextField<OverviewSchema>
                     className="w-fit py-2"
-                    name="zipCode"
+                    name="storeCode"
                     readonly
-                    label="CEP"
-                  />
-                </GoToField>
-              )}
-              <div className="flex md:flex-row flex-col gap-4">
-                <GoToField step={2} fieldName="address">
-                  <TextField<OverviewSchema>
-                    name="address"
-                    readonly
-                    label="Endereço"
-                  />
-                </GoToField>
-                <GoToField step={2} fieldName="neighborhood">
-                  <TextField<OverviewSchema>
-                    name="neighborhood"
-                    readonly
-                    label="Bairro"
-                  />
-                </GoToField>
-                <GoToField step={2} fieldName="houseNumber">
-                  <TextField<OverviewSchema>
-                    name="houseNumber"
-                    readonly
-                    label="Numero da casa"
+                    label="Codigo da loja"
                   />
                 </GoToField>
               </div>
-              <div className="flex md:flex-row flex-col gap-4">
-                <GoToField step={2} fieldName="city">
-                  <TextField<OverviewSchema>
-                    name="city"
-                    readonly
-                    label="Cidade"
-                  />
-                </GoToField>
-                <GoToField step={2} fieldName="state">
-                  <SelectField<OverviewSchema>
-                    name="state"
-                    label="Estado"
-                    readonly
-                    options={STATES}
-                  />
-                </GoToField>
-                {currentFormData.cityCode && (
-                  <GoToField step={2} fieldName="cityCode">
-                    <TextField<OverviewSchema>
-                      name="cityCode"
-                      label="Codigo do Município"
-                      readonly
-                    />
-                  </GoToField>
-                )}
-                {currentFormData.country && (
-                  <GoToField step={2} fieldName="country">
-                    <SelectField<OverviewSchema>
-                      name="country"
-                      label="País"
-                      options={COUNTRIES}
-                      readonly
-                    />
-                  </GoToField>
-                )}
-              </div>
-            </div>
-            {currentFormData.taxId && (
               <div className="space-y-3">
-                <h3 className="text-zinc-500">Documento</h3>
+                <h3 className="text-zinc-500">Dados pessoais</h3>
                 <div className="flex md:flex-row flex-col gap-4">
-                  {currentFormData.taxId && (
-                    <GoToField step={1} fieldName="taxId">
+                  <GoToField step={1} fieldName="name">
+                    <TextField<OverviewSchema>
+                      name="name"
+                      readonly
+                      label="Nome"
+                    />
+                  </GoToField>
+                  {currentFormData.email && (
+                    <GoToField step={1} fieldName="email">
                       <TextField<OverviewSchema>
-                        name="taxId"
-                        label="CPF/CNPJ"
-                        mask="cpf/cnpj"
+                        name="email"
                         readonly
+                        label="Email"
                       />
                     </GoToField>
                   )}
-                  {currentFormData.openingDate &&
-                    currentFormData.taxId?.length === 11 && (
-                      <GoToField step={1} fieldName="openingDate">
-                        <TextField<OverviewSchema>
-                          name="openingDate"
-                          label="Data de Nascimento"
-                          mask="date"
-                          readonly
-                        />
-                      </GoToField>
-                    )}
-                  {currentFormData.openingDate &&
-                    currentFormData.taxId?.length === 14 && (
-                      <GoToField step={1} fieldName="openingDate">
-                        <TextField<OverviewSchema>
-                          name="openingDate"
-                          label="Data de Abertura"
-                          mask="date"
-                          readonly
-                        />
-                      </GoToField>
-                    )}
-                  {currentFormData.type && (
-                    <GoToField step={1} fieldName="type">
-                      <SelectField<OverviewSchema>
-                        options={TYPES}
-                        name="type"
-                        label="Tipo de cadastro"
+                  {currentFormData.phone && (
+                    <GoToField step={1} fieldName="phone">
+                      <TextField<OverviewSchema>
+                        name="phone"
                         readonly
+                        label="Numero para contato"
+                        mask="phone"
                       />
                     </GoToField>
                   )}
                 </div>
+                {currentFormData.homepage && (
+                  <GoToField step={1} fieldName="homepage">
+                    <TextField<OverviewSchema>
+                      name="homepage"
+                      readonly
+                      label="Home page"
+                    />
+                  </GoToField>
+                )}
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-zinc-500">Endereço</h3>
+                {currentFormData.zipCode && (
+                  <GoToField step={2} fieldName="zipCode">
+                    <TextField<OverviewSchema>
+                      className="w-fit py-2"
+                      name="zipCode"
+                      readonly
+                      label="CEP"
+                    />
+                  </GoToField>
+                )}
                 <div className="flex md:flex-row flex-col gap-4">
-                  {currentFormData.tradeName && (
-                    <GoToField step={1} fieldName="tradeName">
+                  <GoToField step={2} fieldName="address">
+                    <TextField<OverviewSchema>
+                      name="address"
+                      readonly
+                      label="Endereço"
+                    />
+                  </GoToField>
+                  <GoToField step={2} fieldName="neighborhood">
+                    <TextField<OverviewSchema>
+                      name="neighborhood"
+                      readonly
+                      label="Bairro"
+                    />
+                  </GoToField>
+                  <GoToField step={2} fieldName="houseNumber">
+                    <TextField<OverviewSchema>
+                      name="houseNumber"
+                      readonly
+                      label="Numero da casa"
+                    />
+                  </GoToField>
+                </div>
+                <div className="flex md:flex-row flex-col gap-4">
+                  <GoToField step={2} fieldName="city">
+                    <TextField<OverviewSchema>
+                      name="city"
+                      readonly
+                      label="Cidade"
+                    />
+                  </GoToField>
+                  <GoToField step={2} fieldName="state">
+                    <SelectField<OverviewSchema>
+                      name="state"
+                      label="Estado"
+                      readonly
+                      options={STATES}
+                    />
+                  </GoToField>
+                  {currentFormData.cityCode && (
+                    <GoToField step={2} fieldName="cityCode">
                       <TextField<OverviewSchema>
-                        name="tradeName"
-                        label="Nome fantasia"
+                        name="cityCode"
+                        label="Codigo do Município"
+                        readonly
+                      />
+                    </GoToField>
+                  )}
+                  {currentFormData.country && (
+                    <GoToField step={2} fieldName="country">
+                      <SelectField<OverviewSchema>
+                        name="country"
+                        label="País"
+                        options={COUNTRIES}
                         readonly
                       />
                     </GoToField>
                   )}
                 </div>
               </div>
-            )}
-            <div className="flex gap-5 justify-end">
-              <Button
-                disabled={isPending}
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
-                Cadastrar
-                {isPending && <Loader2 size={16} className="animate-spin" />}
-              </Button>
+              {currentFormData.taxId && (
+                <div className="space-y-3">
+                  <h3 className="text-zinc-500">Documento</h3>
+                  <div className="flex md:flex-row flex-col gap-4">
+                    {currentFormData.taxId && (
+                      <GoToField step={1} fieldName="taxId">
+                        <TextField<OverviewSchema>
+                          name="taxId"
+                          label="CPF/CNPJ"
+                          mask="cpf/cnpj"
+                          readonly
+                        />
+                      </GoToField>
+                    )}
+                    {currentFormData.openingDate &&
+                      currentFormData.taxId?.length === 11 && (
+                        <GoToField step={1} fieldName="openingDate">
+                          <TextField<OverviewSchema>
+                            name="openingDate"
+                            label="Data de Nascimento"
+                            mask="date"
+                            readonly
+                          />
+                        </GoToField>
+                      )}
+                    {currentFormData.openingDate &&
+                      currentFormData.taxId?.length === 14 && (
+                        <GoToField step={1} fieldName="openingDate">
+                          <TextField<OverviewSchema>
+                            name="openingDate"
+                            label="Data de Abertura"
+                            mask="date"
+                            readonly
+                          />
+                        </GoToField>
+                      )}
+                    {currentFormData.type && (
+                      <GoToField step={1} fieldName="type">
+                        <SelectField<OverviewSchema>
+                          options={TYPES}
+                          name="type"
+                          label="Tipo de cadastro"
+                          readonly
+                        />
+                      </GoToField>
+                    )}
+                  </div>
+                  <div className="flex md:flex-row flex-col gap-4">
+                    {currentFormData.tradeName && (
+                      <GoToField step={1} fieldName="tradeName">
+                        <TextField<OverviewSchema>
+                          name="tradeName"
+                          label="Nome fantasia"
+                          readonly
+                        />
+                      </GoToField>
+                    )}
+                  </div>
+                </div>
+              )}
+              <div className="flex gap-5 justify-end">
+                <Button
+                  disabled={isPending}
+                  type="submit"
+                  className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
+                  Cadastrar
+                  {isPending && <Loader2 size={16} className="animate-spin" />}
+                </Button>
+              </div>
             </div>
-          </div>
-        </form>
-      </FormWrapper>
-    </div>
+          </form>
+        </FormWrapper>
+      </div>
+    </AnimationDiv>
   );
 };
