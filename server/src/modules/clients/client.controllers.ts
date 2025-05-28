@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify"
 import { ClientServices } from "./client.services"
 import {
   cursorPaginationSchema,
+  deleteClientSchema,
   getClientSchema,
   listClientsSchema,
   registerClientSchema,
@@ -10,7 +11,6 @@ import {
 import { HTTP_STATUS } from "@/core/constraints"
 import { Status } from "./domain/dtos/client.dtos"
 import { env } from "@/core/env"
-import { CHUNK_SIZE } from "./domain/repository/client-repository.interface"
 import { logger } from "@/core/logger"
 
 export class ClientControllers {
@@ -31,6 +31,15 @@ export class ClientControllers {
     reply
       .status(HTTP_STATUS.OK)
       .send({ ok: true, message: "Client updated successfully" })
+  }
+
+  async deleteClient(req: FastifyRequest, reply: FastifyReply) {
+    const { code } = deleteClientSchema.parse(req.params)
+
+    await this.clientServices.deleteCliente(code)
+    reply
+      .status(HTTP_STATUS.OK)
+      .send({ ok: true, message: "Client deleted successfully" })
   }
 
   async getClient(req: FastifyRequest, reply: FastifyReply) {

@@ -128,6 +128,10 @@ export const getClientSchema = z.object({
   code: codeSchema,
 })
 
+export const deleteClientSchema = z.object({
+  code: codeSchema,
+})
+
 export const listClientsSchema = z.object({
   page: z.coerce
     .number()

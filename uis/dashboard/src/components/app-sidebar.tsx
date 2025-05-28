@@ -30,14 +30,14 @@ const NAV_MAIN =
           icon: LayoutDashboardIcon,
         },
         {
-          title: "Clientes",
-          url: "/clients/table",
-          icon: Users,
-        },
-        {
           title: "Registrar cliente",
           url: "/clients",
           icon: UserPlus,
+        },
+        {
+          title: "Clientes",
+          url: "/clients/table",
+          icon: Users,
         },
         {
           title: "Faturas",
@@ -52,14 +52,14 @@ const NAV_MAIN =
           icon: LayoutDashboardIcon,
         },
         {
-          title: "Clientes",
-          url: "/clients/table",
-          icon: Users,
-        },
-        {
           title: "Registrar cliente",
           url: "/clients",
           icon: UserPlus,
+        },
+        {
+          title: "Clientes",
+          url: "/clients/table",
+          icon: Users,
         },
       ];
 

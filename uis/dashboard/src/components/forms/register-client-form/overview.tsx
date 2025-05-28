@@ -19,7 +19,7 @@ import { ApiError } from "@/api/types";
 import { AnimationDiv } from "./animation-div";
 
 export const Overview = ({ direction }: { direction: number }) => {
-  const { navigate } = useStepsControl();
+  const { navigate, removeFocus } = useStepsControl();
   const { currentFormData, clearFormData, clear } = useMultiStepsForm();
   const queryClient = useQueryClient();
 
@@ -67,6 +67,7 @@ export const Overview = ({ direction }: { direction: number }) => {
         });
         clearFormData();
         navigate(1);
+        removeFocus();
       }
     },
     onError: (error: ApiError) => {

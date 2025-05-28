@@ -364,3 +364,12 @@ export type ListClientFilesResponseType = {
   ok: true;
   clientFiles: TreeNode[];
 };
+
+export type DeleteClientBodyType = {
+  code: string;
+};
+
+export type DeleteClientResponseType = {
+  ok: true;
+  message: string;
+};

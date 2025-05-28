@@ -147,6 +147,16 @@ export class ClientServices {
     })
   }
 
+  async deleteCliente(code: string) {
+    const client = await this.clientRepository.findByCode(code)
+
+    if (!client) {
+      throw new NotFoundException("Invalid code, client not found")
+    }
+
+    await this.clientRepository.delete(code)
+  }
+
   async getClientByCode(code: string) {
     const client = await this.clientRepository.findByCode(code)
     if (!client) {

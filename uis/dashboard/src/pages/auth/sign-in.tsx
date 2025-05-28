@@ -43,10 +43,10 @@ export function SignIn() {
     onError: (error: ApiError) => {
       if (["VALIDATION_ERROR", "BAD_REQUEST"].includes(error.errorCode)) {
         methods.setError("email", {
-          message: "Credenciais invalidas",
+          message: "Email ou senha incorretos",
         });
         methods.setError("password", {
-          message: "Credenciais invalidas",
+          message: "Email ou senha incorretos",
         });
         return;
       }

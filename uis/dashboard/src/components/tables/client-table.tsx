@@ -210,7 +210,7 @@ export function DataTableClients({
                 );
               }}>
               <DownloadIcon className="mr-2 size-4" />
-              Exportar como CSV
+              Exportar como XLSX
             </Button>
           )}
         </div>

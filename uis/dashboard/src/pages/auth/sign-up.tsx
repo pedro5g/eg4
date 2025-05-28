@@ -61,9 +61,12 @@ export function SignUp() {
     },
     onError: (error: ApiError) => {
       if (error.errorCode === "AUTH_EMAIL_ALREADY_EXISTS") {
-        window.toast.error(
-          "Parece que você já tem uma conta, por favor faça login"
-        );
+        window.toast.error("Parece que você já tem uma conta.", {
+          description: "Por favor faça login",
+        });
+        methods.setError("email", {
+          message: "Parece que você já tem uma conta.",
+        });
         return;
       }
       window.toast.error("Erro inesperado, por favor tente mais tarde");

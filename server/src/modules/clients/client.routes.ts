@@ -19,6 +19,11 @@ export class CLientRoutes {
       { preHandler: [isAuthenticated] },
       this.clientControllers.updateClient.bind(this.clientControllers),
     )
+    this.app.delete(
+      "/delete/:code",
+      { preHandler: [isAuthenticated] },
+      this.clientControllers.deleteClient.bind(this.clientControllers),
+    )
     this.app.get(
       "/profile/:code",
       { preHandler: [isAuthenticated] },

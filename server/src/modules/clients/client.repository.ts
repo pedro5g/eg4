@@ -34,6 +34,14 @@ export class ClientRepository implements IClientRepository {
     })
   }
 
+  async delete(code: string): Promise<void> {
+    await this.db.client.delete({
+      where: {
+        code,
+      },
+    })
+  }
+
   async findById(id: string): Promise<IClient | null> {
     const client = await this.db.client.findUnique({
       where: {

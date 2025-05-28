@@ -45,6 +45,7 @@ export const CHUNK_SIZE = 500
 export interface IClientRepository {
   create(args: RegisterClientDto): Promise<void>
   update(client: IClient): Promise<void>
+  delete(code: string): Promise<void>
   findByCode(code: string): Promise<IClient | null>
   findById(id: string): Promise<IClient | null>
   findByEmail(email: string): Promise<IClient | null>

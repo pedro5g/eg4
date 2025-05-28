@@ -16,6 +16,7 @@ import { MoreVerticalIcon } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "../ui/button";
 import { TableSheet } from "./table-sheet";
+import { ConfirmDeleteClient } from "../modals/confirm-delete-client";
 
 export const columns: ColumnDef<Client>[] = [
   {
@@ -143,6 +144,7 @@ export const columns: ColumnDef<Client>[] = [
           <DropdownMenuItem>
             <Link to={`/clients/${row.original.code}`}>Perfil do cliente</Link>
           </DropdownMenuItem>
+          <ConfirmDeleteClient code={row.original.code} />
           {import.meta.env.VITE_APP_VERSION !== "aula" && (
             <TableSheet client={row.original}>
               <Button

@@ -8,8 +8,10 @@ import {
   CreateStoreResponseType,
   CursorPaginationBodyType,
   CursorPaginationResponseType,
+  DeleteClientBodyType,
   DeleteClientFileBodyType,
   DeleteClientFileReturnType,
+  DeleteClientResponseType,
   DeleteInvoiceBodyType,
   DeleteInvoiceResponseType,
   GetInvoiceBodyType,
@@ -232,5 +234,13 @@ export const ApiDeleteClientFile = async <T extends DeleteClientFileBodyType>({
 }: T) => {
   return await httpClient.DELETE<DeleteClientFileReturnType>(
     `/client-files/${id}`
+  );
+};
+
+export const ApiDeleteClient = async <T extends DeleteClientBodyType>({
+  code,
+}: T) => {
+  return await httpClient.DELETE<DeleteClientResponseType>(
+    `client/delete/${code}`
   );
 };
