@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Check, ChevronsUpDown, CircleAlert, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, isJavaVersion } from "@/lib/utils";
 import {
   Command,
   CommandEmpty,
@@ -34,6 +34,17 @@ export const SelectStore = <T extends FieldValues>({
     queryKey: ["store-list"],
   });
 
+  const stores = isJavaVersion()
+    ? (data?.data as {
+        id: number;
+        code: string;
+        name: string;
+        address: string | null;
+      }[])
+    : data?.stores;
+
+  console.log(stores);
+
   return (
     <Controller
       name={name}
@@ -57,8 +68,8 @@ export const SelectStore = <T extends FieldValues>({
                     focus:border-blue-400 cursor-pointer`,
                     invalid && "border-red-500 [&>svg]:stroke-red-500  "
                   )}>
-                  {(data?.stores || []).find((store) => store.code === value)
-                    ?.name || "''"}
+                  {(stores || []).find((store) => store.code === value)?.name ||
+                    "''"}
                   <ChevronsUpDown className="opacity-50" />
 
                   <label
@@ -93,7 +104,7 @@ export const SelectStore = <T extends FieldValues>({
                       </div>
                     ) : (
                       <CommandGroup>
-                        {(data?.stores || []).map((store) => (
+                        {(stores || []).map((store) => (
                           <CommandItem
                             key={store.code}
                             className="flex flex-col items-start cursor-pointer h-11"

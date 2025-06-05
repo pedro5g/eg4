@@ -10,6 +10,7 @@ import { useMutation } from "@tanstack/react-query";
 import { ApiSignIn } from "@/api/endpoints";
 import { Loader2 } from "lucide-react";
 import { ApiError } from "@/api/types";
+import { isJavaVersion } from "@/lib/utils";
 
 export const signInFormSchema = z.object({
   email: z.string().trim().email({ message: "Digite um email valido" }),
@@ -36,7 +37,9 @@ export function SignIn() {
     mutationFn: (data: SignInFormSchemaType) => ApiSignIn(data),
     onSuccess: ({ ok }) => {
       if (ok) {
-        navigate("/dashboard", { replace: true });
+        isJavaVersion()
+          ? navigate("/clients", { replace: true })
+          : navigate("/dashboard", { replace: true });
         methods.reset();
       }
     },

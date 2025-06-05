@@ -36,6 +36,8 @@ const LoadingTable = () => {
 
   if (isLoading) return <TableSkeleton columns={5} rows={10} />;
 
+  console.log(data);
+
   return (
     <DataTableClients
       data={data?.data.items || []}

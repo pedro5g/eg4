@@ -12,6 +12,7 @@ import { FilterByStatus } from "./filter-by-status";
 import { SearchClient } from "./search-client";
 import { useDataExport } from "@/hooks/use-data-export";
 import { exportAllClientsEndpoint } from "@/api/endpoints";
+import { isJavaVersion } from "@/lib/utils";
 
 export const TableWrapper = ({ children }: { children: React.ReactNode }) => {
   const { exportData, isExporting, error, progress, cancelExport } =
@@ -26,46 +27,48 @@ export const TableWrapper = ({ children }: { children: React.ReactNode }) => {
           <FilterByStatus />
           <SearchClient />
 
-          <div className="md:ml-auto">
-            {isExporting ? (
-              <Button
-                variant="outline"
-                size="sm"
-                className=" lg:flex px-3 py-5 rounded-sm border-2 border-zinc-500/40 text-zinc-600 cursor-pointer"
-                onClick={cancelExport}>
-                <div className="flex select-none relative text-slate-500 items-center justify-center">
-                  <div
-                    className="radial-progress size-8"
-                    style={{
-                      //@ts-ignore
-                      "--value": progress.percentage,
-                      "--progress-color": "var(--color-blue-500)",
-                      "--thickness": " 0.3rem",
-                    }}></div>
-                  <div className="absolute font-bold text-[8px]">
-                    {progress.percentage}%
+          {!isJavaVersion() && (
+            <div className="md:ml-auto">
+              {isExporting ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className=" lg:flex px-3 py-5 rounded-sm border-2 border-zinc-500/40 text-zinc-600 cursor-pointer"
+                  onClick={cancelExport}>
+                  <div className="flex select-none relative text-slate-500 items-center justify-center">
+                    <div
+                      className="radial-progress size-8"
+                      style={{
+                        //@ts-ignore
+                        "--value": progress.percentage,
+                        "--progress-color": "var(--color-blue-500)",
+                        "--thickness": " 0.3rem",
+                      }}></div>
+                    <div className="absolute font-bold text-[8px]">
+                      {progress.percentage}%
+                    </div>
                   </div>
-                </div>
-                Cancelar download
-              </Button>
-            ) : (
-              <Button
-                variant="outline"
-                size="sm"
-                className=" lg:flex px-3 py-5 rounded-sm border-2 border-zinc-500/40 text-zinc-600 cursor-pointer"
-                onClick={() =>
-                  exportData({
-                    endpoint: exportAllClientsEndpoint,
-                    format: "xlsx",
-                    filename: "clientes",
-                    title: "Lista de Clientes",
-                  })
-                }>
-                <DownloadIcon className="mr-2 size-4" />
-                Exportar todos os clientes
-              </Button>
-            )}
-          </div>
+                  Cancelar download
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className=" lg:flex px-3 py-5 rounded-sm border-2 border-zinc-500/40 text-zinc-600 cursor-pointer"
+                  onClick={() =>
+                    exportData({
+                      endpoint: exportAllClientsEndpoint,
+                      format: "xlsx",
+                      filename: "clientes",
+                      title: "Lista de Clientes",
+                    })
+                  }>
+                  <DownloadIcon className="mr-2 size-4" />
+                  Exportar todos os clientes
+                </Button>
+              )}
+            </div>
+          )}
         </div>
         <p className="text-muted-foreground text-xs">
           Você pode filtrar os cliente pelo seu status, ou se preferir pode

@@ -29,7 +29,7 @@ export const RegisterFormFistStep = ({ direction }: { direction: number }) => {
         "",
       areaCode: currentFormData.areaCode || "",
       homepage: currentFormData.homepage || "",
-      storeCode: currentFormData.storeCode || "",
+      storeId: currentFormData.storeId || "",
       taxId: currentFormData.taxId || null,
       openingDate: currentFormData.openingDate || null,
       tradeName: currentFormData.tradeName || null,
@@ -97,7 +97,7 @@ export const RegisterFormFistStep = ({ direction }: { direction: number }) => {
               </div>
               <div className="space-y-4">
                 <div className="col-span-2">
-                  <SelectStore<StepOneSchema> name="storeCode" />
+                  <SelectStore<StepOneSchema> name="storeId" />
                 </div>
 
                 <div className="col-span-2">
