@@ -45,10 +45,10 @@ export const Overview = ({ direction }: { direction: number }) => {
       taxId: currentFormData.taxId,
       openingDate: currentFormData.openingDate,
       tradeName: currentFormData.tradeName,
-      type: currentFormData.type,
+      type: currentFormData.type ?? "F",
       status: "ACTIVE",
       homepage: currentFormData.homepage,
-      storeCode: currentFormData.storeCode,
+      storeId: currentFormData.storeId,
       houseNumber:
         currentFormData.address && currentFormData.address.split("n°")[1],
     },
@@ -119,7 +119,7 @@ export const Overview = ({ direction }: { direction: number }) => {
                 <GoToField step={1} fieldName="storeCode">
                   <TextField<OverviewSchema>
                     className="w-fit py-2"
-                    name="storeCode"
+                    name="storeId"
                     readonly
                     label="Codigo da loja"
                   />

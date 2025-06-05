@@ -1,4 +1,5 @@
 import { ApiProfile } from "@/api/endpoints";
+import { isJavaVersion } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 
 export const useAuth = () => {
@@ -10,7 +11,7 @@ export const useAuth = () => {
   });
 
   return {
-    user: data.data?.profile ?? null,
+    user: (isJavaVersion() ? data.data?.data : data.data?.profile) ?? null,
     isLoading: data.isLoading,
   };
 };

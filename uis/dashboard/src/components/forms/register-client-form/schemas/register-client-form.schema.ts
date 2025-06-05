@@ -19,7 +19,7 @@ export const overviewSchema = z
     email: emailSchema,
     homepage: homepageSchema,
     status: statusSchema,
-    storeCode: storeCodeSchema,
+    storeId: storeCodeSchema,
     taxId: taxSchema.nullable(),
     openingDate: openingDateSchema.nullable(),
     tradeName: tradeNameSchema.nullable(),

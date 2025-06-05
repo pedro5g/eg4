@@ -127,3 +127,7 @@ export const getDueDays = (dueDate: Date | string) => {
     return "Com vencimento hoje";
   }
 };
+
+export function isJavaVersion() {
+  return import.meta.env.VITE_IS_JAVA_VERSION === "true";
+}

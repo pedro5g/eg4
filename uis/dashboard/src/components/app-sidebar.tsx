@@ -18,11 +18,11 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, isJavaVersion } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 
 const NAV_MAIN =
-  import.meta.env.VITE_APP_VERSION !== "aula"
+  import.meta.env.VITE_APP_VERSION !== "aula"! && isJavaVersion()
     ? [
         {
           title: "Dashboard",
@@ -46,11 +46,6 @@ const NAV_MAIN =
         },
       ]
     : [
-        {
-          title: "Dashboard",
-          url: "/dashboard",
-          icon: LayoutDashboardIcon,
-        },
         {
           title: "Registrar cliente",
           url: "/clients",
