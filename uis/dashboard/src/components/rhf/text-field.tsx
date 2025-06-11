@@ -109,7 +109,7 @@ export const TextField = <T extends FieldValues = any>({
                 id={`floating_outlined_${label}`}
                 className={cn(
                   `block px-3 pb-2.5 pt-4 w-full text-sm text-zinc-500 dark:text-zinc-300 bg-transparent duration-300 transform   
-              rounded-sm border-2 border-zinc-500/40 dark:border-zinc-100/40 appearance-none data-[error=true]:border-red-500
+              rounded-sm border-2 border-zinc-500/40 dark:border-zinc-100/40 appearance-none data-[error=true]:border-red-500 dark:data-[error=true]:border-red-500
               focus:outline-none focus:ring-0 focus:border-blue-400 dark:focus:border-blue-400 peer`,
                   IconLeft && "pl-10",
                   className

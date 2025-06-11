@@ -60,7 +60,7 @@ export const SelectField = <T extends FieldValues>({
                     duration-300 transform rounded-sm border-2 border-zinc-500/40 appearance-none focus-visible:ring-0 dark:text-zinc-300
                     data-[state=open]:border-blue-400 data-[state=open]:[&>label]:text-blue-400 disabled:opacity-100 focus:border-blue-400 dark:focus:border-blue-400`,
                     invalid &&
-                      "border-red-500 [&>svg]:stroke-red-500 cursor-pointer",
+                      "border-red-500 dark:border-red-500 [&>svg]:stroke-red-500 cursor-pointer",
                     readonly && "pointer-events-none"
                   )}>
                   <SelectValue />

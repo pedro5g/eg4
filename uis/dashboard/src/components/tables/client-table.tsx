@@ -201,7 +201,7 @@ export function DataTableClients({
             <Button
               variant="outline"
               size="sm"
-              className=" lg:flex px-3 py-2 rounded-sm border-2 border-zinc-500/40 text-zinc-600 cursor-pointer"
+              className=" lg:flex px-3 py-2 rounded-sm border-2 border-zinc-500/40 text-zinc-600 dark:text-zinc-200  cursor-pointer"
               onClick={() => {
                 exportCustomXLSX(
                   table.getSelectedRowModel().rows,

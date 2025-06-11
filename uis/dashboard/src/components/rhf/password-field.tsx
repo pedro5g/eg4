@@ -45,7 +45,7 @@ export const PasswordField = <T extends FieldValues>({
                 readOnly={readonly}
                 id={`floating_outlined_${label}`}
                 className="block px-3 pb-2.5 pt-4 w-full text-sm text-zinc-500 dark:text-zinc-300 dark:border-zinc-100/40 bg-transparent duration-300 transform   
-              rounded-sm border-2 border-zinc-500/40 appearance-none data-[error=true]:border-red-500
+              rounded-sm border-2 border-zinc-500/40 appearance-none data-[error=true]:border-red-500 dark:data-[error=true]:border-red-500
               focus:outline-none focus:ring-0 focus:border-blue-400 dark:focus:border-blue-400 pr-8 peer"
                 placeholder=" "
               />
