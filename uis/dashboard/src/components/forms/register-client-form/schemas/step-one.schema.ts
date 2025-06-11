@@ -13,7 +13,7 @@ export const stepOneSchema = z
     name: nameSchema,
     email: emailSchema,
     homepage: homepageSchema,
-    storeId: storeCodeSchema,
+    storeCode: storeCodeSchema,
   })
   .and(contactSchema)
   .and(taxIdSchema);

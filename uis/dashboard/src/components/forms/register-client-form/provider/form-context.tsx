@@ -1,5 +1,6 @@
 import { createContext, useCallback, useState } from "react";
 import { OverviewSchema } from "../schemas/register-client-form.schema";
+import { useStepsControl } from "../hooks/use-steps-control";
 
 type Optional<T> = { [K in keyof T]?: T[K] };
 type Props = {
@@ -20,6 +21,7 @@ export const RegisterClientFormContext = ({
     const data = localStorage.getItem(LOCAL_STORAGE_KEY);
     return data ? JSON.parse(data) : {};
   });
+  const { navigate } = useStepsControl();
 
   const clearFormData = useCallback(() => {
     localStorage.removeItem(LOCAL_STORAGE_KEY);
@@ -42,7 +44,7 @@ export const RegisterClientFormContext = ({
     const confirm = window.confirm("Limpar o formulário ?");
     if (confirm) {
       clearFormData();
-      window.location.reload();
+      navigate(1);
     }
   };
 

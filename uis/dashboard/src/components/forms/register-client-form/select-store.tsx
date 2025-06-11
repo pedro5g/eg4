@@ -15,10 +15,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useQuery } from "@tanstack/react-query";
-import { ApiListStores } from "@/api/endpoints";
 import { RegisterStoreModel } from "@/components/modals/register-store-model";
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
+import { useGetStores } from "@/hooks/use-get-stores";
 
 interface SelectStoreProps<T extends FieldValues> {
   name: Path<T>;
@@ -29,10 +28,7 @@ export const SelectStore = <T extends FieldValues>({
 }: SelectStoreProps<T>) => {
   const [open, setOpen] = React.useState(false);
   const { control } = useFormContext<T>();
-  const { data, isLoading } = useQuery({
-    queryFn: ApiListStores,
-    queryKey: ["store-list"],
-  });
+  const { data, isLoading } = useGetStores();
 
   const stores = data?.stores;
 

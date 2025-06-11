@@ -17,11 +17,17 @@ import { useMultiStepsForm } from "./hooks/use-multi-steps-form";
 import { GoToField } from "./go-to-field";
 import { ApiError } from "@/api/types";
 import { AnimationDiv } from "./animation-div";
+import { useGetStores } from "@/hooks/use-get-stores";
 
 export const Overview = ({ direction }: { direction: number }) => {
   const { navigate, removeFocus } = useStepsControl();
   const { currentFormData, clearFormData, clear } = useMultiStepsForm();
+  const { data } = useGetStores();
   const queryClient = useQueryClient();
+
+  const selectedStore = (data?.stores || []).find(
+    (store) => store.code === currentFormData.storeCode
+  );
 
   const methods = useForm({
     resolver: zodResolver(overviewSchema),
@@ -48,7 +54,7 @@ export const Overview = ({ direction }: { direction: number }) => {
       type: currentFormData.type ?? "F",
       status: "ACTIVE",
       homepage: currentFormData.homepage,
-      storeId: currentFormData.storeId,
+      storeCode: currentFormData.storeCode,
       houseNumber:
         currentFormData.address && currentFormData.address.split("n°")[1],
     },
@@ -103,7 +109,7 @@ export const Overview = ({ direction }: { direction: number }) => {
             <button
               type="button"
               onClick={clear}
-              className="text-zinc-800 cursor-pointer">
+              className="text-zinc-800 dark:text-zinc-100 cursor-pointer">
               <RefreshCcw size={20} />
               <span className="sr-only">Limpar o formulário</span>
             </button>
@@ -121,9 +127,10 @@ export const Overview = ({ direction }: { direction: number }) => {
                 <GoToField step={1} fieldName="storeCode">
                   <TextField<OverviewSchema>
                     className="w-fit py-2"
-                    name="storeId"
+                    name="storeCode"
                     readonly
-                    label="Codigo da loja"
+                    label="Loja"
+                    value={selectedStore?.name}
                   />
                 </GoToField>
               </div>

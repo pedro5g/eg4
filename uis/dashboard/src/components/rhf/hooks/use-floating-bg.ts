@@ -1,5 +1,5 @@
+import { useTheme } from "@/context/theme-provider";
 import { getParentBackgroundColor } from "@/lib/utils";
-import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 
 export function useFloatingBg() {
