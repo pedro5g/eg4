@@ -97,7 +97,7 @@ export const AppSidebar = ({
                     <SidebarMenuItem className="relative overflow-hidden">
                       <SidebarMenuButton
                         className={cn(
-                          "hover:bg-transparent hover:text-blue-500 font-medium relative z-10 transition-colors duration-200",
+                          "hover:bg-transparent hover:text-blue-500 dark:text-white font-medium relative z-10 transition-colors duration-200",
                           isCurrentPath && "text-blue-500"
                         )}
                         asChild
@@ -131,7 +131,7 @@ export const AppSidebar = ({
                       <AnimatePresence mode="wait">
                         {isCurrentPath && (
                           <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-blue-100 to-blue-50 rounded-md"
+                            className="absolute inset-0 bg-gradient-to-r dark:from-slate-600 dark:to-slate-900  from-blue-100 to-blue-50 rounded-md"
                             layoutId="activeTabBackground"
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}

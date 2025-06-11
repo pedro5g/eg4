@@ -56,7 +56,7 @@ export const SelectStore = <T extends FieldValues>({
                     `inline-flex justify-between px-3 pb-2.5 pt-3 w-full text-sm text-zinc-500 bg-transparent 
                     duration-300 transform rounded-sm border-2 border-zinc-500/40 appearance-none focus-visible:ring-0
                     data-[state=open]:border-blue-400 data-[state=open]:[&>label]:text-blue-400 disabled:opacity-100 
-                    focus:border-blue-400 cursor-pointer`,
+                    focus:border-blue-400 cursor-pointer dark:text-zinc-300 dark:border-zinc-100/40 dark:data-[state=open]:border-blue-400`,
                     invalid && "border-red-500 [&>svg]:stroke-red-500  "
                   )}>
                   {(stores || []).find((store) => store.code === value)?.name ||
@@ -66,7 +66,7 @@ export const SelectStore = <T extends FieldValues>({
                   <label
                     data-error={invalid}
                     className={cn(
-                      `absolute text-base text-zinc-500 duration-300 transform 
+                      `absolute text-base text-zinc-500 duration-300 transform dark:bg-background 
                     scale-100 z-10 origin-[0] bg-white px-2 -translate-y-1/2 top-1/2 start-2`,
                       value && "-translate-y-3 top-0 scale-75"
                     )}>

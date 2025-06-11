@@ -31,7 +31,7 @@ export const FilterByStatus = () => {
           variant="outline"
           size="sm"
           className="h-8 py-5 border-2 border-zinc-400 rounded-sm text-muted-foreground cursor-pointer w-auto max-lg:justify-start 
-           data-[state=open]:border-blue-300 ">
+           data-[state=open]:border-blue-300 dark:text-zinc-200">
           <PlusCircle />
           Filtrar por status
           {selectedValueSet.size > 0 && (
@@ -102,10 +102,10 @@ export const FilterByStatus = () => {
             {selectedValueSet.size > 0 && (
               <>
                 <CommandSeparator />
-                <CommandGroup className="sticky bottom-0 align-bottom bg-white">
+                <CommandGroup className="sticky bottom-0 align-bottom bg-white dark:bg-background ">
                   <CommandItem
                     onSelect={() => setStatus([])}
-                    className="justify-center text-center">
+                    className="justify-center text-center ">
                     Remover filtros
                   </CommandItem>
                 </CommandGroup>

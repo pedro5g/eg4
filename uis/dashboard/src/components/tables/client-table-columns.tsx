@@ -60,16 +60,16 @@ export const columns: ColumnDef<Client>[] = [
 
       return (
         <div className="flex flex-col gap-1">
-          <span className="text-sm text-zinc-800 font-bold [&>a]:hover:underline underline-offset-2 ">
+          <span className="text-sm text-zinc-800 dark:text-zinc-200 font-bold [&>a]:hover:underline underline-offset-2 ">
             <Link to={`/clients/${row.original.code}`}>{name}</Link>
           </span>
           {email && (
-            <span className="text-xs text-zinc-500 font-light leading-1">
+            <span className="text-xs text-zinc-500 font-light dark:text-zinc-400 leading-1">
               {email}
             </span>
           )}
           {phone && areaCode && (
-            <span className="text-xs text-zinc-500 font-light">
+            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-light">
               {formatPhone(areaCode + phone)}
             </span>
           )}
@@ -87,11 +87,11 @@ export const columns: ColumnDef<Client>[] = [
       return (
         <div className="px-1.5">
           {taxId ? (
-            <span className="text-sm leading-1 text-zinc-800 font-medium tracking-tight">
+            <span className="text-sm leading-1 text-zinc-800 dark:text-zinc-200 font-medium tracking-tight">
               {taxId.length === 11 ? formatCPF(taxId) : formatCNPJ(taxId)}
             </span>
           ) : (
-            <span className="text-sm leading-1 text-zinc-600 font-medium tracking-wider">
+            <span className="text-sm leading-1 text-zinc-600 dark:text-zinc-200 font-medium tracking-wider">
               Não informado
             </span>
           )}
@@ -107,10 +107,12 @@ export const columns: ColumnDef<Client>[] = [
 
       return (
         <div className="flex flex-col ">
-          <span className=" text-zinc-800 font-semibold text-sm">
+          <span className=" text-zinc-800 font-semibold dark:text-zinc-200 text-sm">
             {state.toUpperCase()}
           </span>
-          <span className=" text-zinc-600 font-light  text-xs">{address}</span>
+          <span className=" text-zinc-600 dark:text-zinc-400 font-light  text-xs">
+            {address}
+          </span>
         </div>
       );
     },

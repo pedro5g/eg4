@@ -80,7 +80,7 @@ export const RegisterStoreModel = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="w-full text-xs gap-2 text-zinc-500 bg-zinc-100 cursor-pointer inline-flex py-2 items-center justify-center">
+        <button className="w-full text-xs gap-2 text-zinc-500 dark:text-zinc-50 bg-zinc-100 dark:bg-primary-foreground cursor-pointer inline-flex py-2 items-center justify-center">
           <span>Cadastrar nova loja</span>
           <CirclePlus size={16} />
         </button>

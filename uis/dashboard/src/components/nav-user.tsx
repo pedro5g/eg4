@@ -16,19 +16,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { LogOutIcon, UserCircleIcon } from "lucide-react";
+import { LogOutIcon, Moon, Sun, UserCircleIcon } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useCallback } from "react";
 import { ApiLogout } from "@/api/endpoints";
 import { useQueryClient } from "@tanstack/react-query";
 import { ProfileModal } from "./modals/profile-modal";
 import { useProfileModal } from "@/hooks/use-profile-modal";
+import { useTheme } from "@/context/theme-provider";
 
 export const NavUser = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isMobile } = useSidebar();
   const { onOpen } = useProfileModal();
+  const { setTheme, theme } = useTheme();
   const queryClient = useQueryClient();
 
   const logOut = useCallback(async () => {
@@ -92,6 +94,17 @@ export const NavUser = () => {
                 <DropdownMenuItem onClick={onOpen} className="cursor-pointer">
                   <UserCircleIcon />
                   Conta
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setTheme(theme === "light" ? "dark" : "light");
+                  }}
+                  className="cursor-pointer">
+                  <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+                  <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+                  Tema
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />

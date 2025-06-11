@@ -97,7 +97,9 @@ export const Overview = ({ direction }: { direction: number }) => {
       <div className="grid w-full h-full space-y-5">
         <div>
           <div className="inline-flex items-center gap-5">
-            <h2 className="text-zinc-800 text-2xl font-bold"> Overview</h2>
+            <h2 className="text-zinc-800 dark:text-zinc-100 text-2xl font-bold">
+              Overview
+            </h2>
             <button
               type="button"
               onClick={clear}
@@ -301,7 +303,7 @@ export const Overview = ({ direction }: { direction: number }) => {
                 <Button
                   disabled={isPending}
                   type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
+                  className="bg-blue-600 hover:bg-blue-700 dark:text-white cursor-pointer">
                   Cadastrar
                   {isPending && <Loader2 size={16} className="animate-spin" />}
                 </Button>

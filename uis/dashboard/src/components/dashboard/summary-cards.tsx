@@ -119,9 +119,11 @@ export const SummaryCards = ({
       {
         id: _ids[0],
         content: (
-          <Card className="bg-gradient-to-br from-blue-50 to-white border-blue-100">
+          <Card className="h-full bg-gradient-to-br from-blue-50 dark:from-blue-800 dark:to-slate-800 border-blue-100 dark:border-blue-900">
             <CardHeader className="pb-2">
-              <CardDescription>Total de Clientes</CardDescription>
+              <CardDescription className="dark:text-zinc-200">
+                Total de Clientes
+              </CardDescription>
               <CardTitle className="text-2xl font-bold">
                 {totalClients}
               </CardTitle>
@@ -129,13 +131,13 @@ export const SummaryCards = ({
             <CardContent className="pb-2">
               <div className="flex items-center">
                 <BuildingIcon className="h-4 w-4 text-blue-500 mr-1" />
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-muted-foreground dark:text-zinc-200">
                   Todos os clientes registrados
                 </span>
               </div>
             </CardContent>
             <CardFooter>
-              <div className="flex items-center text-sm text-blue-600">
+              <div className="flex items-center text-sm text-blue-600 dark:text-zinc-200">
                 <TrendingUpIcon className="h-4 w-4 mr-1" />
                 <span>{percentChange.toFixed(2)}% crescimento neste mês</span>
               </div>
@@ -146,9 +148,11 @@ export const SummaryCards = ({
       {
         id: _ids[1],
         content: (
-          <Card className="bg-gradient-to-br from-green-50 to-white border-green-100">
+          <Card className="h-full bg-gradient-to-br from-green-50 dark:from-emerald-700 dark:to-green-900 to-white border-green-100 dark:border-green-900">
             <CardHeader className="pb-2">
-              <CardDescription>Clientes Ativos</CardDescription>
+              <CardDescription className="dark:text-zinc-200">
+                Clientes Ativos
+              </CardDescription>
               <CardTitle className="text-2xl font-bold">
                 {statusCounts.ACTIVE}
               </CardTitle>
@@ -156,13 +160,13 @@ export const SummaryCards = ({
             <CardContent className="pb-2">
               <div className="flex items-center">
                 <CheckCircle2Icon className="h-4 w-4 text-green-500 mr-1" />
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-muted-foreground dark:text-zinc-200">
                   Clientes ativos atualmente
                 </span>
               </div>
             </CardContent>
             <CardFooter>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-muted-foreground dark:text-zinc-200">
                 {((statusCounts.ACTIVE / totalClients) * 100).toFixed(1)}% do
                 total
               </div>
@@ -173,23 +177,25 @@ export const SummaryCards = ({
       {
         id: _ids[2],
         content: (
-          <Card className="bg-gradient-to-br from-amber-50 to-white border-amber-100">
+          <Card className="h-full bg-gradient-to-br from-amber-50 dark:from-yellow-600 dark:to-amber-900 to-white border-amber-100 dark:border-amber-800">
             <CardHeader className="pb-2">
-              <CardDescription>Clientes inativos</CardDescription>
-              <CardTitle className="text-2xl font-bold">
+              <CardDescription className="dark:text-zinc-200">
+                Clientes inativos
+              </CardDescription>
+              <CardTitle className="text-2xl font-bold ">
                 {statusCounts.INACTIVE}
               </CardTitle>
             </CardHeader>
             <CardContent className="pb-2">
               <div className="flex items-center">
                 <PauseCircleIcon className="h-4 w-4 text-amber-500 mr-1" />
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-muted-foreground dark:text-zinc-200">
                   Temporariamente inativo
                 </span>
               </div>
             </CardContent>
             <CardFooter>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-muted-foreground dark:text-zinc-200">
                 {((statusCounts.INACTIVE / totalClients) * 100).toFixed(1)}% do
                 total
               </div>
@@ -200,9 +206,11 @@ export const SummaryCards = ({
       {
         id: _ids[3],
         content: (
-          <Card className="bg-gradient-to-br from-blue-50 to-white border-blue-100">
+          <Card className="h-full bg-gradient-to-br from-blue-50 dark:from-sky-600 to-white dark:to-blue-950 border-blue-100 dark:border-blue-950">
             <CardHeader className="pb-2">
-              <CardDescription>Novidades deste mês</CardDescription>
+              <CardDescription className="dark:text-zinc-200">
+                Novidades deste mês
+              </CardDescription>
               <CardTitle className="text-2xl font-bold">
                 {newClientsThisMonth}
               </CardTitle>
@@ -210,13 +218,13 @@ export const SummaryCards = ({
             <CardContent className="pb-2">
               <div className="flex items-center">
                 <CircleOffIcon className="h-4 w-4 text-blue-500 mr-1" />
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-muted-foreground dark:text-zinc-200">
                   Clientes recentes
                 </span>
               </div>
             </CardContent>
             <CardFooter>
-              <div className="text-sm text-blue-600">
+              <div className="text-sm text-blue-600 dark:text-zinc-200">
                 {newClientsThisMonth > 0
                   ? `+${newClientsThisMonth} do mês passado`
                   : "Nenhuma alteração em relação ao mês passado"}
@@ -237,7 +245,7 @@ export const SummaryCards = ({
       onDragEnd={handleDragEnd}
       id={useId()}>
       <SortableContext items={items} strategy={rectSortingStrategy}>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 grid-rows-1 lg:grid-cols-4">
           {items.map((id) => (
             <DraggableCard key={id} id={id}>
               {cardMap[id].content}

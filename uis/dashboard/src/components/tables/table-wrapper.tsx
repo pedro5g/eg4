@@ -30,7 +30,7 @@ export const TableWrapper = ({ children }: { children: React.ReactNode }) => {
               <Button
                 variant="outline"
                 size="sm"
-                className=" lg:flex px-3 py-5 rounded-sm border-2 border-zinc-500/40 text-zinc-600 cursor-pointer"
+                className=" lg:flex px-3 py-5 rounded-sm border-2 border-zinc-500/40 text-zinc-600 dark:text-zinc-200 cursor-pointer"
                 onClick={cancelExport}>
                 <div className="flex select-none relative text-slate-500 items-center justify-center">
                   <div
@@ -51,7 +51,7 @@ export const TableWrapper = ({ children }: { children: React.ReactNode }) => {
               <Button
                 variant="outline"
                 size="sm"
-                className=" lg:flex px-3 py-5 rounded-sm border-2 border-zinc-500/40 text-zinc-600 cursor-pointer"
+                className="lg:flex px-3 py-5 rounded-sm border-2 border-zinc-500/40 text-zinc-600 dark:text-zinc-200 cursor-pointer"
                 onClick={() =>
                   exportData({
                     endpoint: exportAllClientsEndpoint,

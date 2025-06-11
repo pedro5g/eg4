@@ -8,7 +8,7 @@ interface TableSkeletonProps {
 export const TableSkeleton = ({ columns, rows = 20 }: TableSkeletonProps) => {
   return (
     <div className="w-full bg-white rounded-lg">
-      <div className="flex h-10 bg-gray-50 rounded-t-lg">
+      <div className="flex h-10 bg-gray-50 dark:bg-slate-900 rounded-t-lg">
         {[...Array(columns)].map((_, index) => (
           <div key={`header-col-${index}`} className={`flex-1 px-4 py-2`}>
             <Skeleton className="h-4 w-full rounded-lg" />
@@ -16,9 +16,9 @@ export const TableSkeleton = ({ columns, rows = 20 }: TableSkeletonProps) => {
         ))}
       </div>
 
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-gray-100 dark:divide-zinc-700/80">
         {[...Array(rows)].map((_, rowIndex) => (
-          <div key={`row-${rowIndex}`} className="flex h-10">
+          <div key={`row-${rowIndex}`} className="flex h-10 dark:bg-slate-900">
             {[...Array(columns)].map((_, colIndex) => (
               <div
                 key={`row-${rowIndex}-col-${colIndex}`}

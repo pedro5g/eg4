@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { AnimationDiv } from "./animation-div";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useTheme } from "@/context/theme-provider";
 
 export const RegisterClientForms = () => {
   const { currentStep } = useStepsControl();
@@ -27,45 +28,12 @@ export const RegisterClientForms = () => {
   return (
     <div className="space-y-4 px-4 sm:px-6 md:px-10">
       <div className="w-full py-4">
-        <h3 className="text-4xl font-bold text-zinc-800 ">Cadastrar Cliente</h3>
+        <h3 className="text-4xl font-bold text-zinc-800 dark:text-zinc-100">
+          Cadastrar Cliente
+        </h3>
       </div>
       <div>
         <div>
-          {/* <div className="flex justify-center">
-            <div className="flex items-center">
-              {steps.map((s, i) => (
-                <div key={s.id} className="relative flex items-center ">
-                  <button
-                    aria-label={s.name}
-                    type="submit"
-                    onClick={() => {
-                      navigate(s.id);
-                    }}
-                    className={`z-5 flex items-center justify-center w-8 h-8 rounded-full border-2 transition-colors cursor-pointer ${
-                      currentStep > s.id
-                        ? " border-blue-500 text-blue-500"
-                        : currentStep === s.id
-                        ? "border-blue-500 text-blue-500 ring-3 ring-blue-500/50"
-                        : "border-muted-foreground/30 text-muted-foreground/30"
-                    }`}>
-                    {s.id}
-                  </button>
-                  <p className=" hidden md:block mx-1 text-zinc-600 text-sm z-10">
-                    {s.name}
-                  </p>
-                  {i < steps.length - 1 && (
-                    <div
-                      className={`w-15 md:w-30 h-1 mx-1 z-5 ${
-                        currentStep >= s.id + 1
-                          ? "bg-blue-500"
-                          : "bg-muted-foreground/30"
-                      }`}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div> */}
           <AnimatePresence custom={1} mode="wait" initial={false}>
             <ProgressBar />
           </AnimatePresence>
@@ -93,7 +61,7 @@ export default function ProgressBar() {
   return (
     <AnimationDiv
       direction={1}
-      className="flex select-none items-center justify-between gap-4 border-b-2 border-zinc-200 px-5 pb-8">
+      className="flex select-none items-center justify-between gap-4 border-b-2 border-zinc-200 dark:border-zinc-400 px-5 pb-8">
       <StepCircle onClick={() => navigate(1)} step={1} fill />
 
       <StepBar fill={currentStep >= 2} />
@@ -122,21 +90,26 @@ function StepCircle({
   fill: boolean;
   onClick: () => void;
 }) {
+  const { theme } = useTheme();
   return (
     <div
       tabIndex={1}
       onClick={onClick}
       className={cn(
-        "relative size-[34px] shrink-0 overflow-hidden rounded-full ring-4 ring-blue-300 cursor-pointer transition-all duration-200 hover:scale-105"
+        "relative size-[34px] shrink-0 overflow-hidden rounded-full ring-4 dark:ring-blue-500 ring-blue-300 cursor-pointer transition-all duration-200 hover:scale-105"
       )}>
       <motion.span
         animate={{
           backgroundColor: fill
-            ? "var(--color-blue-500)"
-            : "var(--color-blue-200)",
+            ? theme === "light"
+              ? "var(--color-blue-500)"
+              : "var(--color-slate-800)"
+            : theme === "light"
+            ? "var(--color-blue-200)"
+            : "var(--color-slate-500)",
         }}
         transition={{ duration: 0.2 }}
-        className="absolute flex h-full w-full items-center justify-center text-white">
+        className="absolute flex h-full w-full items-center justify-center text-white font-bold">
         {step}
       </motion.span>
     </div>
@@ -147,7 +120,7 @@ function StepBar({ fill }: { fill: boolean }) {
   return (
     <div
       className={cn(
-        "relative hidden h-[6px] w-full overflow-hidden rounded-[50px] bg-zinc-200 sm:block",
+        "relative hidden h-[6px] w-full overflow-hidden rounded-[50px] bg-zinc-200 dark:bg-blue-200 sm:block",
         "before:absolute before:-left-full before:h-[6px] before:w-full before:bg-blue-500 before:duration-200 before:content-['']",
         fill ? "before:left-0 " : "before:delay-150"
       )}></div>

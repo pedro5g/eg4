@@ -157,10 +157,10 @@ export function DataTableClients({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                className="px-3 py-2 rounded-sm border-2 border-zinc-500/40 text-zinc-600 cursor-pointer"
+                className="px-3 py-2 rounded-sm border-2 border-zinc-500/40 text-zinc-600 dark:text-zinc-200 cursor-pointer"
                 variant="outline"
                 size="sm">
-                <ColumnsIcon className="text-zinc-600" />
+                <ColumnsIcon className="text-zinc-600 dark:text-zinc-200" />
                 <span className="hidden lg:inline">Customize as colunas</span>
                 <span className="lg:hidden">Colunas</span>
                 <ChevronDownIcon />

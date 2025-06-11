@@ -69,11 +69,13 @@ export const RegisterFormSecondStep = ({
           <div className="grid gap-4">
             <div>
               <div className="inline-flex items-center gap-5">
-                <h2 className="text-zinc-800 text-2xl font-bold">Endereço</h2>
+                <h2 className="text-zinc-800 dark:text-zinc-100 text-2xl font-bold">
+                  Endereço
+                </h2>
                 <button
                   type="button"
                   onClick={clear}
-                  className="text-zinc-800 cursor-pointer">
+                  className="text-zinc-800 dark:text-zinc-100 cursor-pointer">
                   <RefreshCcw size={20} />
                   <span className="sr-only">Limpar o formulário</span>
                 </button>
@@ -146,7 +148,7 @@ export const RegisterFormSecondStep = ({
             <div className="flex gap-5 justify-end">
               <Button
                 type="submit"
-                className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
+                className="bg-blue-600 hover:bg-blue-700 dark:text-white cursor-pointer">
                 Salvar e continuar
               </Button>
             </div>

@@ -128,6 +128,19 @@ export const getDueDays = (dueDate: Date | string) => {
   }
 };
 
+export function getParentBackgroundColor(element: HTMLElement): string | null {
+  if (typeof window === "undefined") return null;
+  let current: HTMLElement | null = element.parentElement;
+  while (current) {
+    const bg = window.getComputedStyle(current).backgroundColor;
+    if (bg && bg !== "transparent" && bg !== "rgba(0, 0, 0, 0)") {
+      return bg;
+    }
+    current = current.parentElement;
+  }
+  return null;
+}
+
 export function appVersion() {
   return {
     isLimited: import.meta.env.VITE_APP_VERSION === "limited",

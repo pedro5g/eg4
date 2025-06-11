@@ -91,7 +91,7 @@ export const ProfileModal = ({ user }: ProfileModalProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader className="bg-blue-50 -mx-6 -mt-6 px-6 pt-6 pb-4 rounded-t-lg">
+        <DialogHeader className="bg-blue-50 dark:bg-slate-600 -mx-6 -mt-6 px-6 pt-6 pb-4 rounded-t-lg">
           <div className="flex justify-between items-center">
             <DialogTitle>Perfil</DialogTitle>
           </div>
@@ -172,7 +172,7 @@ export const ProfileModal = ({ user }: ProfileModalProps) => {
                   Object.keys(methods.formState.dirtyFields).length === 0 ||
                   isPending
                 }
-                className="bg-blue-600 hover:bg-blue-700 cursor-pointer ml-auto">
+                className="bg-blue-600 hover:bg-blue-700 dark:text-white cursor-pointer ml-auto">
                 <UserIcon className="mr-2 h-4 w-4" />
                 {isPending ? "Editando" : "Editar"}
                 {isPending && <Loader2 size={16} className="animate-spin" />}
@@ -181,7 +181,7 @@ export const ProfileModal = ({ user }: ProfileModalProps) => {
           ) : (
             <Button
               onClick={() => setOpenEditForm(!openEditForm)}
-              className="bg-blue-600 hover:bg-blue-700 cursor-pointer ml-auto">
+              className="bg-blue-600 hover:bg-blue-700 dark:text-white cursor-pointer ml-auto">
               <UserIcon className="mr-2 h-4 w-4" />
               Editar Perfil
             </Button>

@@ -9,6 +9,7 @@ import {
   formatDate,
   formatPhone,
 } from "@/lib/utils";
+import { useFloatingBg } from "./hooks/use-floating-bg";
 
 export interface TextFieldProps<T extends FieldValues>
   extends Omit<
@@ -40,6 +41,7 @@ export const TextField = <T extends FieldValues = any>({
   ...props
 }: TextFieldProps<T>) => {
   const { control } = useFormContext<T>();
+  const { bgColor, parentRef } = useFloatingBg();
 
   const cleanFormat = (value: string) => {
     return value.replace(/\D/g, "").trim();
@@ -88,7 +90,7 @@ export const TextField = <T extends FieldValues = any>({
         };
 
         return (
-          <div className="w-full space-y-1">
+          <div ref={parentRef} className="w-full space-y-1">
             <div className="relative">
               <input
                 name={name}
@@ -106,9 +108,9 @@ export const TextField = <T extends FieldValues = any>({
                 readOnly={readonly}
                 id={`floating_outlined_${label}`}
                 className={cn(
-                  `block px-3 pb-2.5 pt-4 w-full text-sm text-zinc-500 bg-transparent duration-300 transform   
-              rounded-sm border-2 border-zinc-500/40 appearance-none data-[error=true]:border-red-500
-              focus:outline-none focus:ring-0 focus:border-blue-400 peer`,
+                  `block px-3 pb-2.5 pt-4 w-full text-sm text-zinc-500 dark:text-zinc-300 bg-transparent duration-300 transform   
+              rounded-sm border-2 border-zinc-500/40 dark:border-zinc-100/40 appearance-none data-[error=true]:border-red-500
+              focus:outline-none focus:ring-0 focus:border-blue-400 dark:focus:border-blue-400 peer`,
                   IconLeft && "pl-10",
                   className
                 )}
@@ -117,15 +119,19 @@ export const TextField = <T extends FieldValues = any>({
               <label
                 htmlFor={`floating_outlined_${label}`}
                 data-error={invalid}
+                style={{
+                  //@ts-ignore
+                  "--dark-floating": bgColor,
+                }}
                 className={cn(
                   `absolute text-base text-zinc-500 duration-300 transform 
-                -translate-y-5 scale-75 top-2 z-10 origin-[0] bg-white px-2 start-1.5
+                -translate-y-5 scale-75 top-2 z-10 origin-[0] bg-white px-2 start-1.5 dark:bg-[var(--dark-floating)]
                 peer-focus:px-2 peer-focus:text-blue-400 data-[error=true]:text-red-500
                 `,
                   !IconLeft &&
                     ` peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 
                     peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-5
-                    rtl:peer-focus:translate-x-2/4 rtl:peer-focus:left-auto `
+                    rtl:peer-focus:translate-x-2/4 rtl:peer-focus:left-auto`
                 )}>
                 {label}
                 {required && <span className="text-xl leading-0">*</span>}

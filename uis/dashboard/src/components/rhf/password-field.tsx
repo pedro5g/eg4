@@ -1,6 +1,7 @@
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 import { CircleAlert, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { useFloatingBg } from "./hooks/use-floating-bg";
 
 export interface TextFieldProps<T extends FieldValues>
   extends Omit<React.ComponentProps<"input">, "placeholder" | "type"> {
@@ -21,6 +22,7 @@ export const PasswordField = <T extends FieldValues>({
 }: TextFieldProps<T>) => {
   const [showPassword, setShowPassword] = useState(false);
   const { control } = useFormContext();
+  const { bgColor, parentRef } = useFloatingBg();
   return (
     <Controller
       control={control}
@@ -30,7 +32,7 @@ export const PasswordField = <T extends FieldValues>({
         fieldState: { invalid, error },
       }) => {
         return (
-          <div className="w-full max-w-md space-y-1">
+          <div ref={parentRef} className="w-full max-w-md space-y-1">
             <div className="relative">
               <input
                 name={name}
@@ -42,9 +44,9 @@ export const PasswordField = <T extends FieldValues>({
                 required={required}
                 readOnly={readonly}
                 id={`floating_outlined_${label}`}
-                className="block px-3 pb-2.5 pt-4 w-full text-sm text-zinc-500 bg-transparent duration-300 transform   
+                className="block px-3 pb-2.5 pt-4 w-full text-sm text-zinc-500 dark:text-zinc-300 dark:border-zinc-100/40 bg-transparent duration-300 transform   
               rounded-sm border-2 border-zinc-500/40 appearance-none data-[error=true]:border-red-500
-              focus:outline-none focus:ring-0 focus:border-blue-400 pr-8 peer"
+              focus:outline-none focus:ring-0 focus:border-blue-400 dark:focus:border-blue-400 pr-8 peer"
                 placeholder=" "
               />
               {show && (
@@ -59,8 +61,12 @@ export const PasswordField = <T extends FieldValues>({
               <label
                 htmlFor={`floating_outlined_${label}`}
                 data-error={invalid}
+                style={{
+                  //@ts-ignore
+                  "--dark-floating": bgColor,
+                }}
                 className="absolute text-base text-zinc-500 duration-300 transform 
-            -translate-y-5 scale-75 top-2 z-10 origin-[0] bg-white px-2 
+            -translate-y-5 scale-75 top-2 z-10 origin-[0] bg-white px-2 dark:bg-[var(--dark-floating)]
             peer-focus:px-2 peer-focus:text-blue-400 data-[error=true]:text-red-500
             peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 
             peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-5

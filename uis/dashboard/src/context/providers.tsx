@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NuqsAdapter } from "nuqs/adapters/react";
 import { HelmetProvider } from "react-helmet-async";
 import { useState } from "react";
+import { ThemeProvider } from "./theme-provider";
 
 export const Providers = ({
   children,
@@ -30,12 +31,14 @@ export const Providers = ({
 
   return (
     <HelmetProvider>
-      <QueryClientProvider client={client}>
-        <NuqsAdapter>
-          {children}
-          <Toaster richColors />
-        </NuqsAdapter>
-      </QueryClientProvider>
+      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+        <QueryClientProvider client={client}>
+          <NuqsAdapter>
+            {children}
+            <Toaster richColors />
+          </NuqsAdapter>
+        </QueryClientProvider>
+      </ThemeProvider>
     </HelmetProvider>
   );
 };

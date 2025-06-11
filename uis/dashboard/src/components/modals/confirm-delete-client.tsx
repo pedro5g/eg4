@@ -48,7 +48,9 @@ export function ConfirmDeleteClient({ code }: ConfirmDeleteClientProps) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" className="w-full hover:bg-red-400">
+        <Button
+          variant="destructive"
+          className="w-full rounded-sm hover:bg-red-400">
           Excluir
         </Button>
       </AlertDialogTrigger>
@@ -70,7 +72,7 @@ export function ConfirmDeleteClient({ code }: ConfirmDeleteClientProps) {
               type="button"
               onClick={handlerDelete}
               disabled={isPending}
-              className="bg-blue-600 hover:bg-blue-700">
+              className="bg-blue-600 hover:bg-blue-700 dark:text-white">
               {isPending && <Loader2 className="animate-spin" />}
               {isPending ? "Deletando" : " Confirmar"}
             </Button>

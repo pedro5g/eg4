@@ -88,8 +88,10 @@ export function SignUp() {
       <main className="w-full flex flex-col items-center justify-center ">
         <div className="max-w-[320px] w-full space-y-8">
           <div>
-            <h3 className="font-bold text-[2.5rem] text-zinc-800">Registrar</h3>
-            <span className="text-base text-zinc-500">
+            <h3 className="font-bold text-[2.5rem] text-zinc-800 dark:text-zinc-200">
+              Registrar
+            </h3>
+            <span className="text-base text-zinc-500 dark:text-zinc-200">
               Cadastre-se para aproveitar nossos recursos
             </span>
           </div>
@@ -117,7 +119,7 @@ export function SignUp() {
                 />
                 <Button
                   type="submit"
-                  className="bg-blue-600 w-full py-6 cursor-pointer hover:bg-blue-500">
+                  className="bg-blue-600 w-full py-6 cursor-pointer dark:text-white hover:bg-blue-500">
                   Cadastrar
                   {isPending && <Loader2 size={16} className="animate-spin" />}
                 </Button>
@@ -127,10 +129,10 @@ export function SignUp() {
         </div>
       </main>
 
-      <span className="text-base text-zinc-500 font-light">
+      <span className="text-base text-zinc-500 dark:text-zinc-200 font-light">
         Já tem uma conta??{" "}
         <Link
-          className="text-blue-500 font-semibold hover:underline"
+          className="text-blue-500 font-semibold dark:text-white hover:underline"
           to={"/sign-in"}>
           Entrar
         </Link>
