@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Check, ChevronsUpDown, CircleAlert, Loader2 } from "lucide-react";
-import { cn, isJavaVersion } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import {
   Command,
   CommandEmpty,
@@ -34,16 +34,7 @@ export const SelectStore = <T extends FieldValues>({
     queryKey: ["store-list"],
   });
 
-  const stores = isJavaVersion()
-    ? (data?.data as {
-        id: number;
-        code: string;
-        name: string;
-        address: string | null;
-      }[])
-    : data?.stores;
-
-  console.log(stores);
+  const stores = data?.stores;
 
   return (
     <Controller

@@ -18,45 +18,49 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
-import { cn, isJavaVersion } from "@/lib/utils";
+import { appVersion, cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 
-const NAV_MAIN =
-  import.meta.env.VITE_APP_VERSION !== "aula"! && isJavaVersion()
-    ? [
-        {
-          title: "Dashboard",
-          url: "/dashboard",
-          icon: LayoutDashboardIcon,
-        },
-        {
-          title: "Registrar cliente",
-          url: "/clients",
-          icon: UserPlus,
-        },
-        {
-          title: "Clientes",
-          url: "/clients/table",
-          icon: Users,
-        },
-        {
-          title: "Faturas",
-          url: "/invoice",
-          icon: ReceiptText,
-        },
-      ]
-    : [
-        {
-          title: "Registrar cliente",
-          url: "/clients",
-          icon: UserPlus,
-        },
-        {
-          title: "Clientes",
-          url: "/clients/table",
-          icon: Users,
-        },
-      ];
+const NAV_MAIN = appVersion().isCompleted
+  ? [
+      {
+        title: "Dashboard",
+        url: "/dashboard",
+        icon: LayoutDashboardIcon,
+      },
+      {
+        title: "Registrar cliente",
+        url: "/clients",
+        icon: UserPlus,
+      },
+      {
+        title: "Clientes",
+        url: "/clients/table",
+        icon: Users,
+      },
+      {
+        title: "Faturas",
+        url: "/invoice",
+        icon: ReceiptText,
+      },
+    ]
+  : [
+      {
+        title: "Dashboard",
+        url: "/dashboard",
+        icon: LayoutDashboardIcon,
+      },
+      {
+        title: "Registrar cliente",
+        url: "/clients",
+        icon: UserPlus,
+      },
+      {
+        title: "Clientes",
+        url: "/clients/table",
+        icon: Users,
+      },
+    ];
 
 export const AppSidebar = ({
   ...props

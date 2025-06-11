@@ -128,6 +128,9 @@ export const getDueDays = (dueDate: Date | string) => {
   }
 };
 
-export function isJavaVersion() {
-  return import.meta.env.VITE_IS_JAVA_VERSION === "true";
+export function appVersion() {
+  return {
+    isLimited: import.meta.env.VITE_APP_VERSION === "limited",
+    isCompleted: import.meta.env.VITE_APP_VERSION === "completed",
+  };
 }

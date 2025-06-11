@@ -3,8 +3,6 @@ import { useParams } from "react-router";
 import { FormProfile } from "@/components/forms/form-profile.tsx/edit-client-profile-form";
 import { useQuery } from "@tanstack/react-query";
 import { ClientProfileSkeleton } from "@/components/skeleton-loader/client-profile-skeleton";
-import { isJavaVersion } from "@/lib/utils";
-import { Client } from "@/api/types";
 
 export const ClientProfile = () => {
   const clientCode = useParams().clientCode;
@@ -16,7 +14,7 @@ export const ClientProfile = () => {
     refetchOnMount: false,
   });
 
-  const client = isJavaVersion() ? (data?.data as Client) : data?.client;
+  const client = data?.client;
   if (isLoading || !client) return <ClientProfileSkeleton />;
 
   return (

@@ -64,6 +64,7 @@ export const RegisterStoreModel = () => {
         });
         window.toast.success("Loja cadastrada com sucesso ✅");
         methods.reset();
+        setOpen(false);
       }
     },
     onError: () => {
@@ -95,9 +96,11 @@ export const RegisterStoreModel = () => {
         <div className="w-full">
           <FormWrapper method={methods}>
             <form
-              id="register_store_form"
               className="space-y-2"
-              onSubmit={methods.handleSubmit(onSubmit)}>
+              onSubmit={(e) => {
+                e.stopPropagation();
+                methods.handleSubmit(onSubmit)(e);
+              }}>
               <div className="space-y-4">
                 <TextField<RegisterStoreFormSchemaType>
                   name="name"
@@ -111,7 +114,6 @@ export const RegisterStoreModel = () => {
               </div>
               <div className="w-full flex items-center justify-end">
                 <Button
-                  form="register_store_form"
                   type="submit"
                   disabled={isPending}
                   className="bg-blue-600 hover:bg-blue-700 cursor-pointer ml-auto">

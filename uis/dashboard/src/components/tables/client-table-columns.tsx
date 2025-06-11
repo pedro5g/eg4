@@ -2,7 +2,7 @@ import { Client } from "@/api/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { DragHandle } from "./table-drag-components";
 import { Checkbox } from "../ui/checkbox";
-import { formatCNPJ, formatCPF, formatPhone } from "@/lib/utils";
+import { appVersion, formatCNPJ, formatCPF, formatPhone } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 import { STATUS_MAP } from "@/constants";
 import { STATUS_ICON_MAP } from "@/constants/status-options";
@@ -145,7 +145,7 @@ export const columns: ColumnDef<Client>[] = [
             <Link to={`/clients/${row.original.code}`}>Perfil do cliente</Link>
           </DropdownMenuItem>
           <ConfirmDeleteClient code={row.original.code} />
-          {import.meta.env.VITE_APP_VERSION !== "aula" && (
+          {appVersion().isCompleted && (
             <TableSheet client={row.original}>
               <Button
                 variant="outline"

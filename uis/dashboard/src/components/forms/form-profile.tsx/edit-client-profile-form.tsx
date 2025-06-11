@@ -12,6 +12,7 @@ import {
   updateClientProfileSchema,
 } from "../register-client-form/schemas/update-client-profile.schema";
 import {
+  appVersion,
   cn,
   formatCEP,
   formatCNPJ,
@@ -174,7 +175,7 @@ export const FormProfile = ({ client }: FormProfileProps) => {
             <EditIcon className="h-4 w-4 mr-2" />
             Editar Perfil
           </Button>
-          {import.meta.env.VITE_APP_VERSION !== "aula" && (
+          {appVersion().isCompleted && (
             <TableSheet client={client}>
               <Button variant="outline" size={"sm"}>
                 Arquivos
@@ -184,15 +185,10 @@ export const FormProfile = ({ client }: FormProfileProps) => {
         </div>
       </div>
       <div
-        className={cn(
-          import.meta.env.VITE_APP_VERSION !== "aula" &&
-            "grid md:grid-cols-5 gap-4"
-        )}>
+        className={cn(appVersion().isCompleted && "grid md:grid-cols-5 gap-4")}>
         <Card
           className={cn(
-            import.meta.env.VITE_APP_VERSION !== "aula"
-              ? "w-full md:col-span-3"
-              : "w-full"
+            appVersion().isCompleted ? "w-full md:col-span-3" : "w-full"
           )}>
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between">
@@ -875,9 +871,7 @@ export const FormProfile = ({ client }: FormProfileProps) => {
             </motion.div>
           )}
         </Card>
-        {import.meta.env.VITE_APP_VERSION !== "aula" && (
-          <InvoiceList client={client} />
-        )}
+        {appVersion().isCompleted && <InvoiceList client={client} />}
       </div>
     </div>
   );
