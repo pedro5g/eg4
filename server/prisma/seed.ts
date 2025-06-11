@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client"
-import { ar, faker } from "@faker-js/faker"
+import { faker } from "@faker-js/faker"
 import { randomString } from "@/core/helpers"
 import { subMonths } from "date-fns"
 import { EncrypterModule } from "@/modules/encrypter/encrypter.module"
@@ -51,9 +51,9 @@ const seedCLISchema = z
   .transform((args) => {
     return {
       mockQuantity: args["-q"],
-      userName: args["-u"] || "UserTest",
-      userEmail: args["-e"] || "UserTest@gmail.com",
-      userPassword: args["-u"] || "123456",
+      userName: args["-u"] || "User Test",
+      userEmail: args["-e"] || "userTest@gmail.com",
+      userPassword: args["-p"] || "123456",
     }
   })
 
@@ -97,11 +97,13 @@ async function main() {
   })
 
   if (!author) {
+    console.log(user.userPassword)
+    const hash = await EncrypterModule.factory().toHash(user.userPassword)
     author = await prisma.user.create({
       data: {
         name: user.userName,
         email: user.userEmail,
-        password: await EncrypterModule.factory().toHash(user.userPassword),
+        password: hash,
       },
     })
   }
@@ -165,7 +167,7 @@ async function main() {
 
   console.log("All done 🌱🌱🌱")
   console.log(
-    `Access app using \nEmail: ${user.userName} \nPassword: ${user.userPassword}`,
+    `Access app using \nEmail: ${user.userEmail} \nPassword: ${user.userPassword}`,
   )
 }
 
